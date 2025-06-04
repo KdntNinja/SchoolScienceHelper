@@ -11,7 +11,7 @@ For installation instructions, visit our [documentation](https://templui.io/docs
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/axzilla/templui-quickstart.git
+   git clone https://github.com/KdntNinja/ScratchClone.git
    cd templui-quickstart
    ```
 

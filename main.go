@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/KdntNinja/ScratchClone/assets"
+	"github.com/KdntNinja/ScratchClone/ui/pages"
 	"github.com/a-h/templ"
-	"github.com/axzilla/templui-quickstart/assets"
-	"github.com/axzilla/templui-quickstart/ui/pages"
 	"github.com/joho/godotenv"
 )
 
