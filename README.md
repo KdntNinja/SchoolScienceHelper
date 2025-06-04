@@ -1,0 +1,2 @@
+# ScratchClone
+Self explanitory
