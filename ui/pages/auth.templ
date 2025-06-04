@@ -1,86 +1,100 @@
 package pages
 
 import (
-    "github.com/KdntNinja/ScratchClone/ui/components/button"
-    "github.com/KdntNinja/ScratchClone/ui/layouts"
+	"github.com/KdntNinja/ScratchClone/ui/components/button"
+	"github.com/KdntNinja/ScratchClone/ui/layouts"
 )
 
 templ Auth() {
-@layouts.BaseLayout() {
-<main class="flex items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12">
-    <div class="bg-white dark:bg-muted rounded-lg shadow-xl w-full max-w-md p-8">
-        <h2 class="text-3xl font-bold text-center mb-6 text-primary">Welcome</h2>
-
-        <div id="tab-switch" class="flex justify-center gap-6 mb-6">
-            <button id="login-tab" class="pb-1 font-medium text-primary border-b-2 border-primary">
-                Login
-            </button>
-            <button id="signup-tab" class="pb-1 font-medium text-muted-foreground hover:text-primary">
-                Sign Up
-            </button>
-        </div>
-
-        <!-- Login Form -->
-        <div id="login-form">
-            <form action="/login" method="POST" class="flex flex-col gap-4">
-                <label>
-                    <input
-                            name="email" type="email" placeholder="Email" required
-                            class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                    />
-                </label>
-                <label>
-                    <input
-                            name="password" type="password" placeholder="Password" required
-                            class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                    />
-                </label>
-                <div class="w-full">
-                    @button.Button(button.Props{Variant: "default", Type: "submit", Class: "w-full"}) {
-                    Log In
-                    }
-                </div>
-            </form>
-        </div>
-
-        <!-- Sign Up Form -->
-        <div id="signup-form" class="hidden">
-            <form action="/signup" method="POST" class="flex flex-col gap-4">
-                <label>
-                    <input
-                            name="username" type="text" placeholder="Username" required
-                            class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                    />
-                </label>
-                <label>
-                    <input
-                            name="email" type="email" placeholder="Email" required
-                            class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                    />
-                </label>
-                <label>
-                    <input
-                            name="password" type="password" placeholder="Password" required
-                            class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                    />
-                </label>
-                <label>
-                    <input
-                            name="confirmPassword" type="password" placeholder="Confirm Password" required
-                            class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                    />
-                </label>
-                <div class="w-full">
-                    @button.Button(button.Props{Variant: "primary", Type: "submit", Class: "w-full"}) {
-                    Sign Up
-                    }
-                </div>
-            </form>
-        </div>
-    </div>
-</main>
-
-<script>
+	@layouts.BaseLayout() {
+		<main class="flex items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12">
+			<div class="bg-white dark:bg-muted rounded-lg shadow-xl w-full max-w-md p-8">
+				<h2 class="text-3xl font-bold text-center mb-6 text-primary">Welcome</h2>
+				<div id="tab-switch" class="flex justify-center gap-6 mb-6">
+					<button id="login-tab" class="pb-1 font-medium text-primary border-b-2 border-primary">
+						Login
+					</button>
+					<button id="signup-tab" class="pb-1 font-medium text-muted-foreground hover:text-primary">
+						Sign Up
+					</button>
+				</div>
+				<!-- Login Form -->
+				<div id="login-form">
+					<form action="/login" method="POST" class="flex flex-col gap-4">
+						<label>
+							<input
+								name="email"
+								type="email"
+								placeholder="Email"
+								required
+								class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+							/>
+						</label>
+						<label>
+							<input
+								name="password"
+								type="password"
+								placeholder="Password"
+								required
+								class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+							/>
+						</label>
+						<div class="w-full">
+							@button.Button(button.Props{Variant: "default", Type: "submit", Class: "w-full"}) {
+								Log In
+							}
+						</div>
+					</form>
+				</div>
+				<!-- Sign Up Form -->
+				<div id="signup-form" class="hidden">
+					<form action="/signup" method="POST" class="flex flex-col gap-4">
+						<label>
+							<input
+								name="username"
+								type="text"
+								placeholder="Username"
+								required
+								class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+							/>
+						</label>
+						<label>
+							<input
+								name="email"
+								type="email"
+								placeholder="Email"
+								required
+								class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+							/>
+						</label>
+						<label>
+							<input
+								name="password"
+								type="password"
+								placeholder="Password"
+								required
+								class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+							/>
+						</label>
+						<label>
+							<input
+								name="confirmPassword"
+								type="password"
+								placeholder="Confirm Password"
+								required
+								class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+							/>
+						</label>
+						<div class="w-full">
+							@button.Button(button.Props{Variant: "primary", Type: "submit", Class: "w-full"}) {
+								Sign Up
+							}
+						</div>
+					</form>
+				</div>
+			</div>
+		</main>
+		<script>
     const loginTab = document.getElementById('login-tab');
     const signupTab = document.getElementById('signup-tab');
     const loginForm = document.getElementById('login-form');
@@ -102,5 +116,5 @@ templ Auth() {
         loginForm.classList.add('hidden');
     };
 </script>
-}
+	}
 }

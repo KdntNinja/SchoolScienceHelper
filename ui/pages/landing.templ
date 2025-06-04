@@ -1,55 +1,72 @@
 package pages
 
 import (
-"github.com/KdntNinja/ScratchClone/ui/components/button"
-"github.com/KdntNinja/ScratchClone/ui/layouts"
+	"github.com/KdntNinja/ScratchClone/ui/components/button"
+	"github.com/KdntNinja/ScratchClone/ui/layouts"
 )
 
 templ Landing() {
-@layouts.BaseLayout() {
-<main class="flex flex-col items-center justify-center min-h-screen px-6 py-16 text-foreground bg-background">
-	<h1 class="text-5xl font-extrabold text-center mb-8 text-primary">
-		🚀 Welcome to ScratchClone
-	</h1>
-
-	<p class="max-w-xl text-center mb-12 text-muted-foreground text-lg leading-relaxed">
-		Your project is ready! ✨ Check out the documentation for guides and examples,
-		or visit GitHub to stay up to date. Let's build something great! 🎨
-	</p>
-
-	<div class="flex flex-wrap justify-center gap-6">
-		@button.Button(button.Props{
-		Variant: "default",
-		Href:    "https://templui.io",
-		Target:  "_blank",
-		}) {
-		Documentation
-		}
-
-		@button.Button(button.Props{
-		Variant: "outline",
-		Href:    "https://github.com/axzilla/templui",
-		Target:  "_blank",
-		}) {
-		GitHub
-		}
-
-		@button.Button(button.Props{
-		Variant: "secondary",
-		Href:    "/auth",
-		}) {
-		Login / Sign Up
-		}
-	</div>
-
-	<p class="text-sm text-muted-foreground mt-12 text-center">
-		Questions? Join our
-		<a href="https://github.com/axzilla/templui/discussions"
-		   target="_blank"
-		   class="text-primary hover:underline">
-			community discussions
-		</a> 👋
-	</p>
-</main>
-}
+	@layouts.BaseLayout() {
+		<main class="flex flex-col min-h-[calc(100vh-72px)] bg-background text-foreground px-6 py-20 space-y-24">
+			<!-- Hero Section -->
+			<section class="flex flex-col items-center text-center">
+				<h1 class="text-6xl font-black text-primary mb-6 leading-tight">
+					🚀 Welcome to ScratchClone
+				</h1>
+				<p class="max-w-2xl text-lg text-muted-foreground leading-relaxed mb-10">
+					You've scaffolded your next big idea. Explore our tools and community to bring your creative coding projects to life. ✨
+				</p>
+				<div class="flex flex-wrap justify-center gap-6">
+					@button.Button(button.Props{
+						Variant: "outline",
+						Href:    "https://github.com/KdntNinja/ScratchClone",
+						Target:  "_blank",
+					}) {
+						View on GitHub
+					}
+					@button.Button(button.Props{
+						Variant: "secondary",
+						Href:    "/auth",
+					}) {
+						Get Started
+					}
+				</div>
+			</section>
+			<!-- Features Section -->
+			<section class="max-w-5xl mx-auto text-center">
+				<h2 class="text-3xl font-bold mb-6 text-primary">Why ScratchClone?</h2>
+				<div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+					<div class="p-6 bg-muted rounded-xl shadow">
+						<h3 class="text-xl font-semibold mb-2">🎨 Visual Programming</h3>
+						<p class="text-muted-foreground">
+							Drag-and-drop coding made simple for creators of all ages, inspired by Scratch but built with modern tech.
+						</p>
+					</div>
+					<div class="p-6 bg-muted rounded-xl shadow">
+						<h3 class="text-xl font-semibold mb-2">⚡ Built with Go & Templ</h3>
+						<p class="text-muted-foreground">
+							Fast, efficient, and easy to deploy. Enjoy clean, reactive UIs with lightning performance.
+						</p>
+					</div>
+					<div class="p-6 bg-muted rounded-xl shadow">
+						<h3 class="text-xl font-semibold mb-2">🌐 Open Source</h3>
+						<p class="text-muted-foreground">
+							Transparent, extensible, and community-driven. Fork it, contribute, or just explore!
+						</p>
+					</div>
+				</div>
+			</section>
+			<!-- Footer -->
+			<footer class="text-sm text-muted-foreground text-center pt-10 border-t border-muted">
+				Have questions or want to get involved? Join the
+				<a
+					href="https://github.com/KdntNinja/ScratchClone/discussions"
+					target="_blank"
+					class="text-primary hover:underline ml-1"
+				>
+					GitHub Discussions
+				</a> 💬 — or follow us for updates!
+			</footer>
+		</main>
+	}
 }
