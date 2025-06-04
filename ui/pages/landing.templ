@@ -1,41 +1,48 @@
 package pages
 
 import (
-	"github.com/KdntNinja/ScratchClone/ui/components/button"
-	"github.com/KdntNinja/ScratchClone/ui/layouts"
+"github.com/KdntNinja/ScratchClone/ui/components/button"
+"github.com/KdntNinja/ScratchClone/ui/layouts"
 )
 
 templ Landing() {
-	@layouts.BaseLayout() {
-		<div class="flex justify-center items-center min-h-screen">
-			<div class="flex flex-col gap-6 items-center justify-center px-4 w-full max-w-3xl py-16">
-				<div class="text-center space-y-4">
-					<h1 class="text-4xl font-bold">🚀 Welcome to templUI Quickstart</h1>
-					<p class="text-muted-foreground text-lg">
-						Your project is ready! ✨ Check out the documentation for guides and examples, 
-						or visit GitHub to stay up to date. Let's build something great! 🎨
-					</p>
-				</div>
-				<div class="flex gap-3">
-					@button.Button(button.Props{
-						Variant: "default",
-						Href:    "https://templui.io",
-						Target:  "_blank",
-					}) {
-						Documentation
-					}
-					@button.Button(button.Props{
-						Variant: "outline",
-						Href:    "https://github.com/axzilla/templui",
-						Target:  "_blank",
-					}) {
-						GitHub
-					}
-				</div>
-				<p class="text-sm text-muted-foreground mt-4">
-					Questions? Join our <a href="https://github.com/axzilla/templui/discussions" target="_blank" class="text-primary hover:underline">community discussions</a> 👋
-				</p>
-			</div>
+@layouts.BaseLayout() {
+<div class="flex justify-center items-center min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100">
+	<div class="flex flex-col gap-6 items-center justify-center px-4 w-full max-w-4xl py-16">
+		<div class="text-center space-y-4">
+			<h1 class="text-5xl font-extrabold text-purple-700">🐱 ScratchClone</h1>
+			<p class="text-muted-foreground text-xl max-w-xl mx-auto">
+				Make your own interactive stories, games, and animations! 🎮✨<br/>
+				Join the community, share your creativity, and learn to code along the way!
+			</p>
 		</div>
-	}
+
+		<div class="flex flex-wrap gap-4 justify-center">
+			@button.Button(button.Props{
+			Variant: "default",
+			Href:    "/editor",
+			}) {
+			🎨 Create Project
+			}
+			@button.Button(button.Props{
+			Variant: "outline",
+			Href:    "/explore",
+			}) {
+			🔍 Explore Projects
+			}
+			@button.Button(button.Props{
+			Variant: "secondary",
+			Href:    "https://github.com/KdntNinja/ScratchClone/discussions",
+			Target:  "_blank",
+			}) {
+			💬 Join Community
+			}
+		</div>
+
+		<p class="text-sm text-muted-foreground mt-6">
+			Want to contribute? Check out the <a href="https://github.com/KdntNinja/ScratchClone" target="_blank" class="text-primary hover:underline">GitHub repo</a> 🚀
+		</p>
+	</div>
+</div>
+}
 }
