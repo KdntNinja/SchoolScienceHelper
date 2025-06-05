@@ -1,46 +1,34 @@
-# Start with a minimal Go image
+# syntax=docker/dockerfile:1
 FROM golang:1.21-alpine AS builder
 
-# Enable go mod and templ
-ENV CGO_ENABLED=0 \
-    GO111MODULE=on \
-    TEMPDIR=/tmp
+# Install git (required for go mod) + curl for templ
+RUN apk add --no-cache git curl
 
-# Install required tools and dependencies
-RUN apk add --no-cache git bash curl
-
-# Set the working directory
 WORKDIR /app
 
-# Cache go mod files first (better caching)
+# Only copy go mod/sum first to cache deps
 COPY go.mod go.sum ./
 RUN go mod download
 
-# Cache templ and templui CLI installation
-RUN go install github.com/a-h/templ/cmd/templ@latest
+# Install templ CLI once
+RUN curl -fsSL https://raw.githubusercontent.com/a-h/templ/main/install.sh | sh
 
-# Copy everything else (source files, templates, etc.)
+# Copy the rest of your source code *after* deps downloaded
 COPY . .
 
-# Precompile templ files (cached if unchanged)
-RUN templ generate
+# Only regenerate templ files if changed
+RUN ./bin/templ generate
 
-# Build the Go application
+# Build binary
 RUN go build -o app .
 
-# --- Final image ---
+# -- Production stage --
 FROM alpine:latest
 
-# Set up non-root user (optional but recommended)
 RUN adduser -D appuser
 USER appuser
 
-# Copy binary from builder
 COPY --from=builder /app/app /usr/local/bin/app
 
-# Copy static/assets if needed
-# COPY --from=builder /app/static /app/templates /desired/path
-
-# Expose and run
-EXPOSE 8080
-CMD ["/usr/local/bin/app"]
+EXPOSE 8090
+CMD ["app"]
