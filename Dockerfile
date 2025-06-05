@@ -16,7 +16,7 @@ RUN go install github.com/a-h/templ/cmd/templ@latest
 RUN templ generate
 
 # Install build dependencies
-RUN apk add --no-cache gcc musl-dev
+RUN apk add gcc musl-dev
 
 # Build the application
 RUN CGO_ENABLED=1 GOOS=linux go build -o main ./main.go
@@ -26,10 +26,7 @@ FROM alpine:3.20.2
 WORKDIR /app
 
 # Install ca-certificates
-RUN apk add --no-cache ca-certificates
-
-# Set environment variable for runtime
-ENV GO_ENV=production
+RUN apk add ca-certificates
 
 # Copy the binary from the build stage
 COPY --from=build /app/main .
