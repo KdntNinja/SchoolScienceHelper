@@ -5,9 +5,9 @@ import "github.com/KdntNinja/ScratchClone/ui/components/button"
 templ Navbar() {
 	<nav class="border-b py-3 bg-background text-foreground">
 		<div class="container mx-auto px-4 flex justify-between items-center">
-			<div class="text-2xl font-extrabold text-primary cursor-pointer select-none">
+			<a href="/" class="text-2xl font-extrabold text-primary cursor-pointer select-none">
 				ScratchClone
-			</div>
+			</a>
 			<div class="flex items-center gap-4">
 				@button.Button(button.Props{
 					Variant: "ghost",
