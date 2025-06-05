@@ -41,3 +41,32 @@ func AuthenticateUser(ctx context.Context, username, password string) (bool, err
 	}
 	return true, nil
 }
+
+// UpdateUser updates the username, email, and/or password for a user.
+func UpdateUser(ctx context.Context, oldUsername, newUsername, newEmail, newPassword string) error {
+	update := bson.M{}
+	if newUsername != "" {
+		update["username"] = newUsername
+	}
+	if newEmail != "" {
+		update["email"] = newEmail
+	}
+	if newPassword != "" {
+		hash, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
+		if err != nil {
+			return err
+		}
+		update["password"] = string(hash)
+	}
+	if len(update) == 0 {
+		return nil // nothing to update
+	}
+	_, err := UsersCollection.UpdateOne(ctx, bson.M{"username": oldUsername}, bson.M{"$set": update})
+	return err
+}
+
+// DeleteUser deletes a user by username.
+func DeleteUser(ctx context.Context, username string) error {
+	_, err := UsersCollection.DeleteOne(ctx, bson.M{"username": username})
+	return err
+}

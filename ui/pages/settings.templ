@@ -1,0 +1,68 @@
+package pages
+
+import (
+	"github.com/KdntNinja/ScratchClone/ui/components/button"
+	"github.com/KdntNinja/ScratchClone/ui/layouts"
+)
+
+templ Settings() {
+	@layouts.BaseLayout() {
+		<main class="flex items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12">
+			<div class="bg-card rounded-2xl shadow-2xl w-full max-w-lg p-10 border border-border flex flex-col gap-8">
+				<h2 class="text-3xl font-extrabold text-center mb-6 text-primary tracking-tight">User Settings</h2>
+				<form id="settings-form" class="flex flex-col gap-5">
+					<div id="settings-success" class="hidden text-green-600 text-sm text-center"></div>
+					<div id="settings-error" class="hidden text-destructive text-sm text-center"></div>
+					<input name="username" type="text" placeholder="Username" required class="w-full border border-input rounded-lg px-4 py-3 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-shadow" />
+					<input name="email" type="email" placeholder="Email" required class="w-full border border-input rounded-lg px-4 py-3 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-shadow" />
+					<input name="password" type="password" placeholder="New Password (leave blank to keep)" class="w-full border border-input rounded-lg px-4 py-3 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-shadow" />
+					<div class="w-full flex gap-4 mt-2">
+						@button.Button(button.Props{Variant: "primary", Type: "submit", Class: "w-full py-2 text-lg font-semibold"}) {
+						Save Changes
+						}
+						@button.Button(button.Props{Variant: "destructive", Type: "button", Class: "w-full py-2 text-lg font-semibold", Attributes: map[string]string{"id": "delete-account-btn"}}) {
+						Delete Account
+						}
+					</div>
+				</form>
+			</div>
+		</main>
+		<script>
+			const form = document.getElementById('settings-form');
+			const successEl = document.getElementById('settings-success');
+			const errorEl = document.getElementById('settings-error');
+			const deleteBtn = document.getElementById('delete-account-btn');
+
+			form.onsubmit = async (e) => {
+				e.preventDefault();
+				successEl.classList.add('hidden');
+				errorEl.classList.add('hidden');
+				const formData = new FormData(form);
+				const res = await fetch('/settings', {
+					method: 'POST',
+					body: formData,
+				});
+				const text = await res.text();
+				if (!res.ok) {
+					errorEl.textContent = text;
+					errorEl.classList.remove('hidden');
+				} else {
+					successEl.textContent = 'Settings updated!';
+					successEl.classList.remove('hidden');
+				}
+			};
+
+			deleteBtn.onclick = async () => {
+				if (!confirm('Are you sure you want to delete your account? This cannot be undone.')) return;
+				const res = await fetch('/settings/delete', { method: 'POST' });
+				if (res.ok) {
+					window.location.href = '/';
+				} else {
+					const text = await res.text();
+					errorEl.textContent = text;
+					errorEl.classList.remove('hidden');
+				}
+			};
+		</script>
+	}
+}

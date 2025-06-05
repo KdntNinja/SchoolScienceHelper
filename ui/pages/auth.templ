@@ -37,6 +37,10 @@ templ Auth() {
 							required
 							class="w-full border border-input rounded-lg px-4 py-3 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-shadow"
 						/>
+						<div class="flex items-center gap-2">
+							<input id="keep-logged-in" name="keepLoggedIn" type="checkbox" class="accent-primary h-4 w-4 rounded border border-input focus:ring-2 focus:ring-primary" />
+							<label for="keep-logged-in" class="text-sm text-muted-foreground select-none cursor-pointer">Keep me logged in</label>
+						</div>
 						<div class="w-full mt-2">
 							@button.Button(button.Props{Variant: "default", Type: "submit", Class: "w-full py-2 text-lg font-semibold"}) {
 							Log In
@@ -121,6 +125,12 @@ templ Auth() {
 				e.preventDefault();
 				loginErrorEl.classList.add('hidden');
 				const formData = new FormData(loginFormEl);
+				const keepLoggedIn = document.getElementById('keep-logged-in').checked;
+				if (keepLoggedIn) {
+					formData.set('keepLoggedIn', '1');
+				} else {
+					formData.delete('keepLoggedIn');
+				}
 				const res = await fetch('/login', {
 					method: 'POST',
 					body: formData,
