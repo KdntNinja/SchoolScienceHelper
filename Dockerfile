@@ -2,7 +2,11 @@
 FROM golang:1.24-alpine AS build
 WORKDIR /app
 
-# Copy the source code
+# Copy go mod/sum and download dependencies (cache layer)
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copy the rest of the source code
 COPY . .
 
 # Install templ
