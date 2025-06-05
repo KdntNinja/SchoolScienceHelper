@@ -28,9 +28,6 @@ WORKDIR /app
 # Install ca-certificates
 RUN apk add --no-cache ca-certificates
 
-# Set environment variable for runtime
-ENV GO_ENV=production
-
 # Copy the binary from the build stage
 COPY --from=build /app/main .
 

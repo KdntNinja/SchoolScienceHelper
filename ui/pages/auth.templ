@@ -23,24 +23,20 @@ templ Auth() {
 		<div id="login-form">
 			<form id="login-form-element" class="flex flex-col gap-4">
 				<div id="login-error" class="hidden text-red-500 text-sm"></div>
-				<label>
-					<input
-							name="email"
-							type="email"
-							placeholder="Email"
-							required
-							class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-					/>
-				</label>
-				<label>
-					<input
-							name="password"
-							type="password"
-							placeholder="Password"
-							required
-							class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-					/>
-				</label>
+				<input
+						name="email"
+						type="email"
+						placeholder="Email"
+						required
+						class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+				/>
+				<input
+						name="password"
+						type="password"
+						placeholder="Password"
+						required
+						class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+				/>
 				<div class="w-full">
 					@button.Button(button.Props{Variant: "default", Type: "submit", Class: "w-full"}) {
 					Log In
@@ -53,42 +49,34 @@ templ Auth() {
 		<div id="signup-form" class="hidden">
 			<form id="signup-form-element" class="flex flex-col gap-4">
 				<div id="signup-error" class="hidden text-red-500 text-sm"></div>
-				<label>
-					<input
-							name="username"
-							type="text"
-							placeholder="Username"
-							required
-							class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-					/>
-				</label>
-				<label>
-					<input
-							name="email"
-							type="email"
-							placeholder="Email"
-							required
-							class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-					/>
-				</label>
-				<label>
-					<input
-							name="password"
-							type="password"
-							placeholder="Password"
-							required
-							class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-					/>
-				</label>
-				<label>
-					<input
-							name="confirmPassword"
-							type="password"
-							placeholder="Confirm Password"
-							required
-							class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-					/>
-				</label>
+				<input
+						name="username"
+						type="text"
+						placeholder="Username"
+						required
+						class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+				/>
+				<input
+						name="email"
+						type="email"
+						placeholder="Email"
+						required
+						class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+				/>
+				<input
+						name="password"
+						type="password"
+						placeholder="Password"
+						required
+						class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+				/>
+				<input
+						name="confirmPassword"
+						type="password"
+						placeholder="Confirm Password"
+						required
+						class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+				/>
 				<div class="w-full">
 					@button.Button(button.Props{Variant: "primary", Type: "submit", Class: "w-full"}) {
 					Sign Up
