@@ -9,8 +9,8 @@ RUN go mod download
 # Copy the rest of the source code
 COPY . .
 
-# Install templ
-RUN go install github.com/a-h/templ/cmd/templ@latest
+# Install templ (cacheable layer)
+RUN --mount=type=cache,target=/go/pkg/mod go install github.com/a-h/templ/cmd/templ@latest
 
 # Generate templ files
 RUN templ generate

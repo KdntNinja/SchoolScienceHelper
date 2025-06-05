@@ -15,9 +15,22 @@ func main() {
 	utils.InitDB()
 	mux := http.NewServeMux()
 	SetupAssetsRoutes(mux)
+
+	// Auth middleware
+	requireAuth := func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			_, err := utils.GetSessionUsername(r)
+			if err != nil {
+				http.Redirect(w, r, "/auth", http.StatusSeeOther)
+				return
+			}
+			next.ServeHTTP(w, r)
+		})
+	}
+
+	// Public routes
 	mux.Handle("GET /", templ.Handler(pages.Landing()))
 	mux.Handle("GET /auth", templ.Handler(pages.Auth()))
-	mux.Handle("GET /dash", templ.Handler(pages.Dash()))
 	mux.Handle("POST /login", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if err := r.ParseForm(); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
@@ -37,10 +50,10 @@ func main() {
 			w.Write([]byte("Invalid credentials"))
 			return
 		}
-		_ = utils.SetSession(w, username)
+		keepLoggedIn := r.FormValue("keepLoggedIn") == "1"
+		_ = utils.SetSession(w, username, keepLoggedIn)
 		http.Redirect(w, r, "/dash", http.StatusSeeOther)
 	}))
-
 	mux.Handle("POST /signup", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if err := r.ParseForm(); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
@@ -61,19 +74,17 @@ func main() {
 			w.Write([]byte("Could not create user"))
 			return
 		}
-		_ = utils.SetSession(w, email)
+		keepLoggedIn := r.FormValue("keepLoggedIn") == "1"
+		_ = utils.SetSession(w, email, keepLoggedIn)
 		http.Redirect(w, r, "/dash", http.StatusSeeOther)
 	}))
-
-	mux.Handle("POST /logout", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		utils.ClearSession(w)
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-	}))
-
 	mux.Handle("GET /terms", templ.Handler(pages.Terms()))
 	mux.Handle("GET /privacy", templ.Handler(pages.Privacy()))
-	mux.Handle("GET /settings", templ.Handler(pages.Settings()))
-	mux.Handle("POST /settings", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+	// Protected routes
+	mux.Handle("GET /dash", requireAuth(templ.Handler(pages.Dash())))
+	// mux.Handle("GET /settings", requireAuth(templ.Handler(pages.Settings())))
+	mux.Handle("POST /settings", requireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if err := r.ParseForm(); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte("Invalid form"))
@@ -95,18 +106,18 @@ func main() {
 			return
 		}
 		if newUsername != "" && newUsername != username {
-			_ = utils.SetSession(w, newUsername)
+			_ = utils.SetSession(w, newUsername, false)
 		}
 		w.Write([]byte("Settings updated!"))
-	}))
-	mux.Handle("POST /settings/delete", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	})))
+	mux.Handle("POST /settings/delete", requireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		username, err := utils.GetSessionUsername(r)
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte("Not logged in"))
 			return
 		}
-		err = utils.DeleteUser(r.Context(), username)
+		err = utils.DeleteUserAndData(r.Context(), username)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte("Could not delete user: " + err.Error()))
@@ -114,7 +125,11 @@ func main() {
 		}
 		utils.ClearSession(w)
 		w.Write([]byte("Account deleted"))
-	}))
+	})))
+	mux.Handle("POST /logout", requireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		utils.ClearSession(w)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+	})))
 
 	fmt.Println("Server is running on http://localhost:8090")
 	err := http.ListenAndServe(":8090", mux)

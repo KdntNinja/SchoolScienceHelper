@@ -65,8 +65,16 @@ func UpdateUser(ctx context.Context, oldUsername, newUsername, newEmail, newPass
 	return err
 }
 
-// DeleteUser deletes a user by username.
-func DeleteUser(ctx context.Context, username string) error {
+// DeleteUserAndData deletes the user and all related data from the database.
+func DeleteUserAndData(ctx context.Context, username string) error {
+	// Delete user document
 	_, err := UsersCollection.DeleteOne(ctx, bson.M{"username": username})
-	return err
+	if err != nil {
+		return err
+	}
+	// TODO: Delete all other data related to this user (projects, comments, etc.)
+	// Example:
+	// _, _ = ProjectsCollection.DeleteMany(ctx, bson.M{"owner": username})
+	// _, _ = CommentsCollection.DeleteMany(ctx, bson.M{"user": username})
+	return nil
 }

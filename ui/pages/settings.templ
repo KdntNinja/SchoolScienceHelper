@@ -20,8 +20,15 @@ templ Settings() {
 						@button.Button(button.Props{Variant: "primary", Type: "submit", Class: "w-full py-2 text-lg font-semibold"}) {
 						Save Changes
 						}
-						@button.Button(button.Props{Variant: "destructive", Type: "button", Class: "w-full py-2 text-lg font-semibold", Attributes: map[string]string{"id": "delete-account-btn"}}) {
-						Delete Account
+						@button.Button(button.Props{
+	Variant: "destructive",
+	Type: "button",
+	Class: "w-full py-2 text-lg font-semibold",
+	Attributes: templ.Attributes{
+		"id": "delete-account-btn",
+	},
+}) {
+	Delete Account
 						}
 					</div>
 				</form>
