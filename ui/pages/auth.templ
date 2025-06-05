@@ -8,37 +8,37 @@ import (
 templ Auth() {
 	@layouts.BaseLayout() {
 		<main class="flex items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12">
-			<div class="bg-card dark:bg-card rounded-lg shadow-xl w-full max-w-md p-8 border border-border">
-				<h2 class="text-3xl font-bold text-center mb-6 text-primary">Welcome</h2>
-				<div id="tab-switch" class="flex justify-center gap-6 mb-6">
-					<button id="login-tab" class="pb-1 font-medium text-primary border-b-2 border-primary bg-transparent">
+			<div class="bg-card rounded-2xl shadow-2xl w-full max-w-md p-10 border border-border flex flex-col gap-8">
+				<h2 class="text-4xl font-extrabold text-center mb-2 text-primary tracking-tight">Welcome</h2>
+				<div id="tab-switch" class="flex justify-center gap-6 mb-4">
+					<button id="login-tab" class="pb-2 px-4 font-semibold text-primary border-b-2 border-primary bg-transparent transition-colors duration-200 rounded-t-md focus:outline-none">
 						Login
 					</button>
-					<button id="signup-tab" class="pb-1 font-medium text-muted-foreground hover:text-primary bg-transparent">
+					<button id="signup-tab" class="pb-2 px-4 font-semibold text-muted-foreground hover:text-primary border-b-2 border-transparent bg-transparent transition-colors duration-200 rounded-t-md focus:outline-none">
 						Sign Up
 					</button>
 				</div>
 
 				<!-- Login Form -->
 				<div id="login-form">
-					<form id="login-form-element" class="flex flex-col gap-4">
-						<div id="login-error" class="hidden text-destructive text-sm"></div>
+					<form id="login-form-element" class="flex flex-col gap-5">
+						<div id="login-error" class="hidden text-destructive text-sm text-center"></div>
 						<input
 							name="email"
 							type="email"
 							placeholder="Email"
 							required
-							class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+							class="w-full border border-input rounded-lg px-4 py-3 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-shadow"
 						/>
 						<input
 							name="password"
 							type="password"
 							placeholder="Password"
 							required
-							class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+							class="w-full border border-input rounded-lg px-4 py-3 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-shadow"
 						/>
-						<div class="w-full">
-							@button.Button(button.Props{Variant: "default", Type: "submit", Class: "w-full"}) {
+						<div class="w-full mt-2">
+							@button.Button(button.Props{Variant: "default", Type: "submit", Class: "w-full py-2 text-lg font-semibold"}) {
 							Log In
 							}
 						</div>
@@ -47,42 +47,45 @@ templ Auth() {
 
 				<!-- Sign Up Form -->
 				<div id="signup-form" class="hidden">
-					<form id="signup-form-element" class="flex flex-col gap-4">
-						<div id="signup-error" class="hidden text-destructive text-sm"></div>
+					<form id="signup-form-element" class="flex flex-col gap-5">
+						<div id="signup-error" class="hidden text-destructive text-sm text-center"></div>
 						<input
 							name="username"
 							type="text"
 							placeholder="Username"
 							required
-							class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+							class="w-full border border-input rounded-lg px-4 py-3 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-shadow"
 						/>
 						<input
 							name="email"
 							type="email"
 							placeholder="Email"
 							required
-							class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+							class="w-full border border-input rounded-lg px-4 py-3 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-shadow"
 						/>
 						<input
 							name="password"
 							type="password"
 							placeholder="Password"
 							required
-							class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+							class="w-full border border-input rounded-lg px-4 py-3 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-shadow"
 						/>
 						<input
 							name="confirmPassword"
 							type="password"
 							placeholder="Confirm Password"
 							required
-							class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+							class="w-full border border-input rounded-lg px-4 py-3 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-shadow"
 						/>
-						<div class="w-full">
-							@button.Button(button.Props{Variant: "primary", Type: "submit", Class: "w-full"}) {
+						<div class="w-full mt-2">
+							@button.Button(button.Props{Variant: "primary", Type: "submit", Class: "w-full py-2 text-lg font-semibold"}) {
 							Sign Up
 							}
 						</div>
 					</form>
+				</div>
+				<div class="text-center text-muted-foreground text-xs mt-2">
+					By continuing, you agree to our <a href="/terms" class="underline hover:text-primary">Terms of Service</a> and <a href="/privacy" class="underline hover:text-primary">Privacy Policy</a>.
 				</div>
 			</div>
 		</main>

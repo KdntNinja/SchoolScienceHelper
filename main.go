@@ -64,6 +64,9 @@ func main() {
 		http.Redirect(w, r, "/dash", http.StatusSeeOther)
 	}))
 
+	mux.Handle("GET /terms", templ.Handler(pages.Terms()))
+	mux.Handle("GET /privacy", templ.Handler(pages.Privacy()))
+
 	fmt.Println("Server is running on http://localhost:8090")
 	err := http.ListenAndServe(":8090", mux)
 	if err != nil {

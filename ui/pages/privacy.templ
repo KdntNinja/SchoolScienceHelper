@@ -1,0 +1,20 @@
+package pages
+
+import "github.com/KdntNinja/ScratchClone/ui/layouts"
+
+templ Privacy() {
+	@layouts.BaseLayout() {
+		<main class="max-w-2xl mx-auto py-16 px-6 bg-background text-foreground">
+			<h1 class="text-3xl font-bold mb-6 text-primary">Privacy Policy</h1>
+			<p class="mb-4 text-muted-foreground">Last updated: June 5, 2025</p>
+			<p class="mb-4">Your privacy is important to us. This policy explains what information we collect and how we use it.</p>
+			<ul class="list-disc pl-6 space-y-2 mb-6">
+				<li>We collect only the information needed to provide our service (such as your email and username).</li>
+				<li>We do not sell your data to third parties.</li>
+				<li>We use cookies and analytics to improve the platform.</li>
+				<li>You can request deletion of your account and data at any time.</li>
+			</ul>
+			<p>For questions, contact us via our <a href="https://github.com/KdntNinja/ScratchClone/discussions" class="underline text-primary hover:text-primary-foreground">GitHub Discussions</a>.</p>
+		</main>
+	}
+}
