@@ -1,34 +1,41 @@
-# syntax=docker/dockerfile:1
-FROM golang:1.24.3-alpine AS builder
-
-# Install git (required for go mod) + curl for templ
-RUN apk add --no-cache git curl
-
+# Build-Stage
+FROM golang:1.24-alpine AS build
 WORKDIR /app
 
-# Only copy go mod/sum first to cache deps
+# Copy go mod/sum and download dependencies (cache layer)
 COPY go.mod go.sum ./
 RUN go mod download
 
-# Install templ CLI once
-RUN curl -fsSL https://raw.githubusercontent.com/a-h/templ/main/install.sh | sh
-
-# Copy the rest of your source code *after* deps downloaded
+# Copy the rest of the source code
 COPY . .
 
-# Only regenerate templ files if changed
-RUN ./bin/templ generate
+# Install templ
+RUN go install github.com/a-h/templ/cmd/templ@latest
 
-# Build binary
-RUN go build -o app .
+# Generate templ files
+RUN templ generate
 
-# -- Production stage --
-FROM alpine:latest
+# Install build dependencies
+RUN apk add --no-cache gcc musl-dev
 
-RUN adduser -D appuser
-USER appuser
+# Build the application
+RUN CGO_ENABLED=1 GOOS=linux go build -o main ./main.go
 
-COPY --from=builder /app/app /usr/local/bin/app
+# Deploy-Stage
+FROM alpine:3.20.2
+WORKDIR /app
 
+# Install ca-certificates
+RUN apk add --no-cache ca-certificates
+
+# Set environment variable for runtime
+ENV GO_ENV=production
+
+# Copy the binary from the build stage
+COPY --from=build /app/main .
+
+# Expose the port your application runs on
 EXPOSE 8090
-CMD ["app"]
+
+# Command to run the application
+CMD ["./main"]
