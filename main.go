@@ -9,11 +9,9 @@ import (
 	"github.com/KdntNinja/ScratchClone/ui/pages"
 	"github.com/KdntNinja/ScratchClone/utils"
 	"github.com/a-h/templ"
-	"github.com/joho/godotenv"
 )
 
 func main() {
-	InitDotEnv()
 	utils.InitDB()
 	mux := http.NewServeMux()
 	SetupAssetsRoutes(mux)
@@ -69,13 +67,6 @@ func main() {
 	err := http.ListenAndServe(":8090", mux)
 	if err != nil {
 		return
-	}
-}
-
-func InitDotEnv() {
-	err := godotenv.Load()
-	if err != nil {
-		fmt.Println("Error loading .env file")
 	}
 }
 
