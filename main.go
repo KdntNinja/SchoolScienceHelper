@@ -17,6 +17,7 @@ func main() {
 	SetupAssetsRoutes(mux)
 	mux.Handle("GET /", templ.Handler(pages.Landing()))
 	mux.Handle("GET /auth", templ.Handler(pages.Auth()))
+	mux.Handle("GET /dash", templ.Handler(pages.Dash()))
 	mux.Handle("POST /login", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if err := r.ParseForm(); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
@@ -36,7 +37,7 @@ func main() {
 			w.Write([]byte("Invalid credentials"))
 			return
 		}
-		w.Write([]byte("Login successful!"))
+		http.Redirect(w, r, "/dash", http.StatusSeeOther)
 	}))
 
 	mux.Handle("POST /signup", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -60,7 +61,7 @@ func main() {
 			w.Write([]byte("Could not create user"))
 			return
 		}
-		w.Write([]byte("Signup successful!"))
+		http.Redirect(w, r, "/dash", http.StatusSeeOther)
 	}))
 
 	fmt.Println("Server is running on http://localhost:8090")
