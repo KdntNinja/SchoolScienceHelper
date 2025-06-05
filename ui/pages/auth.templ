@@ -1,120 +1,164 @@
 package pages
 
 import (
-	"github.com/KdntNinja/ScratchClone/ui/components/button"
-	"github.com/KdntNinja/ScratchClone/ui/layouts"
+"github.com/KdntNinja/ScratchClone/ui/components/button"
+"github.com/KdntNinja/ScratchClone/ui/layouts"
 )
 
 templ Auth() {
-	@layouts.BaseLayout() {
-		<main class="flex items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12">
-			<div class="bg-white dark:bg-muted rounded-lg shadow-xl w-full max-w-md p-8">
-				<h2 class="text-3xl font-bold text-center mb-6 text-primary">Welcome</h2>
-				<div id="tab-switch" class="flex justify-center gap-6 mb-6">
-					<button id="login-tab" class="pb-1 font-medium text-primary border-b-2 border-primary">
-						Login
-					</button>
-					<button id="signup-tab" class="pb-1 font-medium text-muted-foreground hover:text-primary">
-						Sign Up
-					</button>
-				</div>
-				<!-- Login Form -->
-				<div id="login-form">
-					<form action="/login" method="POST" class="flex flex-col gap-4">
-						<label>
-							<input
-								name="email"
-								type="email"
-								placeholder="Email"
-								required
-								class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-							/>
-						</label>
-						<label>
-							<input
-								name="password"
-								type="password"
-								placeholder="Password"
-								required
-								class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-							/>
-						</label>
-						<div class="w-full">
-							@button.Button(button.Props{Variant: "default", Type: "submit", Class: "w-full"}) {
-								Log In
-							}
-						</div>
-					</form>
-				</div>
-				<!-- Sign Up Form -->
-				<div id="signup-form" class="hidden">
-					<form action="/signup" method="POST" class="flex flex-col gap-4">
-						<label>
-							<input
-								name="username"
-								type="text"
-								placeholder="Username"
-								required
-								class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-							/>
-						</label>
-						<label>
-							<input
-								name="email"
-								type="email"
-								placeholder="Email"
-								required
-								class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-							/>
-						</label>
-						<label>
-							<input
-								name="password"
-								type="password"
-								placeholder="Password"
-								required
-								class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-							/>
-						</label>
-						<label>
-							<input
-								name="confirmPassword"
-								type="password"
-								placeholder="Confirm Password"
-								required
-								class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-							/>
-						</label>
-						<div class="w-full">
-							@button.Button(button.Props{Variant: "primary", Type: "submit", Class: "w-full"}) {
-								Sign Up
-							}
-						</div>
-					</form>
-				</div>
-			</div>
-		</main>
-		<script>
-    const loginTab = document.getElementById('login-tab');
-    const signupTab = document.getElementById('signup-tab');
-    const loginForm = document.getElementById('login-form');
-    const signupForm = document.getElementById('signup-form');
+@layouts.BaseLayout() {
+<main class="flex items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12">
+	<div class="bg-white dark:bg-muted rounded-lg shadow-xl w-full max-w-md p-8">
+		<h2 class="text-3xl font-bold text-center mb-6 text-primary">Welcome</h2>
+		<div id="tab-switch" class="flex justify-center gap-6 mb-6">
+			<button id="login-tab" class="pb-1 font-medium text-primary border-b-2 border-primary">
+				Login
+			</button>
+			<button id="signup-tab" class="pb-1 font-medium text-muted-foreground hover:text-primary">
+				Sign Up
+			</button>
+		</div>
 
-    loginTab.onclick = () => {
-        loginTab.classList.add('text-primary', 'border-primary');
-        signupTab.classList.remove('text-primary', 'border-primary');
-        signupTab.classList.add('text-muted-foreground');
-        loginForm.classList.remove('hidden');
-        signupForm.classList.add('hidden');
-    };
+		<!-- Login Form -->
+		<div id="login-form">
+			<form id="login-form-element" class="flex flex-col gap-4">
+				<div id="login-error" class="hidden text-red-500 text-sm"></div>
+				<label>
+					<input
+							name="email"
+							type="email"
+							placeholder="Email"
+							required
+							class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+					/>
+				</label>
+				<label>
+					<input
+							name="password"
+							type="password"
+							placeholder="Password"
+							required
+							class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+					/>
+				</label>
+				<div class="w-full">
+					@button.Button(button.Props{Variant: "default", Type: "submit", Class: "w-full"}) {
+					Log In
+					}
+				</div>
+			</form>
+		</div>
 
-    signupTab.onclick = () => {
-        signupTab.classList.add('text-primary', 'border-primary');
-        loginTab.classList.remove('text-primary', 'border-primary');
-        loginTab.classList.add('text-muted-foreground');
-        signupForm.classList.remove('hidden');
-        loginForm.classList.add('hidden');
-    };
+		<!-- Sign Up Form -->
+		<div id="signup-form" class="hidden">
+			<form id="signup-form-element" class="flex flex-col gap-4">
+				<div id="signup-error" class="hidden text-red-500 text-sm"></div>
+				<label>
+					<input
+							name="username"
+							type="text"
+							placeholder="Username"
+							required
+							class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+					/>
+				</label>
+				<label>
+					<input
+							name="email"
+							type="email"
+							placeholder="Email"
+							required
+							class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+					/>
+				</label>
+				<label>
+					<input
+							name="password"
+							type="password"
+							placeholder="Password"
+							required
+							class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+					/>
+				</label>
+				<label>
+					<input
+							name="confirmPassword"
+							type="password"
+							placeholder="Confirm Password"
+							required
+							class="w-full border border-input rounded-md px-4 py-2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+					/>
+				</label>
+				<div class="w-full">
+					@button.Button(button.Props{Variant: "primary", Type: "submit", Class: "w-full"}) {
+					Sign Up
+					}
+				</div>
+			</form>
+		</div>
+	</div>
+</main>
+
+<script>
+	const loginTab = document.getElementById('login-tab');
+	const signupTab = document.getElementById('signup-tab');
+	const loginForm = document.getElementById('login-form');
+	const signupForm = document.getElementById('signup-form');
+
+	loginTab.onclick = () => {
+		loginTab.classList.add('text-primary', 'border-primary');
+		signupTab.classList.remove('text-primary', 'border-primary');
+		signupTab.classList.add('text-muted-foreground');
+		loginForm.classList.remove('hidden');
+		signupForm.classList.add('hidden');
+	};
+
+	signupTab.onclick = () => {
+		signupTab.classList.add('text-primary', 'border-primary');
+		loginTab.classList.remove('text-primary', 'border-primary');
+		loginTab.classList.add('text-muted-foreground');
+		signupForm.classList.remove('hidden');
+		loginForm.classList.add('hidden');
+	};
+
+	const loginFormEl = document.getElementById('login-form-element');
+	const signupFormEl = document.getElementById('signup-form-element');
+	const loginErrorEl = document.getElementById('login-error');
+	const signupErrorEl = document.getElementById('signup-error');
+
+	loginFormEl.onsubmit = async (e) => {
+		e.preventDefault();
+		loginErrorEl.classList.add('hidden');
+		const formData = new FormData(loginFormEl);
+		const res = await fetch('/login', {
+			method: 'POST',
+			body: formData,
+		});
+		const text = await res.text();
+		if (!res.ok) {
+			loginErrorEl.textContent = text;
+			loginErrorEl.classList.remove('hidden');
+		} else {
+			window.location.href = '/dashboard';
+		}
+	};
+
+	signupFormEl.onsubmit = async (e) => {
+		e.preventDefault();
+		signupErrorEl.classList.add('hidden');
+		const formData = new FormData(signupFormEl);
+		const res = await fetch('/signup', {
+			method: 'POST',
+			body: formData,
+		});
+		const text = await res.text();
+		if (!res.ok) {
+			signupErrorEl.textContent = text;
+			signupErrorEl.classList.remove('hidden');
+		} else {
+			window.location.href = '/dashboard';
+		}
+	};
 </script>
-	}
+}
 }
