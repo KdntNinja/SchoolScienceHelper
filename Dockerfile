@@ -1,38 +1,46 @@
-# Build-Stage
-FROM golang:1.24-alpine AS build
+# Start with a minimal Go image
+FROM golang:1.21-alpine AS builder
+
+# Enable go mod and templ
+ENV CGO_ENABLED=0 \
+    GO111MODULE=on \
+    TEMPDIR=/tmp
+
+# Install required tools and dependencies
+RUN apk add --no-cache git bash curl
+
+# Set the working directory
 WORKDIR /app
 
-# Copy go mod/sum and download dependencies (cache layer)
+# Cache go mod files first (better caching)
 COPY go.mod go.sum ./
 RUN go mod download
 
-# Copy the rest of the source code
-COPY . .
-
-# Install templ
+# Cache templ and templui CLI installation
 RUN go install github.com/a-h/templ/cmd/templ@latest
 
-# Generate templ files
+# Copy everything else (source files, templates, etc.)
+COPY . .
+
+# Precompile templ files (cached if unchanged)
 RUN templ generate
 
-# Install build dependencies
-RUN apk add --no-cache gcc musl-dev
+# Build the Go application
+RUN go build -o app .
 
-# Build the application
-RUN CGO_ENABLED=1 GOOS=linux go build -o main ./main.go
+# --- Final image ---
+FROM alpine:latest
 
-# Deploy-Stage
-FROM alpine:3.20.2
-WORKDIR /app
+# Set up non-root user (optional but recommended)
+RUN adduser -D appuser
+USER appuser
 
-# Install ca-certificates
-RUN apk add --no-cache ca-certificates
+# Copy binary from builder
+COPY --from=builder /app/app /usr/local/bin/app
 
-# Copy the binary from the build stage
-COPY --from=build /app/main .
+# Copy static/assets if needed
+# COPY --from=builder /app/static /app/templates /desired/path
 
-# Expose the port your application runs on
-EXPOSE 8090
-
-# Command to run the application
-CMD ["./main"]
+# Expose and run
+EXPOSE 8080
+CMD ["/usr/local/bin/app"]
