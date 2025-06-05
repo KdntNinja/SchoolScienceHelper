@@ -208,9 +208,6 @@
   .inset-0 {
     inset: calc(var(--spacing) * 0);
   }
-  .z-\[9999\] {
-    z-index: 9999;
-  }
   .container {
     width: 100%;
     @media (width >= 40rem) {
@@ -292,6 +289,9 @@
   .min-h-\[calc\(100vh-72px\)\] {
     min-height: calc(100vh - 72px);
   }
+  .w-1 {
+    width: calc(var(--spacing) * 1);
+  }
   .w-1\/2 {
     width: calc(1/2 * 100%);
   }
@@ -301,8 +301,14 @@
   .w-1\/4 {
     width: calc(1/4 * 100%);
   }
+  .w-2 {
+    width: calc(var(--spacing) * 2);
+  }
   .w-2\/3 {
     width: calc(2/3 * 100%);
+  }
+  .w-3 {
+    width: calc(var(--spacing) * 3);
   }
   .w-3\/4 {
     width: calc(3/4 * 100%);
@@ -322,11 +328,17 @@
   .max-w-md {
     max-width: var(--container-md);
   }
+  .flex-shrink {
+    flex-shrink: 1;
+  }
   .shrink {
     flex-shrink: 1;
   }
   .shrink-0 {
     flex-shrink: 0;
+  }
+  .border-collapse {
+    border-collapse: collapse;
   }
   .scale-3d {
     scale: var(--tw-scale-x) var(--tw-scale-y) var(--tw-scale-z);
@@ -375,6 +387,13 @@
   }
   .gap-8 {
     gap: calc(var(--spacing) * 8);
+  }
+  .space-y-1 {
+    :where(& > :not(:last-child)) {
+      --tw-space-y-reverse: 0;
+      margin-block-start: calc(calc(var(--spacing) * 1) * var(--tw-space-y-reverse));
+      margin-block-end: calc(calc(var(--spacing) * 1) * calc(1 - var(--tw-space-y-reverse)));
+    }
   }
   .space-y-1\.5 {
     :where(& > :not(:last-child)) {
@@ -638,9 +657,6 @@
   }
   .filter {
     filter: var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,);
-  }
-  .filter\! {
-    filter: var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,) !important;
   }
   .transition-colors {
     transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to;
