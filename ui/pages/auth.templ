@@ -10,7 +10,7 @@ templ Auth() {
 				<p class="mb-8 text-center text-muted-foreground">Sign in or sign up securely using our trusted authentication provider.</p>
 				<button id="auth-external-btn" class="w-full flex items-center justify-center gap-3 rounded-lg px-4 py-3 bg-white text-[#3c4043] font-medium text-base shadow border border-[#dadce0] hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#4285F4] focus:ring-offset-2 transition-all min-h-[48px] min-w-[220px]" style="min-height:48px;min-width:220px;">
 					<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Google Logo" class="h-6 w-6 flex-shrink-0" style="width:24px;height:24px;object-fit:contain;background:transparent;"/>
-					<span class="font-medium">Sign in with Google</span>
+					<span class="font-medium dark:text-[#3c4043]">Sign in with Google</span>
 				</button>
 				<p class="mt-6 text-xs text-muted-foreground text-center">
 					By continuing, you agree to our
@@ -21,6 +21,27 @@ templ Auth() {
 			</div>
 		</main>
 		<script>
+			// Helper: parse hash params
+			function parseHashParams(hash) {
+			  const params = {};
+			  hash.replace(/^#/, '').split('&').forEach(kv => {
+				const [k, v] = kv.split('=');
+				if (k) params[k] = decodeURIComponent(v || '');
+			  });
+			  return params;
+			}
+
+			// On page load, check for Auth0 token in hash
+			const hashParams = parseHashParams(window.location.hash);
+			if (hashParams.access_token) {
+			  // Store token (choose localStorage or sessionStorage as needed)
+			  localStorage.setItem('auth0_id_token', hashParams.access_token);
+			  // Optionally: clear the hash from the URL
+			  window.location.hash = '';
+			  // Redirect to /dash
+			  window.location.href = '/dash';
+			}
+
 			// Fetch Auth0 config
 			fetch('/config')
 			  .then(res => res.json())
