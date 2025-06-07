@@ -38,8 +38,10 @@ templ Auth() {
 			  localStorage.setItem('auth0_id_token', hashParams.access_token);
 			  // Optionally: clear the hash from the URL
 			  window.location.hash = '';
-			  // Redirect to /dash
-			  window.location.href = '/dash';
+			  // Redirect to /dash if not already there or on /auth
+			  if (!window.location.pathname.startsWith('/dash') && !window.location.pathname.startsWith('/auth')) {
+				window.location.href = '/dash';
+			  }
 			}
 
 			// Fetch Auth0 config
@@ -48,8 +50,8 @@ templ Auth() {
 			  .then(cfg => {
 				window.AUTH0_DOMAIN = cfg.AUTH0_DOMAIN;
 				window.AUTH0_CLIENT_ID = cfg.AUTH0_CLIENT_ID;
-				// If already authenticated (token present), redirect to /dash
-				if (localStorage.getItem('auth0_id_token') || sessionStorage.getItem('auth0_id_token')) {
+				// If already authenticated (token present), redirect to /dash if not already there or on /auth
+				if ((localStorage.getItem('auth0_id_token') || sessionStorage.getItem('auth0_id_token')) && !window.location.pathname.startsWith('/dash') && !window.location.pathname.startsWith('/auth')) {
 				  window.location.href = '/dash';
 				}
 			  });
