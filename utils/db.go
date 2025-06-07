@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"os"
 
+	_ "github.com/lib/pq"
+
 	log "github.com/sirupsen/logrus"
 )
 
