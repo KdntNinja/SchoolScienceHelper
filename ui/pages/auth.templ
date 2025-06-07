@@ -26,6 +26,8 @@ templ Auth() {
 			// Inject Auth0 config from backend environment variables
 			window.AUTH0_DOMAIN = {@env `AUTH0_DOMAIN` | js};
 			window.AUTH0_CLIENT_ID = {@env `AUTH0_CLIENT_ID` | js};
+			console.debug('AUTH0_DOMAIN (injected):', window.AUTH0_DOMAIN);
+			console.debug('AUTH0_CLIENT_ID (injected):', window.AUTH0_CLIENT_ID);
 		</script>
 		<script>
 			document.getElementById('auth-external-btn').onclick = () => {
