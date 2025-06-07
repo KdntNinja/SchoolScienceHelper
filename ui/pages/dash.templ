@@ -2,7 +2,7 @@ package pages
 
 import "github.com/KdntNinja/ScratchClone/ui/layouts"
 
-templ Dash() {
+templ Dash(projects []map[string]interface{}) {
 	@layouts.BaseLayout() {
 		<main class="flex flex-col items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12 relative">
 			<div class="bg-card dark:bg-card rounded-lg shadow-xl w-full max-w-2xl p-10 border border-border flex flex-col gap-8">
@@ -13,19 +13,16 @@ templ Dash() {
 					<div class="flex-1">
 						<h3 class="text-xl font-semibold mb-2">My Projects</h3>
 						<ul class="space-y-3">
-							<!-- Example projects, replace with dynamic list -->
-							<li class="bg-muted rounded-md p-4 flex items-center justify-between">
-								<span class="font-medium">Platformer Game</span>
-								<a href="#" class="text-primary hover:underline text-sm">Open</a>
-							</li>
-							<li class="bg-muted rounded-md p-4 flex items-center justify-between">
-								<span class="font-medium">Art Project</span>
-								<a href="#" class="text-primary hover:underline text-sm">Open</a>
-							</li>
-							<li class="bg-muted rounded-md p-4 flex items-center justify-between">
-								<span class="font-medium">Music Visualizer</span>
-								<a href="#" class="text-primary hover:underline text-sm">Open</a>
-							</li>
+							{{ if len(projects) == 0 }}
+								<li class="text-muted-foreground">No projects yet.</li>
+							{{ else }}
+								{{ for _, p := range projects }}
+									<li class="bg-muted rounded-md p-4 flex items-center justify-between">
+										<span class="font-medium">{{ p["name"].(string) }}</span>
+										<a href={"/project?name=" + p["name"].(string)} class="text-primary hover:underline text-sm">Open</a>
+									</li>
+								{{ end }}
+							{{ end }}
 						</ul>
 						<button class="mt-6 w-full bg-primary text-white rounded-md py-2 font-semibold hover:bg-primary-foreground transition">+ New Project</button>
 					</div>
@@ -48,6 +45,7 @@ templ Dash() {
 			</a>
 		</main>
 	}
+	// prettier-ignore
 	<script>
 	(function() {
 	  // Require Auth0 token for /dash
