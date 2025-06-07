@@ -4,17 +4,19 @@ import "github.com/KdntNinja/ScratchClone/ui/layouts"
 
 templ Terms() {
 	@layouts.BaseLayout() {
-		<main class="max-w-2xl mx-auto py-16 px-6 bg-background text-foreground">
-			<h1 class="text-3xl font-bold mb-6 text-primary">Terms of Service</h1>
-			<p class="mb-4 text-muted-foreground">Last updated: June 5, 2025</p>
-			<p class="mb-4">Welcome to ScratchClone! By using our service, you agree to the following terms. Please read them carefully.</p>
-			<ul class="list-disc pl-6 space-y-2 mb-6">
-				<li>Use this platform respectfully and lawfully.</li>
+		<main class="max-w-2xl mx-auto py-16 px-6 bg-background text-foreground rounded-xl shadow-lg border border-border mt-10">
+			<h1 class="text-4xl font-extrabold mb-6 text-primary tracking-tight">Terms & Conditions</h1>
+			<p class="mb-4 text-muted-foreground">Last updated: June 7, 2025</p>
+			<p class="mb-4">Welcome to ScratchClone! By using our service, you agree to these terms. Please read them carefully.</p>
+			<ul class="list-disc pl-6 space-y-2 mb-6 text-base">
+				<li>Use ScratchClone respectfully and lawfully. No harassment, hate speech, or illegal activity.</li>
 				<li>Do not attempt to harm, disrupt, or misuse the service or other users.</li>
-				<li>Content you create is your responsibility.</li>
-				<li>We may update these terms at any time.</li>
+				<li>You are responsible for the content you create and share.</li>
+				<li>We may update these terms at any time. Continued use means you accept the new terms.</li>
+				<li>Accounts may be suspended or removed for violations.</li>
+				<li>ScratchClone is provided as-is, with no guarantee of uptime or data retention.</li>
 			</ul>
-			<p>For questions, contact us via our <a href="https://github.com/KdntNinja/ScratchClone/discussions" class="underline text-primary hover:text-primary-foreground">GitHub Discussions</a>.</p>
+			<p class="mb-2">For questions, contact us via our <a href="https://github.com/KdntNinja/ScratchClone/discussions" class="underline text-primary hover:text-primary-foreground">GitHub Discussions</a>.</p>
 		</main>
 	}
 }
