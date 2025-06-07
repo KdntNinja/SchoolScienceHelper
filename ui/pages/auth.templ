@@ -21,7 +21,7 @@ templ Auth() {
 				<!-- Login Form -->
 				<div id="login-form">
 					<form id="login-form-element" class="flex flex-col gap-4" autocomplete="on">
-						<div id="login-error" class="hidden text-destructive text-sm" role="alert"></div>
+						<div id="login-error" class="hidden text-destructive text-sm" role="alert" aria-live="polite"></div>
 						<label for="login-email" class="sr-only">Email</label>
 						<input
 							id="login-email"
@@ -57,7 +57,7 @@ templ Auth() {
 				<!-- Sign Up Form -->
 				<div id="signup-form" class="hidden">
 					<form id="signup-form-element" class="flex flex-col gap-4" autocomplete="on">
-						<div id="signup-error" class="hidden text-destructive text-sm" role="alert"></div>
+						<div id="signup-error" class="hidden text-destructive text-sm" role="alert" aria-live="polite"></div>
 						<label for="signup-username" class="sr-only">Username</label>
 						<input
 							id="signup-username"
@@ -102,6 +102,15 @@ templ Auth() {
 							/>
 							<button type="button" id="signup-show-confirm-password" tabindex="-1" class="absolute right-2 top-2 text-muted-foreground hover:text-primary text-sm">Show</button>
 						</div>
+						<div class="flex items-center gap-2 text-xs">
+							<input id="agree-tos" name="agreeTos" type="checkbox" required class="accent-primary" />
+							<label for="agree-tos" class="select-none">
+								I agree to the
+								<button type="button" onclick="openLegalModal('terms')" class="text-primary hover:underline focus:outline-none focus:underline">Terms & Conditions</button>
+								and
+								<button type="button" onclick="openLegalModal('privacy')" class="text-primary hover:underline focus:outline-none focus:underline">Privacy Policy</button>
+							</label>
+						</div>
 						<div class="w-full">
 							@button.Button(button.Props{Variant: "primary", Type: "submit", Class: "w-full", ID: "signup-submit-btn"}) {
 								Sign Up
@@ -109,14 +118,18 @@ templ Auth() {
 						</div>
 					</form>
 				</div>
-				<div class="text-xs text-muted-foreground text-center mt-6">
-					By continuing, you agree to our
-					<a href="/terms" class="text-primary hover:underline">Terms & Conditions</a>
-					and
-					<a href="/privacy" class="text-primary hover:underline">Privacy Policy</a>.
-				</div>
 			</div>
 		</main>
+		<div id="global-loading" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30 hidden">
+			<div class="animate-spin rounded-full h-12 w-12 border-t-4 border-primary border-solid"></div>
+		</div>
+		<!-- Legal Modal -->
+		<div id="legal-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 hidden">
+			<div class="bg-card rounded-lg shadow-xl max-w-2xl w-full p-6 relative">
+				<button onclick="closeLegalModal()" class="absolute top-2 right-2 text-lg text-muted-foreground hover:text-primary">&times;</button>
+				<div id="legal-modal-content" class="overflow-y-auto max-h-[70vh] text-left"></div>
+			</div>
+		</div>
 		<script>
 			const loginTab = document.getElementById('login-tab');
 			const signupTab = document.getElementById('signup-tab');
@@ -145,23 +158,25 @@ templ Auth() {
 			const signupErrorEl = document.getElementById('signup-error');
 
 			// Show/hide password toggles
-			function setupShowPassword(inputId, btnId) {
+			function setupShowPassword(inputId, btnId, altInputId = null) {
 				const input = document.getElementById(inputId);
 				const btn = document.getElementById(btnId);
+				const altInput = altInputId ? document.getElementById(altInputId) : null;
 				if (!input || !btn) return;
 				btn.onclick = () => {
-					if (input.type === 'password') {
-						input.type = 'text';
-						btn.textContent = 'Hide';
-					} else {
-						input.type = 'password';
-						btn.textContent = 'Show';
+					const isPassword = input.type === 'password';
+					input.type = isPassword ? 'text' : 'password';
+					if (altInput) altInput.type = isPassword ? 'text' : 'password';
+					btn.textContent = isPassword ? 'Hide' : 'Show';
+					if (altInput && altInputId) {
+						const altBtn = document.getElementById(altInputId.replace('input', 'show-password'));
+						if (altBtn) altBtn.textContent = isPassword ? 'Hide' : 'Show';
 					}
 				};
 			}
 			setupShowPassword('login-password', 'login-show-password');
-			setupShowPassword('signup-password', 'signup-show-password');
-			setupShowPassword('signup-confirm-password', 'signup-show-confirm-password');
+			setupShowPassword('signup-password', 'signup-show-password', 'signup-confirm-password');
+			setupShowPassword('signup-confirm-password', 'signup-show-confirm-password', 'signup-password');
 
 			// Password strength feedback
 			const signupPassword = document.getElementById('signup-password');
@@ -188,10 +203,19 @@ templ Auth() {
 				btn.textContent = loading ? 'Loading...' : btnId.includes('login') ? 'Log In' : 'Sign Up';
 			}
 
+			// Show/hide global loading spinner
+			function showGlobalLoading(show) {
+				const spinner = document.getElementById('global-loading');
+				if (!spinner) return;
+				if (show) spinner.classList.remove('hidden');
+				else spinner.classList.add('hidden');
+			}
+
 			loginFormEl.onsubmit = async (e) => {
 				e.preventDefault();
 				loginErrorEl.classList.add('hidden');
 				setLoading('login-submit-btn', true);
+				showGlobalLoading(true);
 				const formData = new FormData(loginFormEl);
 				const res = await fetch('/login', {
 					method: 'POST',
@@ -199,6 +223,7 @@ templ Auth() {
 				});
 				const text = await res.text();
 				setLoading('login-submit-btn', false);
+				showGlobalLoading(false);
 				if (!res.ok) {
 					loginErrorEl.textContent = text;
 					loginErrorEl.classList.remove('hidden');
@@ -211,6 +236,7 @@ templ Auth() {
 				e.preventDefault();
 				signupErrorEl.classList.add('hidden');
 				setLoading('signup-submit-btn', true);
+				showGlobalLoading(true);
 				const formData = new FormData(signupFormEl);
 				const res = await fetch('/signup', {
 					method: 'POST',
@@ -218,6 +244,7 @@ templ Auth() {
 				});
 				const text = await res.text();
 				setLoading('signup-submit-btn', false);
+				showGlobalLoading(false);
 				if (!res.ok) {
 					signupErrorEl.textContent = text;
 					signupErrorEl.classList.remove('hidden');
@@ -225,6 +252,21 @@ templ Auth() {
 					window.location.href = '/dashboard';
 				}
 			};
+
+			async function openLegalModal(type) {
+				const modal = document.getElementById('legal-modal');
+				const content = document.getElementById('legal-modal-content');
+				modal.classList.remove('hidden');
+				let url = type === 'terms' ? '/terms' : '/privacy';
+				const res = await fetch(url);
+				const html = await res.text();
+				// Extract the <main> content only
+				const mainMatch = html.match(/<main[\s\S]*?<\/main>/);
+				content.innerHTML = mainMatch ? mainMatch[0] : html;
+			}
+			function closeLegalModal() {
+				document.getElementById('legal-modal').classList.add('hidden');
+			}
 		</script>
 	}
 }
