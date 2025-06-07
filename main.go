@@ -42,21 +42,6 @@ func main() {
 
 	SetupAssetsRoutes(mux)
 
-	// Auth0-protected route middleware (pseudo, update as needed for your Auth0 integration)
-	requireAuth := func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			// Example: check for Auth0 ID token in cookie or Authorization header
-			// If not present/valid, redirect to /auth
-			idToken := r.Header.Get("Authorization")
-			if idToken == "" {
-				http.Redirect(w, r, "/auth", http.StatusSeeOther)
-				return
-			}
-			// Optionally: validate the token here (implementation depends on your Auth0 setup)
-			next.ServeHTTP(w, r)
-		})
-	}
-
 	// Public routes
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
@@ -86,16 +71,13 @@ func main() {
 		}
 		templ.Handler(pages.Privacy()).ServeHTTP(w, r)
 	})
-
-	// Protected routes
 	mux.HandleFunc("/dash", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 			return
 		}
-		requireAuth(templ.Handler(pages.Dash())).ServeHTTP(w, r)
+		templ.Handler(pages.Dash()).ServeHTTP(w, r)
 	})
-	// Add more protected routes as needed, using requireAuth
 
 	// Start server
 	port := os.Getenv("PORT")
