@@ -15,9 +15,8 @@ RUN --mount=type=cache,target=/go/pkg/mod go install github.com/a-h/templ/cmd/te
 # Generate templ files
 RUN templ generate
 
-# Install build dependencies and Postgres driver
+# Install build dependencies
 RUN apk add gcc musl-dev
-RUN go install github.com/lib/pq@latest
 
 # Build the application
 RUN CGO_ENABLED=1 GOOS=linux go build -o main ./main.go

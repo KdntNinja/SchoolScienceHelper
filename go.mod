@@ -7,7 +7,6 @@ require github.com/a-h/templ v0.3.898
 require (
 	github.com/Oudwins/tailwind-merge-go v0.2.1
 	github.com/golang-jwt/jwt/v5 v5.2.2
-	github.com/lib/pq v1.10.9
 	github.com/sirupsen/logrus v1.9.3
 )
 
