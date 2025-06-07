@@ -8,9 +8,27 @@ import (
 	"github.com/KdntNinja/ScratchClone/assets"
 	"github.com/KdntNinja/ScratchClone/ui/pages"
 	"github.com/a-h/templ"
+	log "github.com/sirupsen/logrus"
 )
 
 func main() {
+	// Logging setup (expandable)
+	log.SetFormatter(&log.TextFormatter{FullTimestamp: true})
+	log.SetLevel(log.InfoLevel)
+
+	domain := os.Getenv("AUTH0_DOMAIN")
+	clientID := os.Getenv("AUTH0_CLIENT_ID")
+	if domain == "" {
+		log.Warn("AUTH0_DOMAIN environment variable is not set!")
+	} else {
+		log.Infof("AUTH0_DOMAIN: %s", domain)
+	}
+	if clientID == "" {
+		log.Warn("AUTH0_CLIENT_ID environment variable is not set!")
+	} else {
+		log.Infof("AUTH0_CLIENT_ID: %s", clientID)
+	}
+
 	mux := http.NewServeMux()
 	SetupAssetsRoutes(mux)
 
