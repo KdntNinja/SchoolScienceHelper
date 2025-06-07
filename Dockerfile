@@ -22,11 +22,11 @@ RUN apk add gcc musl-dev
 RUN CGO_ENABLED=1 GOOS=linux go build -o main ./main.go
 
 # Deploy-Stage
-FROM alpine:3.20.2
+FROM alpine:latest
 WORKDIR /app
 
-# Install ca-certificates
-RUN apk add ca-certificates
+# Update package index and install ca-certificates
+RUN apk update && apk upgrade && apk add ca-certificates
 
 # Copy the binary from the build stage
 COPY --from=build /app/main .

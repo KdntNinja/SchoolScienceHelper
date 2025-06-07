@@ -57,10 +57,16 @@ func main() {
 	mux.Handle("GET /dash", requireAuth(templ.Handler(pages.Dash())))
 	// Add more protected routes as needed, using requireAuth
 
+	// Serve Auth0 config for frontend
+	mux.HandleFunc("/config", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprintf(w, `{"AUTH0_DOMAIN":%q,"AUTH0_CLIENT_ID":%q}`, domain, clientID)
+	})
+
 	// Start server
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080"
+		port = "8090"
 	}
 	fmt.Printf("Server running on :%s\n", port)
 	http.ListenAndServe(":"+port, mux)
