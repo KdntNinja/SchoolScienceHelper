@@ -21,15 +21,25 @@ func main() {
 	if domain == "" {
 		log.Warn("AUTH0_DOMAIN environment variable is not set!")
 	} else {
-		log.Infof("AUTH0_DOMAIN: %s", domain)
+		log.Infof("AUTH0_DOMAIN: found")
 	}
 	if clientID == "" {
 		log.Warn("AUTH0_CLIENT_ID environment variable is not set!")
 	} else {
-		log.Infof("AUTH0_CLIENT_ID: %s", clientID)
+		log.Infof("AUTH0_CLIENT_ID: found")
 	}
 
 	mux := http.NewServeMux()
+
+	// Serve Auth0 config for frontend (must be registered before method-based routes)
+	mux.HandleFunc("/config", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_, err := fmt.Fprintf(w, `{"AUTH0_DOMAIN":%q,"AUTH0_CLIENT_ID":%q}`, domain, clientID)
+		if err != nil {
+			return
+		}
+	})
+
 	SetupAssetsRoutes(mux)
 
 	// Auth0-protected route middleware (pseudo, update as needed for your Auth0 integration)
@@ -48,20 +58,44 @@ func main() {
 	}
 
 	// Public routes
-	mux.Handle("GET /", templ.Handler(pages.Landing()))
-	mux.Handle("GET /auth", templ.Handler(pages.Auth()))
-	mux.Handle("GET /terms", templ.Handler(pages.Terms()))
-	mux.Handle("GET /privacy", templ.Handler(pages.Privacy()))
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+		templ.Handler(pages.Landing()).ServeHTTP(w, r)
+	})
+	mux.HandleFunc("/auth", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+		templ.Handler(pages.Auth()).ServeHTTP(w, r)
+	})
+	mux.HandleFunc("/terms", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+		templ.Handler(pages.Terms()).ServeHTTP(w, r)
+	})
+	mux.HandleFunc("/privacy", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+		templ.Handler(pages.Privacy()).ServeHTTP(w, r)
+	})
 
 	// Protected routes
-	mux.Handle("GET /dash", requireAuth(templ.Handler(pages.Dash())))
-	// Add more protected routes as needed, using requireAuth
-
-	// Serve Auth0 config for frontend
-	mux.HandleFunc("/config", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprintf(w, `{"AUTH0_DOMAIN":%q,"AUTH0_CLIENT_ID":%q}`, domain, clientID)
+	mux.HandleFunc("/dash", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+		requireAuth(templ.Handler(pages.Dash())).ServeHTTP(w, r)
 	})
+	// Add more protected routes as needed, using requireAuth
 
 	// Start server
 	port := os.Getenv("PORT")
