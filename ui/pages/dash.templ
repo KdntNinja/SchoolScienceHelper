@@ -48,4 +48,12 @@ templ Dash() {
 			</a>
 		</main>
 	}
+	<script>
+	(function() {
+	  // Require Auth0 token for /dash
+	  if (!(localStorage.getItem('auth0_id_token') || sessionStorage.getItem('auth0_id_token'))) {
+	    window.location.replace('/auth');
+	  }
+	})();
+	</script>
 }
