@@ -36,12 +36,10 @@ templ Auth() {
 			if (hashParams.access_token) {
 			  // Store token (choose localStorage or sessionStorage as needed)
 			  localStorage.setItem('auth0_id_token', hashParams.access_token);
-			  // Optionally: clear the hash from the URL
+			  // Clear the hash from the URL
 			  window.location.hash = '';
-			  // Redirect to /dash if not already there or on /auth
-			  if (!window.location.pathname.startsWith('/dash') && !window.location.pathname.startsWith('/auth')) {
-				window.location.href = '/dash';
-			  }
+			  // Always redirect to /dash after login
+			  window.location.replace('/dash');
 			}
 
 			// Fetch Auth0 config
