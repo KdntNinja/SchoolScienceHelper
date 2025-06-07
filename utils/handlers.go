@@ -5,10 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"net/http"
-	"strings"
 	"time"
-
-	"github.com/KdntNinja/ScratchClone/ui/pages"
 )
 
 var DB *sql.DB
@@ -218,41 +215,4 @@ func HandleProjectLoadPublic(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(data))
-}
-
-func HandleDash(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		return
-	}
-	header := r.Header.Get("Authorization")
-	token := ""
-	if strings.HasPrefix(header, "Bearer ") {
-		token = strings.TrimPrefix(header, "Bearer ")
-	}
-	var projects []map[string]interface{}
-	if token != "" {
-		userID, err := GetUserIDFromAuthHeader(r)
-		if err == nil {
-			rows, err := DB.Query(`SELECT name, updated_at, is_public, public_id FROM projects WHERE user_id=$1`, userID)
-			if err == nil {
-				defer rows.Close()
-				for rows.Next() {
-					var name, publicID sql.NullString
-					var updated time.Time
-					var isPublic bool
-					if err := rows.Scan(&name, &updated, &isPublic, &publicID); err != nil {
-						continue
-					}
-					projects = append(projects, map[string]interface{}{
-						"name":       name.String,
-						"updated_at": updated,
-						"is_public":  isPublic,
-						"public_id":  publicID.String,
-					})
-				}
-			}
-		}
-	}
-	pages.Dash(projects).Render(r.Context(), w)
 }

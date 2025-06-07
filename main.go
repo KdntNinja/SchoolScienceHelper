@@ -9,7 +9,6 @@ import (
 	"github.com/KdntNinja/ScratchClone/ui/pages"
 	"github.com/KdntNinja/ScratchClone/utils"
 	"github.com/a-h/templ"
-	_ "github.com/lib/pq"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -67,7 +66,7 @@ func main() {
 	db := utils.SetupDB()
 	utils.SetDB(db)
 
-	mux.HandleFunc("/dash", utils.HandleDash)
+	mux.HandleFunc("/dash", handleDash)
 	mux.HandleFunc("/api/project/save", utils.HandleProjectSave)
 	mux.HandleFunc("/api/project/load", utils.HandleProjectLoad)
 	mux.HandleFunc("/api/project/list", utils.HandleProjectList)
@@ -80,7 +79,10 @@ func main() {
 		port = "8090"
 	}
 	log.Infof("Server running on :%s", port)
-	http.ListenAndServe(":"+port, mux)
+	err := http.ListenAndServe(":"+port, mux)
+	if err != nil {
+		return
+	}
 }
 
 func SetupAssetsRoutes(mux *http.ServeMux) {
@@ -98,4 +100,15 @@ func SetupAssetsRoutes(mux *http.ServeMux) {
 		fs.ServeHTTP(w, r)
 	})
 	mux.Handle("GET /assets/", http.StripPrefix("/assets/", assetHandler))
+}
+
+func handleDash(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+	// No need to fetch projects here; frontend loads them via /api/project/list
+	if err := pages.Dash().Render(r.Context(), w); err != nil {
+		http.Error(w, "Failed to render dashboard", http.StatusInternalServerError)
+	}
 }
