@@ -10,8 +10,8 @@ import (
 
 templ Settings() {
 	@layouts.BaseLayout() {
-		<main class="flex flex-col items-center justify-start min-h-[calc(100vh-72px)] bg-background px-4 py-12 w-full">
-			@card.Card(card.Props{Class: "bg-card dark:bg-card rounded-lg shadow-xl w-full max-w-6xl p-10 border border-border flex flex-col gap-8"}) {
+		<main class="flex flex-col items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12">
+			@card.Card(card.Props{Class: "bg-card dark:bg-card rounded-lg shadow-xl w-full max-w-2xl p-10 border border-border flex flex-col gap-8"}) {
 				@card.Header(card.HeaderProps{Class: "border-b border-border pb-4 mb-4"}) {
 					@card.Title(card.TitleProps{Class: "text-3xl font-extrabold text-left mb-1 text-primary tracking-tight"}) {
 						Account Settings
@@ -22,95 +22,74 @@ templ Settings() {
 				}
 				@card.Content(card.ContentProps{Class: "w-full"}) {
 					<div class="flex flex-row gap-8 w-full justify-center items-start" style="min-width:0;">
-						<!-- Sidebar Navigation -->
+						<!-- Sidebar Navigation (Vertical Tabs, always visible on left) -->
 						<nav class="w-56 flex-shrink-0 flex flex-col items-end pr-2">
 							<ul class="flex flex-col gap-1 sticky top-24 w-full">
 								<li><button type="button" class="settings-tab block w-full text-left px-4 py-2 rounded hover:bg-muted/60 font-medium text-primary transition" data-tab="profile">Profile</button></li>
+								<li><button type="button" class="settings-tab block w-full text-left px-4 py-2 rounded hover:bg-muted/60 font-medium text-primary transition" data-tab="security">Security</button></li>
 								<li><button type="button" class="settings-tab block w-full text-left px-4 py-2 rounded hover:bg-muted/60 font-medium text-primary transition" data-tab="preferences">Preferences</button></li>
 								<li><button type="button" class="settings-tab block w-full text-left px-4 py-2 rounded hover:bg-destructive/10 font-medium text-destructive transition" data-tab="danger">Danger Zone</button></li>
 							</ul>
 						</nav>
-						<!-- Tab Content Area -->
-						<div class="flex-1 w-full flex flex-col gap-8 items-start justify-start">
-							<div id="tab-profile" class="settings-tab-content w-full hidden">
-								<div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
-									<section class="flex flex-col gap-4 p-6 bg-muted/40 rounded-lg border border-border w-full shadow-md hover:shadow-lg transition-shadow">
-										<h2 class="text-xl font-semibold text-primary mb-2">Profile</h2>
-										<div class="flex flex-col gap-4">
-											<div>
-												<span class="block text-muted-foreground text-sm">Current Display Name</span>
-												<span class="block font-medium text-lg" id="current-display-name"></span>
-											</div>
-											<div>
-												<span class="block text-muted-foreground text-sm">Current Email</span>
-												<span class="block font-medium text-lg" id="current-email"></span>
-											</div>
+						<!-- Tab Content (centered to the right of sidebar) -->
+						<div class="flex-1 min-w-0 max-w-2xl mx-auto flex flex-col gap-8 items-center justify-center">
+							<div id="tab-profile" class="settings-tab-content">
+								<section class="flex flex-col gap-4 p-6 bg-muted/40 rounded-lg border border-border">
+									<h2 class="text-xl font-semibold text-primary mb-2">Profile</h2>
+									<div class="flex flex-col md:flex-row md:items-center gap-4 mb-2">
+										<div class="flex-1">
+											<span class="block text-muted-foreground text-sm">Current Display Name</span>
+											<span class="block font-medium text-lg" id="current-display-name"></span>
 										</div>
-									</section>
-									<section class="flex flex-col gap-4 p-6 bg-muted/40 rounded-lg border border-border w-full shadow-md hover:shadow-lg transition-shadow">
-										<h2 class="text-xl font-semibold text-primary mb-2">Edit Profile</h2>
-										<form class="flex flex-col gap-4 w-full" method="POST" action="/api/user/profile">
-											@label.Label(label.Props{}) {
-												New Display Name
-											}
-											@input.Input(input.Props{Type: "text", Name: "displayName", Placeholder: "Your display name", Class: "input input-bordered w-full"})
-											@label.Label(label.Props{}) {
-												New Email
-											}
-											@input.Input(input.Props{Type: "email", Name: "email", Placeholder: "you@email.com", Class: "input input-bordered w-full"})
-											@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("primary")}) {
-												Save Profile
-											}
-										</form>
-									</section>
-								</div>
-							</div>
-							<div id="tab-preferences" class="settings-tab-content w-full hidden">
-								<section class="flex flex-col gap-4 p-6 bg-muted/40 rounded-lg border border-border w-full shadow-md hover:shadow-lg transition-shadow">
-									<h2 class="text-xl font-semibold text-primary mb-2">Preferences</h2>
-									<form class="flex flex-col gap-4 w-full" id="preferences-form">
+										<div class="flex-1">
+											<span class="block text-muted-foreground text-sm">Current Email</span>
+											<span class="block font-medium text-lg" id="current-email"></span>
+										</div>
+									</div>
+									<form class="flex flex-col gap-4 max-w-lg" method="POST" action="/api/user/profile">
 										@label.Label(label.Props{}) {
-											Theme 
+											New Display Name
+										}
+										@input.Input(input.Props{Type: "text", Name: "displayName", Placeholder: "Your display name", Class: "input input-bordered w-full"})
+										@label.Label(label.Props{}) {
+											New Email
+										}
+										@input.Input(input.Props{Type: "email", Name: "email", Placeholder: "you@email.com", Class: "input input-bordered w-full"})
+										@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("primary")}) {
+											Save Profile
+										}
+									</form>
+								</section>
+							</div>
+							<div id="tab-security" class="settings-tab-content hidden">
+								<section class="flex flex-col gap-4 p-6 bg-muted/40 rounded-lg border border-border">
+									<h2 class="text-xl font-semibold text-primary mb-2">Security</h2>
+									<form class="flex flex-col gap-4 max-w-lg" method="POST" action="/api/user/password">
+										@label.Label(label.Props{}) {
+											New Password
+										}
+										@input.Input(input.Props{Type: "password", Name: "newPassword", Placeholder: "New password", Class: "input input-bordered w-full"})
+										@label.Label(label.Props{}) {
+											Confirm Password
+										}
+										@input.Input(input.Props{Type: "password", Name: "confirmPassword", Placeholder: "Confirm password", Class: "input input-bordered w-full"})
+										@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("primary")}) {
+											Change Password
+										}
+									</form>
+								</section>
+							</div>
+							<div id="tab-preferences" class="settings-tab-content hidden">
+								<section class="flex flex-col gap-4 p-6 bg-muted/40 rounded-lg border border-border">
+									<h2 class="text-xl font-semibold text-primary mb-2">Preferences</h2>
+									<form class="flex flex-col gap-4 max-w-lg" method="POST" action="/api/user/preferences">
+										@label.Label(label.Props{}) {
+											Theme
 										}
 										<select name="theme" class="input input-bordered w-full" id="theme-select">
 											<option value="system">System</option>
 											<option value="light">Light</option>
 											<option value="dark">Dark</option>
-										</select>
-										@label.Label(label.Props{}) {
-											Email Notifications 
-										}
-										<select name="notificationsEmail" class="input input-bordered w-full" id="notifications-email-select">
-											<option value="true">Enabled</option>
-											<option value="false">Disabled</option>
-										</select>
-										@label.Label(label.Props{}) {
-											Language 
-										}
-										<select name="language" class="input input-bordered w-full" id="language-select">
-											<option value="en">English</option>
-											<option value="es">Spanish</option>
-											<option value="fr">French</option>
-											<option value="de">German</option>
-											<option value="zh">Chinese</option>
-											<option value="ja">Japanese</option>
-											<option value="ko">Korean</option>
-											<option value="">Other</option>
-										</select>
-										@label.Label(label.Props{}) {
-											Font Size 
-										}
-										<select name="fontSize" class="input input-bordered w-full" id="font-size-select">
-											<option value="normal">Normal</option>
-											<option value="large">Large</option>
-											<option value="x-large">Extra Large</option>
-										</select>
-										@label.Label(label.Props{}) {
-											High Contrast Mode 
-										}
-										<select name="highContrast" class="input input-bordered w-full" id="high-contrast-select">
-											<option value="false">Off</option>
-											<option value="true">On</option>
 										</select>
 										@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("primary")}) {
 											Save Preferences
@@ -118,10 +97,10 @@ templ Settings() {
 									</form>
 								</section>
 							</div>
-							<div id="tab-danger" class="settings-tab-content w-full hidden">
-								<section class="flex flex-col gap-4 p-6 bg-destructive/10 rounded-lg border border-destructive w-full shadow-md hover:shadow-lg transition-shadow">
+							<div id="tab-danger" class="settings-tab-content hidden">
+								<section class="flex flex-col gap-4 p-6 bg-destructive/10 rounded-lg border border-destructive">
 									<h2 class="text-xl font-semibold text-destructive mb-2">Danger Zone</h2>
-									<form class="flex flex-col gap-4 w-full" method="POST" action="/api/user/delete" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
+									<form class="flex flex-col gap-4 max-w-lg" method="POST" action="/api/user/delete" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
 										@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("destructive")}) {
 											Delete Account
 										}
@@ -130,40 +109,162 @@ templ Settings() {
 							</div>
 						</div>
 					</div>
-					<div class="flex flex-row justify-end w-full mt-2">
-						<button id="logout-btn" class="px-4 py-2 rounded bg-destructive text-white font-semibold hover:bg-destructive/80 transition">Log Out</button>
-					</div>
+					<!-- Feedback containers for forms -->
+					<div id="profile-feedback" class="text-sm mt-2"></div>
+					<div id="password-feedback" class="text-sm mt-2"></div>
+					<div id="preferences-feedback" class="text-sm mt-2"></div>
+					<div id="danger-feedback" class="text-sm mt-2"></div>
 					<script>
 document.addEventListener("DOMContentLoaded", () => {
-	const tabButtons = Array.from(document.querySelectorAll('.settings-tab'));
-	const tabContents = Array.from(document.querySelectorAll('.settings-tab-content'));
-
-	function activateTab(idx) {
-		tabButtons.forEach((b, i) => {
-			if (i === idx) {
-				b.classList.add('bg-muted', 'font-bold');
-			} else {
-				b.classList.remove('bg-muted', 'font-bold');
-			}
+	const tabButtons = document.querySelectorAll('.settings-tab');
+	const tabContents = document.querySelectorAll('.settings-tab-content');
+	tabButtons.forEach(btn => {
+		btn.addEventListener('click', (e) => {
+			tabButtons.forEach(b => b.classList.remove('bg-muted', 'font-bold', 'ring-2', 'ring-primary'));
+			tabContents.forEach(c => c.classList.add('hidden'));
+			btn.classList.add('bg-muted', 'font-bold', 'ring-2', 'ring-primary');
+			document.getElementById('tab-' + btn.dataset.tab).classList.remove('hidden');
+			btn.focus();
 		});
-		tabContents.forEach((c, i) => {
-			if (i === idx) {
-				c.classList.remove('hidden');
-			} else {
-				c.classList.add('hidden');
+		btn.setAttribute('tabindex', '0');
+		btn.setAttribute('aria-controls', 'tab-' + btn.dataset.tab);
+	});
+	// Keyboard navigation for tabs
+	document.querySelector('nav').addEventListener('keydown', (e) => {
+		if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+			const idx = Array.from(tabButtons).indexOf(document.activeElement);
+			if (idx !== -1) {
+				const next = e.key === 'ArrowDown' ? (idx + 1) % tabButtons.length : (idx - 1 + tabButtons.length) % tabButtons.length;
+				tabButtons[next].focus();
+				e.preventDefault();
+			}
+		}
+	});
+	// Default to first tab
+	tabButtons[0].classList.add('bg-muted', 'font-bold', 'ring-2', 'ring-primary');
+	tabContents[0].classList.remove('hidden');
+
+	// --- Profile form ---
+	const profileForm = document.querySelector('form[action="/api/user/profile"]');
+	if (profileForm) {
+		profileForm.addEventListener('submit', async (e) => {
+			e.preventDefault();
+			const feedback = document.getElementById('profile-feedback');
+			feedback.textContent = 'Saving...';
+			feedback.className = 'text-sm mt-2 text-muted-foreground';
+			const formData = new FormData(profileForm);
+			try {
+				const resp = await fetch('/api/user/profile', {
+					method: 'POST',
+					body: formData
+				});
+				if (resp.ok) {
+					feedback.textContent = 'Profile updated!';
+					feedback.className = 'text-sm mt-2 text-green-600';
+					const data = await resp.json();
+					document.getElementById("current-display-name").textContent = data.displayName;
+					document.getElementById("current-email").textContent = data.email;
+				} else {
+					const err = await resp.text();
+					feedback.textContent = err || 'Failed to update profile.';
+					feedback.className = 'text-sm mt-2 text-red-600';
+				}
+			} catch {
+				feedback.textContent = 'Network error.';
+				feedback.className = 'text-sm mt-2 text-red-600';
 			}
 		});
 	}
 
-	tabButtons.forEach((btn, idx) => {
-		btn.addEventListener('click', function(e) {
+	// --- Password form ---
+	const passwordForm = document.querySelector('form[action="/api/user/password"]');
+	if (passwordForm) {
+		passwordForm.addEventListener('submit', async (e) => {
 			e.preventDefault();
-			activateTab(idx);
+			const feedback = document.getElementById('password-feedback');
+			feedback.textContent = 'Saving...';
+			feedback.className = 'text-sm mt-2 text-muted-foreground';
+			const formData = new FormData(passwordForm);
+			try {
+				const resp = await fetch('/api/user/password', {
+					method: 'POST',
+					body: formData
+				});
+				if (resp.ok) {
+					feedback.textContent = 'Password changed!';
+					feedback.className = 'text-sm mt-2 text-green-600';
+					passwordForm.reset();
+				} else {
+					const err = await resp.text();
+					feedback.textContent = err || 'Failed to change password.';
+					feedback.className = 'text-sm mt-2 text-red-600';
+				}
+			} catch {
+				feedback.textContent = 'Network error.';
+				feedback.className = 'text-sm mt-2 text-red-600';
+			}
 		});
-	});
+	}
 
-	activateTab(0);
+	// --- Preferences form ---
+	const preferencesForm = document.querySelector('form[action="/api/user/preferences"]');
+	if (preferencesForm) {
+		preferencesForm.addEventListener('submit', async (e) => {
+			e.preventDefault();
+			const feedback = document.getElementById('preferences-feedback');
+			feedback.textContent = 'Saving...';
+			feedback.className = 'text-sm mt-2 text-muted-foreground';
+			const formData = new FormData(preferencesForm);
+			try {
+				const resp = await fetch('/api/user/preferences', {
+					method: 'POST',
+					body: formData
+				});
+				if (resp.ok) {
+					feedback.textContent = 'Preferences saved!';
+					feedback.className = 'text-sm mt-2 text-green-600';
+				} else {
+					const err = await resp.text();
+					feedback.textContent = err || 'Failed to save preferences.';
+					feedback.className = 'text-sm mt-2 text-red-600';
+				}
+			} catch {
+				feedback.textContent = 'Network error.';
+				feedback.className = 'text-sm mt-2 text-red-600';
+			}
+		});
+	}
 
+	// --- Danger form ---
+	const dangerForm = document.querySelector('form[action="/api/user/delete"]');
+	if (dangerForm) {
+		dangerForm.addEventListener('submit', async (e) => {
+			const feedback = document.getElementById('danger-feedback');
+			feedback.textContent = 'Processing...';
+			feedback.className = 'text-sm mt-2 text-muted-foreground';
+			const formData = new FormData(dangerForm);
+			try {
+				const resp = await fetch('/api/user/delete', {
+					method: 'POST',
+					body: formData
+				});
+				if (resp.ok) {
+					feedback.textContent = 'Account deleted.';
+					feedback.className = 'text-sm mt-2 text-green-600';
+					setTimeout(() => { window.location.href = '/'; }, 1500);
+				} else {
+					const err = await resp.text();
+					feedback.textContent = err || 'Failed to delete account.';
+					feedback.className = 'text-sm mt-2 text-red-600';
+				}
+			} catch {
+				feedback.textContent = 'Network error.';
+				feedback.className = 'text-sm mt-2 text-red-600';
+			}
+		});
+	}
+
+	// Load user info and prefill form
 	fetch("/api/user/profile")
 		.then(resp => resp.ok ? resp.json() : null)
 		.then(data => {
@@ -176,71 +277,17 @@ document.addEventListener("DOMContentLoaded", () => {
 				if (emailInput) emailInput.value = data.email;
 			}
 		});
-
+	// Load user preferences and preselect theme
 	fetch("/api/user/preferences")
 		.then(resp => resp.ok ? resp.json() : null)
 		.then(data => {
-			if (data) {
-				if (data.theme) {
-					const themeSelect = document.getElementById("theme-select");
-					if (themeSelect) themeSelect.value = data.theme;
-				}
-				if (typeof data.notificationsEmail !== 'undefined') {
-					const notifSelect = document.getElementById("notifications-email-select");
-					if (notifSelect) notifSelect.value = String(data.notificationsEmail);
-				}
-				if (data.language) {
-					const langSelect = document.getElementById("language-select");
-					if (langSelect) langSelect.value = data.language;
-				}
-				if (data.fontSize) {
-					const fontSizeSelect = document.getElementById("font-size-select");
-					if (fontSizeSelect) fontSizeSelect.value = data.fontSize;
-				}
-				if (typeof data.highContrast !== 'undefined') {
-					const hcSelect = document.getElementById("high-contrast-select");
-					if (hcSelect) hcSelect.value = String(data.highContrast);
-				}
+			if (data && data.theme) {
+				const themeSelect = document.getElementById("theme-select");
+				if (themeSelect) themeSelect.value = data.theme;
 			}
 		});
-
-	// Intercept preferences form submit to POST JSON
-	const prefsForm = document.getElementById('preferences-form');
-	if (prefsForm) {
-		prefsForm.addEventListener('submit', function(e) {
-			e.preventDefault();
-			const formData = new FormData(prefsForm);
-			const payload = {
-				theme: formData.get('theme'),
-				notificationsEmail: formData.get('notificationsEmail') === 'true',
-				language: formData.get('language'),
-				fontSize: formData.get('fontSize'),
-				highContrast: formData.get('highContrast') === 'true',
-			};
-			fetch('/api/user/preferences', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(payload)
-			}).then(resp => {
-				if (resp.ok) {
-					// Optionally show a toast or reload
-					location.reload();
-				}
-			});
-		});
-	}
-
-	document.getElementById('logout-btn')?.addEventListener('click', function() {
-		// Remove all cookies (best effort, domain/path may limit this)
-		document.cookie.split(';').forEach(function(c) {
-			document.cookie = c.replace(/^ +/, '').replace(/=.*/, '=;expires=' + new Date(0).toUTCString() + ';path=/');
-		});
-		// Optionally, call a backend endpoint to invalidate the session if needed
-		fetch('/api/auth/logout', { method: 'POST' }).finally(() => {
-			window.location.href = '/';
-		});
-	});
-					</script>
+});
+</script>
 				}
 			}
 		</main>
