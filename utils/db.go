@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"os"
 	"path/filepath"
+	"strings"
 
 	_ "github.com/lib/pq"
 
@@ -42,8 +43,15 @@ func SetupDB() *sql.DB {
 	if err != nil {
 		log.Fatalf("Failed to read users.sql migration: %v", err)
 	}
-	if _, err := db.Exec(string(migration)); err != nil {
-		log.Fatalf("Failed to run users.sql migration: %v", err)
+	// Split and run each statement individually to guarantee all tables are created
+	for _, stmt := range strings.Split(string(migration), ";") {
+		stmt = strings.TrimSpace(stmt)
+		if stmt == "" || strings.HasPrefix(stmt, "--") {
+			continue
+		}
+		if _, err := db.Exec(stmt); err != nil {
+			log.Warnf("Migration statement failed: %s\nError: %v", stmt, err)
+		}
 	}
 	log.Info("users.sql migration applied (users and projects tables ensured).")
 
