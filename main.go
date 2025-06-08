@@ -62,6 +62,13 @@ func main() {
 		}
 		templ.Handler(pages.Privacy()).ServeHTTP(w, r)
 	})
+	mux.HandleFunc("/settings", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+		templ.Handler(pages.Settings()).ServeHTTP(w, r)
+	})
 
 	db := utils.SetupDB()
 	utils.SetDB(db)
