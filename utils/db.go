@@ -2,7 +2,6 @@ package utils
 
 import (
 	"database/sql"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -39,13 +38,16 @@ func SetupDB() *sql.DB {
 		migrationPath := "assets/users.sql"
 		if _, err := os.Stat(migrationPath); os.IsNotExist(err) {
 			altPath := filepath.Join("/assets", "users.sql")
+			altPath2 := filepath.Join("/app/assets", "users.sql")
 			if _, err := os.Stat(altPath); err == nil {
 				migrationPath = altPath
+			} else if _, err := os.Stat(altPath2); err == nil {
+				migrationPath = altPath2
 			} else {
-				log.Fatalf("Failed to find users.sql migration at %s or %s", migrationPath, altPath)
+				log.Fatalf("Failed to find users.sql migration at %s, %s, or %s", migrationPath, altPath, altPath2)
 			}
 		}
-		migration, err := ioutil.ReadFile(migrationPath)
+		migration, err := os.ReadFile(migrationPath)
 		if err != nil {
 			log.Fatalf("Failed to read users.sql migration: %v", err)
 		}
