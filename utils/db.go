@@ -65,27 +65,27 @@ func SetupDB() *sql.DB {
 		log.Fatalf("Failed to check projects table existence: %v", err)
 	}
 	if !exists {
-		log.Info("'projects' table not found, running migration from assets/projects.sql...")
-		migrationPath := "assets/projects.sql"
+		log.Info("'projects' table not found, running migration from assets/users.sql...")
+		migrationPath := "assets/users.sql"
 		if _, err := os.Stat(migrationPath); os.IsNotExist(err) {
-			altPath := filepath.Join("/assets", "projects.sql")
-			altPath2 := filepath.Join("/app/assets", "projects.sql")
+			altPath := filepath.Join("/assets", "users.sql")
+			altPath2 := filepath.Join("/app/assets", "users.sql")
 			if _, err := os.Stat(altPath); err == nil {
 				migrationPath = altPath
 			} else if _, err := os.Stat(altPath2); err == nil {
 				migrationPath = altPath2
 			} else {
-				log.Fatalf("Failed to find projects.sql migration at %s, %s, or %s", migrationPath, altPath, altPath2)
+				log.Fatalf("Failed to find users.sql migration at %s, %s, or %s", migrationPath, altPath, altPath2)
 			}
 		}
 		migration, err := os.ReadFile(migrationPath)
 		if err != nil {
-			log.Fatalf("Failed to read projects.sql migration: %v", err)
+			log.Fatalf("Failed to read users.sql migration: %v", err)
 		}
 		if _, err := db.Exec(string(migration)); err != nil {
-			log.Fatalf("Failed to run projects.sql migration: %v", err)
+			log.Fatalf("Failed to run users.sql migration: %v", err)
 		}
-		log.Info("'projects' table migration applied.")
+		log.Info("'projects' table migration applied (from users.sql).")
 	}
 
 	return db
