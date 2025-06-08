@@ -132,36 +132,35 @@ templ Settings() {
 					</div>
 					<script>
 document.addEventListener("DOMContentLoaded", () => {
-	const tabButtons = document.querySelectorAll('.settings-tab');
-	const tabContents = document.querySelectorAll('.settings-tab-content');
+	const tabButtons = Array.from(document.querySelectorAll('.settings-tab'));
+	const tabContents = Array.from(document.querySelectorAll('.settings-tab-content'));
 
-	tabButtons.forEach(btn => {
+	function activateTab(idx) {
+		tabButtons.forEach((b, i) => {
+			if (i === idx) {
+				b.classList.add('bg-muted', 'font-bold');
+			} else {
+				b.classList.remove('bg-muted', 'font-bold');
+			}
+		});
+		tabContents.forEach((c, i) => {
+			if (i === idx) {
+				c.classList.remove('hidden');
+			} else {
+				c.classList.add('hidden');
+			}
+		});
+	}
+
+	tabButtons.forEach((btn, idx) => {
 		btn.addEventListener('click', (e) => {
 			e.preventDefault();
-			tabButtons.forEach(b => b.classList.remove('bg-muted', 'font-bold'));
-			tabContents.forEach(c => c.classList.add('hidden'));
-			btn.classList.add('bg-muted', 'font-bold');
-			const tabId = btn.getAttribute('data-tab');
-			const content = document.getElementById('tab-' + tabId);
-			if (content) content.classList.remove('hidden');
+			activateTab(idx);
 		});
 	});
 
-	// Ensure only the first tab is active on load
-	tabButtons.forEach((b, i) => {
-		if (i === 0) {
-			b.classList.add('bg-muted', 'font-bold');
-		} else {
-			b.classList.remove('bg-muted', 'font-bold');
-		}
-	});
-	tabContents.forEach((c, i) => {
-		if (i === 0) {
-			c.classList.remove('hidden');
-		} else {
-			c.classList.add('hidden');
-		}
-	});
+	// Activate the first tab by default
+	activateTab(0);
 
 	fetch("/api/user/profile")
 		.then(resp => resp.ok ? resp.json() : null)
