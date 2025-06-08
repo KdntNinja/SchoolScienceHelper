@@ -45,39 +45,57 @@ templ Settings() {
 								</div>
 							</div>
 							<form class="flex flex-col gap-4 max-w-lg" method="POST" action="/api/user/profile">
-								@label.Label(label.Props{}) { New Display Name }
+								@label.Label(label.Props{}) {
+									New Display Name 
+								}
 								@input.Input(input.Props{Type: "text", Name: "displayName", Placeholder: "Your display name", Class: "input input-bordered w-full"})
-								@label.Label(label.Props{}) { New Email }
+								@label.Label(label.Props{}) {
+									New Email 
+								}
 								@input.Input(input.Props{Type: "email", Name: "email", Placeholder: "you@email.com", Class: "input input-bordered w-full"})
-								@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("primary")}) { Save Profile }
+								@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("primary")}) {
+									Save Profile 
+								}
 							</form>
 						</section>
 						<section id="security" class="flex flex-col gap-4 p-6 bg-muted/40 rounded-lg border border-border">
 							<h2 class="text-xl font-semibold text-primary mb-2">Security</h2>
 							<form class="flex flex-col gap-4 max-w-lg" method="POST" action="/api/user/password">
-								@label.Label(label.Props{}) { New Password }
+								@label.Label(label.Props{}) {
+									New Password 
+								}
 								@input.Input(input.Props{Type: "password", Name: "newPassword", Placeholder: "New password", Class: "input input-bordered w-full"})
-								@label.Label(label.Props{}) { Confirm Password }
+								@label.Label(label.Props{}) {
+									Confirm Password 
+								}
 								@input.Input(input.Props{Type: "password", Name: "confirmPassword", Placeholder: "Confirm password", Class: "input input-bordered w-full"})
-								@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("primary")}) { Change Password }
+								@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("primary")}) {
+									Change Password 
+								}
 							</form>
 						</section>
 						<section id="preferences" class="flex flex-col gap-4 p-6 bg-muted/40 rounded-lg border border-border">
 							<h2 class="text-xl font-semibold text-primary mb-2">Preferences</h2>
 							<form class="flex flex-col gap-4 max-w-lg" method="POST" action="/api/user/preferences">
-								@label.Label(label.Props{}) { Theme }
+								@label.Label(label.Props{}) {
+									Theme 
+								}
 								<select name="theme" class="input input-bordered w-full">
 									<option value="system">System</option>
 									<option value="light">Light</option>
 									<option value="dark">Dark</option>
 								</select>
-								@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("primary")}) { Save Preferences }
+								@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("primary")}) {
+									Save Preferences 
+								}
 							</form>
 						</section>
 						<section id="danger" class="flex flex-col gap-4 p-6 bg-destructive/10 rounded-lg border border-destructive">
 							<h2 class="text-xl font-semibold text-destructive mb-2">Danger Zone</h2>
 							<form class="flex flex-col gap-4 max-w-lg" method="POST" action="/api/user/delete" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
-								@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("destructive")}) { Delete Account }
+								@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("destructive")}) {
+									Delete Account 
+								}
 							</form>
 						</section>
 					</div>
