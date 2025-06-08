@@ -102,6 +102,24 @@ func main() {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 		}
 	})
+	mux.HandleFunc("/api/user/password", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+		// TODO: Implement password change logic
+		w.WriteHeader(http.StatusNotImplemented)
+		w.Write([]byte("not implemented"))
+	})
+	mux.HandleFunc("/api/user/preferences", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet {
+			utils.HandleUserPreferences(w, r)
+		} else if r.Method == http.MethodPost {
+			utils.HandleUserPreferencesUpdate(w, r)
+		} else {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+		}
+	})
 	// Handler registration for error pages
 	mux.HandleFunc("/forbidden", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusForbidden)
