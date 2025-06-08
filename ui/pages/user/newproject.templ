@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", function() {
             e.preventDefault();
             const name = form.querySelector('[name="name"]').value;
             const description = form.querySelector('[name="description"]').value;
-            const payload = { name, description };
+            const payload = { name, data: {}, description };
             const res = await fetch("/api/project/save", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
