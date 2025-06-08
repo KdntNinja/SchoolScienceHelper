@@ -88,17 +88,5 @@ func SetupDB() *sql.DB {
 		log.Info("'projects' table migration applied.")
 	}
 
-	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS projects (
-		id SERIAL PRIMARY KEY,
-		user_id TEXT NOT NULL,
-		name TEXT NOT NULL,
-		data JSONB NOT NULL,
-		updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-		is_public BOOLEAN NOT NULL DEFAULT FALSE,
-		public_id TEXT UNIQUE
-	)`)
-	if err != nil {
-		log.Fatalf("Failed to create projects table: %v", err)
-	}
 	return db
 }
