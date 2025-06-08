@@ -31,8 +31,9 @@ templ Dash() {
 								<ul id="project-list" class="space-y-3">
 									<li class="text-muted-foreground text-center" id="project-list-empty">Loading...</li>
 								</ul>
-								@button.Button(button.Props{ID: "new-project-btn", Class: "mt-6 w-full", Variant: button.Variant("primary")}) {
-									+ New Project
+								@button.Button(button.Props{ID: "new-project-btn", Class: "mt-6 w-full flex items-center justify-center gap-2 text-lg font-semibold py-3 px-6 rounded-lg bg-gradient-to-r from-primary to-blue-500 hover:from-blue-500 hover:to-primary shadow-lg transition-all duration-200", Variant: button.Variant("primary")}) {
+									<span class="material-icons align-middle text-2xl">add_circle</span>
+									<span>New Project</span>
 								}
 							}
 						}
@@ -121,6 +122,12 @@ templ Dash() {
 				// New Project button: go to /newproject
 				const btn = document.getElementById("new-project-btn");
 				if (btn) {
+					btn.addEventListener("mouseenter", function() {
+						btn.classList.add("ring-2", "ring-primary", "scale-105");
+					});
+					btn.addEventListener("mouseleave", function() {
+						btn.classList.remove("ring-2", "ring-primary", "scale-105");
+					});
 					btn.addEventListener("click", function(e) {
 						e.preventDefault();
 						window.location.href = "/newproject";
