@@ -12,7 +12,7 @@ import (
 templ NewProject() {
 	@layouts.BaseLayout() {
 		<main class="flex items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12">
-			@card.Card(card.Props{Class: "bg-card dark:bg-card rounded-3xl shadow-2xl w-full max-w-xs border border-border p-4 animate-fade-in"}) {
+			@card.Card(card.Props{Class: "bg-card dark:bg-card rounded-3xl shadow-2xl w-full max-w-[340px] border border-border p-4 animate-fade-in"}) {
 				@card.Header(card.HeaderProps{Class: "text-center mb-6"}) {
 					@card.Title(card.TitleProps{Class: "text-4xl font-bold text-primary tracking-tight"}) {
 						Create a New Project
@@ -24,8 +24,6 @@ templ NewProject() {
 				@card.Content(card.ContentProps{}) {
 					<form
 						id="new-project-form"
-						method="POST"
-						action="/api/project/save"
 						autocomplete="off"
 						class="flex flex-col gap-3 bg-background/70 p-3 rounded-xl shadow-inner border border-border max-w-xs mx-auto"
 					>
@@ -81,6 +79,30 @@ templ NewProject() {
 							}
 						</div>
 					</form>
+					<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const form = document.getElementById("new-project-form");
+    if (form) {
+        form.addEventListener("submit", async function(e) {
+            e.preventDefault();
+            const name = form.querySelector('[name="name"]').value;
+            const description = form.querySelector('[name="description"]').value;
+            const payload = { name, description };
+            const res = await fetch("/api/project/save", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+            if (res.ok) {
+                alert("Project created!");
+                window.location.href = "/dash";
+            } else {
+                alert("Failed to create project.");
+            }
+        });
+    }
+});
+</script>
 				}
 			}
 		</main>
