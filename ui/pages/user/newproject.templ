@@ -53,6 +53,8 @@ templ NewProject() {
 							Attributes:  templ.Attributes{"maxlength": "256"},
 						})
 					</div>
+					<!-- Error Box -->
+					<div id="project-error" class="hidden text-destructive bg-destructive/10 border border-destructive rounded-lg px-4 py-3 text-base font-semibold mb-2"></div>
 					<!-- Actions -->
 					<div class="flex flex-col sm:flex-row gap-4 mt-6">
 						@button.Button(button.Props{
@@ -74,9 +76,14 @@ templ NewProject() {
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     const form = document.getElementById("new-project-form");
+    const errorBox = document.getElementById("project-error");
     if (form) {
         form.addEventListener("submit", async function(e) {
             e.preventDefault();
+            if (errorBox) {
+                errorBox.classList.add("hidden");
+                errorBox.textContent = "";
+            }
             const name = form.querySelector('[name="name"]').value;
             const description = form.querySelector('[name="description"]').value;
             const payload = { name, data: {}, description };
@@ -86,10 +93,16 @@ document.addEventListener("DOMContentLoaded", function() {
                 body: JSON.stringify(payload)
             });
             if (res.ok) {
-                alert("Project created!");
                 window.location.href = "/dash";
             } else {
-                alert("Failed to create project.");
+                let msg = "Failed to create project.";
+                try {
+                    msg = await res.text();
+                } catch {}
+                if (errorBox) {
+                    errorBox.textContent = msg;
+                    errorBox.classList.remove("hidden");
+                }
             }
         });
     }
