@@ -132,35 +132,18 @@ templ Settings() {
 					</div>
 					<script>
 document.addEventListener("DOMContentLoaded", () => {
-	const tabButtons = Array.from(document.querySelectorAll('.settings-tab'));
-	const tabContents = Array.from(document.querySelectorAll('.settings-tab-content'));
-
-	function activateTab(idx) {
-		tabButtons.forEach((b, i) => {
-			if (i === idx) {
-				b.classList.add('bg-muted', 'font-bold');
-			} else {
-				b.classList.remove('bg-muted', 'font-bold');
-			}
-		});
-		tabContents.forEach((c, i) => {
-			if (i === idx) {
-				c.classList.remove('hidden');
-			} else {
-				c.classList.add('hidden');
-			}
-		});
-	}
-
-	tabButtons.forEach((btn, idx) => {
-		btn.addEventListener('click', (e) => {
-			e.preventDefault();
-			activateTab(idx);
+	const tabButtons = document.querySelectorAll('.settings-tab');
+	const tabContents = document.querySelectorAll('.settings-tab-content');
+	tabButtons.forEach(btn => {
+		btn.addEventListener('click', () => {
+			tabButtons.forEach(b => b.classList.remove('bg-muted', 'font-bold'));
+			tabContents.forEach(c => c.classList.add('hidden'));
+			btn.classList.add('bg-muted', 'font-bold');
+			document.getElementById('tab-' + btn.dataset.tab).classList.remove('hidden');
 		});
 	});
-
-	// Activate the first tab by default
-	activateTab(0);
+	tabButtons[0].classList.add('bg-muted', 'font-bold');
+	tabContents[0].classList.remove('hidden');
 
 	fetch("/api/user/profile")
 		.then(resp => resp.ok ? resp.json() : null)
