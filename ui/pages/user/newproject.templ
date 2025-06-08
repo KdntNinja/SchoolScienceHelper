@@ -3,42 +3,83 @@ package pages
 import (
 	"github.com/KdntNinja/ScratchClone/ui/components/button"
 	"github.com/KdntNinja/ScratchClone/ui/components/card"
+	"github.com/KdntNinja/ScratchClone/ui/components/input"
+	"github.com/KdntNinja/ScratchClone/ui/components/label"
+	"github.com/KdntNinja/ScratchClone/ui/components/textarea"
 	"github.com/KdntNinja/ScratchClone/ui/layouts"
 )
 
 templ NewProject() {
 	@layouts.BaseLayout() {
-		<main class="flex flex-col items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12">
-			@card.Card(card.Props{Class: "bg-card dark:bg-card rounded-lg shadow-xl w-full max-w-lg p-10 border border-border flex flex-col gap-8"}) {
-				@card.Header(card.HeaderProps{}) {
-					@card.Title(card.TitleProps{Class: "text-3xl font-extrabold text-center mb-4 text-primary tracking-tight"}) {
-						Create New Project
+		<main class="flex items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12">
+			@card.Card(card.Props{Class: "bg-card dark:bg-card rounded-3xl shadow-2xl w-full max-w-xl border border-border p-10 animate-fade-in"}) {
+				
+				@card.Header(card.HeaderProps{Class: "text-center mb-6"}) {
+					@card.Title(card.TitleProps{Class: "text-4xl font-bold text-primary tracking-tight"}) {
+						Create a New Project
 					}
-					@card.Description(card.DescriptionProps{Class: "text-center text-lg text-muted-foreground mb-8"}) {
-						Start a new Scratch-like project. Give it a name and description to get started!
+					@card.Description(card.DescriptionProps{Class: "mt-2 text-muted-foreground text-base"}) {
+						Start building something amazing. Just give your project a name and optional description.
 					}
 				}
+				
 				@card.Content(card.ContentProps{}) {
-					<form id="new-project-form" class="flex flex-col gap-8 bg-white dark:bg-muted/40 rounded-2xl p-10 shadow-2xl border border-border animate-fade-in max-w-md w-full mx-auto" method="POST" action="/api/project/save" autocomplete="off">
-						<div class="flex flex-col gap-2">
-							<label for="project-name" class="font-bold text-lg text-primary">Project Name <span class="text-destructive">*</span></label>
-							<input id="project-name" name="name" type="text" required class="input input-bordered w-full text-lg px-4 py-3 rounded-xl focus:ring-2 focus:ring-primary border border-border bg-background/80 placeholder:text-muted-foreground transition" placeholder="My Awesome Project" maxlength="64" autofocus />
+					<form id="new-project-form" method="POST" action="/api/project/save" autocomplete="off" 
+						class="flex flex-col gap-6 bg-background/70 p-8 rounded-2xl shadow-inner border border-border">
+						
+						<!-- Project Name -->
+						<div class="flex flex-col gap-1.5">
+							@label.Label(label.Props{
+								For: "project-name",
+								Class: "text-sm font-semibold text-primary",
+							}) {
+								Project Name <span class="text-destructive">*</span>
+							}
+							@input.Input(input.Props{
+								ID: "project-name",
+								Name: "name",
+								Type: input.TypeText,
+								Required: true,
+								Class: "px-4 py-3 text-base rounded-xl border border-border bg-background/90 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition",
+								Placeholder: "E.g. My First Game",
+								Attributes: templ.Attributes{"maxlength": "64", "autofocus": "autofocus"},
+							})
 						</div>
-						<div class="flex flex-col gap-2">
-							<label for="project-desc" class="font-bold text-lg text-primary">Description</label>
-							<textarea id="project-desc" name="description" class="input input-bordered w-full min-h-[100px] text-base px-4 py-3 rounded-xl focus:ring-2 focus:ring-primary border border-border bg-background/80 placeholder:text-muted-foreground transition" placeholder="What is this project about? (optional)" maxlength="256"></textarea>
+						
+						<!-- Description -->
+						<div class="flex flex-col gap-1.5">
+							@label.Label(label.Props{
+								For: "project-desc",
+								Class: "text-sm font-semibold text-primary",
+							}) {
+								Description
+							}
+							@textarea.Textarea(textarea.Props{
+								ID: "project-desc",
+								Name: "description",
+								Class: "px-4 py-3 text-base min-h-[96px] rounded-xl border border-border bg-background/90 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition",
+								Placeholder: "A short description of your project (optional)",
+								Attributes: templ.Attributes{"maxlength": "256"},
+							})
 						</div>
-						<div class="flex flex-row gap-4 mt-4">
-							@button.Button(button.Props{Type: "submit", Class: "flex-1 py-3 text-lg font-bold rounded-xl bg-gradient-to-r from-primary to-blue-500 hover:from-blue-500 hover:to-primary shadow-lg transition-all duration-200 flex items-center justify-center gap-2"}) {
-								<span class="material-icons align-middle text-2xl">add_circle</span>
+
+						<!-- Actions -->
+						<div class="flex flex-col sm:flex-row gap-4 mt-4">
+							@button.Button(button.Props{
+								Type: "submit",
+								Class: "flex-1 py-3 text-base font-bold rounded-xl bg-gradient-to-br from-primary to-blue-500 hover:brightness-110 shadow-lg flex items-center justify-center gap-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 active:scale-95",
+								Attributes: templ.Attributes{"aria-label": "Create Project"},
+							}) {
+								<span class="material-icons text-xl">add_circle</span>
 								<span>Create Project</span>
 							}
+
 							@button.Button(button.Props{
 								Type: "button",
-								Class: "flex-1 py-3 text-lg font-bold rounded-xl bg-muted hover:bg-muted/70 border border-border transition-all duration-200 flex items-center justify-center gap-2",
-								Attributes: templ.Attributes{"type": "button", "onclick": "window.history.back()"},
+								Class: "flex-1 py-3 text-base font-medium rounded-xl bg-muted hover:bg-muted/70 border border-border flex items-center justify-center gap-2 transition-all duration-200",
+								Attributes: templ.Attributes{"onclick": "window.history.back()"},
 							}) {
-								<span class="material-icons align-middle text-2xl">close</span>
+								<span class="material-icons text-xl">cancel</span>
 								<span>Cancel</span>
 							}
 						</div>
