@@ -2,6 +2,7 @@ package utils
 
 import (
 	"database/sql"
+	"io/ioutil"
 	"os"
 
 	_ "github.com/lib/pq"
@@ -9,7 +10,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// SetupDB connects to Postgres and ensures the projects table exists.
+// SetupDB connects to Postgres and ensures the projects and users tables exist.
 func SetupDB() *sql.DB {
 	pgURL := os.Getenv("POSTGRES_DSN")
 	if pgURL == "" {
@@ -23,6 +24,27 @@ func SetupDB() *sql.DB {
 		log.Fatalf("Failed to ping DB: %v", err)
 	}
 	log.Info("Connected to Postgres DB")
+
+	// Ensure users table exists by running migration if needed
+	var exists bool
+	err = db.QueryRow(`SELECT EXISTS (
+		SELECT FROM information_schema.tables 
+		WHERE table_schema = 'public' AND table_name = 'users')`).Scan(&exists)
+	if err != nil {
+		log.Fatalf("Failed to check users table existence: %v", err)
+	}
+	if !exists {
+		log.Info("'users' table not found, running migration from assets/users.sql...")
+		migration, err := ioutil.ReadFile("assets/users.sql")
+		if err != nil {
+			log.Fatalf("Failed to read users.sql migration: %v", err)
+		}
+		if _, err := db.Exec(string(migration)); err != nil {
+			log.Fatalf("Failed to run users.sql migration: %v", err)
+		}
+		log.Info("'users' table migration applied.")
+	}
+
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS projects (
 		id SERIAL PRIMARY KEY,
 		user_id TEXT NOT NULL,
