@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -148,12 +149,16 @@ func HandleAuthCallback(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("invalid token"))
 		return
 	}
+	secure := true
+	if os.Getenv("GO_ENV") != "production" {
+		secure = false
+	}
 	cookie := &http.Cookie{
 		Name:     "auth_token",
 		Value:    req.Token,
 		Path:     "/",
 		HttpOnly: true,
-		Secure:   true,
+		Secure:   secure,
 		SameSite: http.SameSiteLaxMode,
 		Expires:  time.Now().Add(30 * 24 * time.Hour), // 30 days
 	}
