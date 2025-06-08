@@ -68,7 +68,7 @@ templ Settings() {
 							<div id="tab-preferences" class="settings-tab-content w-full hidden">
 								<section class="flex flex-col gap-4 p-6 bg-muted/40 rounded-lg border border-border w-full shadow-md hover:shadow-lg transition-shadow">
 									<h2 class="text-xl font-semibold text-primary mb-2">Preferences</h2>
-									<form class="flex flex-col gap-4 w-full" method="POST" action="/api/user/preferences" id="preferences-form">
+									<form class="flex flex-col gap-4 w-full" id="preferences-form">
 										@label.Label(label.Props{}) {
 											Theme 
 										}
