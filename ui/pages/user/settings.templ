@@ -21,9 +21,9 @@ templ Settings() {
 					}
 				}
 				@card.Content(card.ContentProps{Class: "w-full"}) {
-					<div class="flex flex-row gap-8 w-full justify-center items-start" style="min-width:0;">
+					<div class="flex flex-row gap-8 w-full justify-center items-start xl:gap-16 xl:px-8" style="min-width:0;">
 						<!-- Sidebar Navigation (Vertical Tabs, always visible on left) -->
-						<nav class="w-56 flex-shrink-0 flex flex-col items-end pr-2">
+						<nav class="w-56 flex-shrink-0 flex flex-col items-end pr-2 xl:pr-6">
 							<ul class="flex flex-col gap-1 sticky top-24 w-full">
 								<li><button type="button" class="settings-tab block w-full text-left px-4 py-2 rounded hover:bg-muted/60 font-medium text-primary transition" data-tab="profile">Profile</button></li>
 								<li><button type="button" class="settings-tab block w-full text-left px-4 py-2 rounded hover:bg-muted/60 font-medium text-primary transition" data-tab="security">Security</button></li>
@@ -32,80 +32,82 @@ templ Settings() {
 							</ul>
 						</nav>
 						<!-- Tab Content (centered to the right of sidebar) -->
-						<div class="flex-1 min-w-0 max-w-2xl mx-auto flex flex-col gap-8 items-stretch justify-center">
-							<div id="tab-profile" class="settings-tab-content">
-								<section class="flex flex-col gap-4 p-6 bg-muted/40 rounded-lg border border-border h-full w-full min-h-[320px] flex-1">
-									<h2 class="text-xl font-semibold text-primary mb-2">Profile</h2>
-									<div class="flex flex-col md:flex-row md:items-center gap-4 mb-2">
-										<div class="flex-1">
-											<span class="block text-muted-foreground text-sm">Current Display Name</span>
-											<span class="block font-medium text-lg" id="current-display-name">Loading...</span>
+						<div class="flex-1 min-w-0 max-w-4xl mx-auto flex flex-col gap-8 items-stretch justify-center xl:flex-row xl:gap-12 xl:items-start">
+							<div class="w-full xl:w-3/4 flex flex-col gap-8">
+								<div id="tab-profile" class="settings-tab-content">
+									<section class="flex flex-col gap-4 p-6 bg-muted/40 rounded-lg border border-border h-full w-full min-h-[320px] flex-1 xl:min-h-[400px] xl:p-10 xl:gap-8 xl:justify-center xl:shadow-lg">
+										<h2 class="text-xl font-semibold text-primary mb-2">Profile</h2>
+										<div class="flex flex-col md:flex-row md:items-center gap-4 mb-2">
+											<div class="flex-1">
+												<span class="block text-muted-foreground text-sm">Current Display Name</span>
+												<span class="block font-medium text-lg" id="current-display-name">Loading...</span>
+											</div>
+											<div class="flex-1">
+												<span class="block text-muted-foreground text-sm">Current Email</span>
+												<span class="block font-medium text-lg" id="current-email">Loading...</span>
+											</div>
 										</div>
-										<div class="flex-1">
-											<span class="block text-muted-foreground text-sm">Current Email</span>
-											<span class="block font-medium text-lg" id="current-email">Loading...</span>
-										</div>
-									</div>
-									<form class="flex flex-col gap-4 max-w-lg" method="POST" action="/api/user/profile">
-										@label.Label(label.Props{}) {
-											New Display Name
-										}
-										@input.Input(input.Props{Type: "text", Name: "displayName", Placeholder: "Your display name", Class: "input input-bordered w-full"})
-										@label.Label(label.Props{}) {
-											New Email
-										}
-										@input.Input(input.Props{Type: "email", Name: "email", Placeholder: "you@email.com", Class: "input input-bordered w-full"})
-										@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("primary")}) {
-											Save Profile
-										}
-									</form>
-								</section>
-							</div>
-							<div id="tab-security" class="settings-tab-content hidden">
-								<section class="flex flex-col gap-4 p-6 bg-muted/40 rounded-lg border border-border h-full w-full min-h-[320px] flex-1">
-									<h2 class="text-xl font-semibold text-primary mb-2">Security</h2>
-									<form class="flex flex-col gap-4 max-w-lg" method="POST" action="/api/user/password">
-										@label.Label(label.Props{}) {
-											New Password
-										}
-										@input.Input(input.Props{Type: "password", Name: "newPassword", Placeholder: "New password", Class: "input input-bordered w-full"})
-										@label.Label(label.Props{}) {
-											Confirm Password
-										}
-										@input.Input(input.Props{Type: "password", Name: "confirmPassword", Placeholder: "Confirm password", Class: "input input-bordered w-full"})
-										@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("primary")}) {
-											Change Password
-										}
-									</form>
-								</section>
-							</div>
-							<div id="tab-preferences" class="settings-tab-content hidden">
-								<section class="flex flex-col gap-4 p-6 bg-muted/40 rounded-lg border border-border h-full w-full min-h-[320px] flex-1">
-									<h2 class="text-xl font-semibold text-primary mb-2">Preferences</h2>
-									<form class="flex flex-col gap-4 max-w-lg" method="POST" action="/api/user/preferences">
-										@label.Label(label.Props{}) {
-											Theme
-										}
-										<select name="theme" class="input input-bordered w-full" id="theme-select">
-											<option value="system">System</option>
-											<option value="light">Light</option>
-											<option value="dark">Dark</option>
-										</select>
-										@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("primary")}) {
-											Save Preferences
-										}
-									</form>
-								</section>
-							</div>
-							<div id="tab-danger" class="settings-tab-content hidden">
-								<section class="flex flex-col gap-4 p-6 bg-destructive/10 rounded-lg border border-destructive h-full w-full min-h-[320px] flex-1">
-									<h2 class="text-xl font-semibold text-destructive mb-2">Danger Zone</h2>
-									<form class="flex flex-col gap-4 max-w-lg" method="POST" action="/api/user/delete" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
-										@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("destructive")}) {
-											Delete Account
-										}
-									</form>
-								</section>
+										<form class="flex flex-col gap-4 max-w-lg" method="POST" action="/api/user/profile">
+											@label.Label(label.Props{}) {
+												New Display Name
+											}
+											@input.Input(input.Props{Type: "text", Name: "displayName", Placeholder: "Your display name", Class: "input input-bordered w-full"})
+											@label.Label(label.Props{}) {
+												New Email
+											}
+											@input.Input(input.Props{Type: "email", Name: "email", Placeholder: "you@email.com", Class: "input input-bordered w-full"})
+											@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("primary")}) {
+												Save Profile
+											}
+										</form>
+									</section>
+								</div>
+								<div id="tab-security" class="settings-tab-content hidden">
+									<section class="flex flex-col gap-4 p-6 bg-muted/40 rounded-lg border border-border h-full w-full min-h-[320px] flex-1 xl:min-h-[400px] xl:p-10 xl:gap-8 xl:justify-center xl:shadow-lg">
+										<h2 class="text-xl font-semibold text-primary mb-2">Security</h2>
+										<form class="flex flex-col gap-4 max-w-lg" method="POST" action="/api/user/password">
+											@label.Label(label.Props{}) {
+												New Password
+											}
+											@input.Input(input.Props{Type: "password", Name: "newPassword", Placeholder: "New password", Class: "input input-bordered w-full"})
+											@label.Label(label.Props{}) {
+												Confirm Password
+											}
+											@input.Input(input.Props{Type: "password", Name: "confirmPassword", Placeholder: "Confirm password", Class: "input input-bordered w-full"})
+											@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("primary")}) {
+												Change Password
+											}
+										</form>
+									</section>
+								</div>
+								<div id="tab-preferences" class="settings-tab-content hidden">
+									<section class="flex flex-col gap-4 p-6 bg-muted/40 rounded-lg border border-border h-full w-full min-h-[320px] flex-1 xl:min-h-[400px] xl:p-10 xl:gap-8 xl:justify-center xl:shadow-lg">
+										<h2 class="text-xl font-semibold text-primary mb-2">Preferences</h2>
+										<form class="flex flex-col gap-4 max-w-lg" method="POST" action="/api/user/preferences">
+											@label.Label(label.Props{}) {
+												Theme
+											}
+											<select name="theme" class="input input-bordered w-full" id="theme-select">
+												<option value="system">System</option>
+												<option value="light">Light</option>
+												<option value="dark">Dark</option>
+											</select>
+											@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("primary")}) {
+												Save Preferences
+											}
+										</form>
+									</section>
+								</div>
+								<div id="tab-danger" class="settings-tab-content hidden">
+									<section class="flex flex-col gap-4 p-6 bg-destructive/10 rounded-lg border border-destructive h-full w-full min-h-[320px] flex-1 xl:min-h-[400px] xl:p-10 xl:gap-8 xl:justify-center xl:shadow-lg">
+										<h2 class="text-xl font-semibold text-destructive mb-2">Danger Zone</h2>
+										<form class="flex flex-col gap-4 max-w-lg" method="POST" action="/api/user/delete" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
+											@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("destructive")}) {
+												Delete Account
+											}
+										</form>
+									</section>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -169,11 +171,15 @@ document.addEventListener("DOMContentLoaded", () => {
 				} else {
 					const err = await resp.text();
 					feedback.textContent = err || 'Failed to update profile.';
-					feedback.className = 'text-sm mt-2 text-red-600';
+					feedback.className = 'text-sm mt-2 text-red-600 font-bold bg-red-100 border border-red-400 rounded px-3 py-2 animate-shake';
+					feedback.style.display = 'block';
+					feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
 				}
 			} catch {
 				feedback.textContent = 'Network error.';
-				feedback.className = 'text-sm mt-2 text-red-600';
+				feedback.className = 'text-sm mt-2 text-red-600 font-bold bg-red-100 border border-red-400 rounded px-3 py-2 animate-shake';
+				feedback.style.display = 'block';
+				feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
 			}
 		});
 	}
@@ -199,11 +205,15 @@ document.addEventListener("DOMContentLoaded", () => {
 				} else {
 					const err = await resp.text();
 					feedback.textContent = err || 'Failed to change password.';
-					feedback.className = 'text-sm mt-2 text-red-600';
+					feedback.className = 'text-sm mt-2 text-red-600 font-bold bg-red-100 border border-red-400 rounded px-3 py-2 animate-shake';
+					feedback.style.display = 'block';
+					feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
 				}
 			} catch {
 				feedback.textContent = 'Network error.';
-				feedback.className = 'text-sm mt-2 text-red-600';
+				feedback.className = 'text-sm mt-2 text-red-600 font-bold bg-red-100 border border-red-400 rounded px-3 py-2 animate-shake';
+				feedback.style.display = 'block';
+				feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
 			}
 		});
 	}
@@ -228,11 +238,15 @@ document.addEventListener("DOMContentLoaded", () => {
 				} else {
 					const err = await resp.text();
 					feedback.textContent = err || 'Failed to save preferences.';
-					feedback.className = 'text-sm mt-2 text-red-600';
+					feedback.className = 'text-sm mt-2 text-red-600 font-bold bg-red-100 border border-red-400 rounded px-3 py-2 animate-shake';
+					feedback.style.display = 'block';
+					feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
 				}
 			} catch {
 				feedback.textContent = 'Network error.';
-				feedback.className = 'text-sm mt-2 text-red-600';
+				feedback.className = 'text-sm mt-2 text-red-600 font-bold bg-red-100 border border-red-400 rounded px-3 py-2 animate-shake';
+				feedback.style.display = 'block';
+				feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
 			}
 		});
 	}
@@ -257,11 +271,15 @@ document.addEventListener("DOMContentLoaded", () => {
 				} else {
 					const err = await resp.text();
 					feedback.textContent = err || 'Failed to delete account.';
-					feedback.className = 'text-sm mt-2 text-red-600';
+					feedback.className = 'text-sm mt-2 text-red-600 font-bold bg-red-100 border border-red-400 rounded px-3 py-2 animate-shake';
+					feedback.style.display = 'block';
+					feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
 				}
 			} catch {
 				feedback.textContent = 'Network error.';
-				feedback.className = 'text-sm mt-2 text-red-600';
+				feedback.className = 'text-sm mt-2 text-red-600 font-bold bg-red-100 border border-red-400 rounded px-3 py-2 animate-shake';
+				feedback.style.display = 'block';
+				feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
 			}
 		});
 	}
