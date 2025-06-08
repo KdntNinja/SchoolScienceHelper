@@ -32,7 +32,6 @@ templ Dash() {
 									<li class="text-muted-foreground text-center" id="project-list-empty">Loading...</li>
 								</ul>
 								@button.Button(button.Props{ID: "new-project-btn", Class: "mt-6 w-full flex items-center justify-center gap-2 text-lg font-semibold py-3 px-6 rounded-lg bg-gradient-to-r from-primary to-blue-500 hover:from-blue-500 hover:to-primary shadow-lg transition-all duration-200", Variant: button.Variant("primary")}) {
-									<span class="material-icons align-middle text-2xl">add_circle</span>
 									<span>New Project</span>
 								}
 							}
@@ -66,7 +65,7 @@ templ Dash() {
 						const empty = document.getElementById('project-list-empty');
 						if (empty) empty.remove();
 						if (!projects || projects.length === 0) {
-							list.innerHTML = '<li class="text-muted-foreground text-center">No projects yet. Click "+ New Project" to get started!</li>';
+							list.innerHTML = '<li class="text-muted-foreground text-center">No projects yet. Click "New Project" to get started!</li>';
 							return;
 						}
 						list.innerHTML = '';
