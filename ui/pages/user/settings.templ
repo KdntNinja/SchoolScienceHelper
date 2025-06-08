@@ -32,9 +32,9 @@ templ Settings() {
 							</ul>
 						</nav>
 						<!-- Tab Content (centered to the right of sidebar) -->
-						<div class="flex-1 min-w-0 max-w-2xl mx-auto flex flex-col gap-8 items-center justify-center">
+						<div class="flex-1 min-w-0 max-w-2xl mx-auto flex flex-col gap-8 items-stretch justify-center">
 							<div id="tab-profile" class="settings-tab-content">
-								<section class="flex flex-col gap-4 p-6 bg-muted/40 rounded-lg border border-border">
+								<section class="flex flex-col gap-4 p-6 bg-muted/40 rounded-lg border border-border h-full w-full min-h-[320px] flex-1">
 									<h2 class="text-xl font-semibold text-primary mb-2">Profile</h2>
 									<div class="flex flex-col md:flex-row md:items-center gap-4 mb-2">
 										<div class="flex-1">
@@ -62,7 +62,7 @@ templ Settings() {
 								</section>
 							</div>
 							<div id="tab-security" class="settings-tab-content hidden">
-								<section class="flex flex-col gap-4 p-6 bg-muted/40 rounded-lg border border-border">
+								<section class="flex flex-col gap-4 p-6 bg-muted/40 rounded-lg border border-border h-full w-full min-h-[320px] flex-1">
 									<h2 class="text-xl font-semibold text-primary mb-2">Security</h2>
 									<form class="flex flex-col gap-4 max-w-lg" method="POST" action="/api/user/password">
 										@label.Label(label.Props{}) {
@@ -80,7 +80,7 @@ templ Settings() {
 								</section>
 							</div>
 							<div id="tab-preferences" class="settings-tab-content hidden">
-								<section class="flex flex-col gap-4 p-6 bg-muted/40 rounded-lg border border-border">
+								<section class="flex flex-col gap-4 p-6 bg-muted/40 rounded-lg border border-border h-full w-full min-h-[320px] flex-1">
 									<h2 class="text-xl font-semibold text-primary mb-2">Preferences</h2>
 									<form class="flex flex-col gap-4 max-w-lg" method="POST" action="/api/user/preferences">
 										@label.Label(label.Props{}) {
@@ -98,7 +98,7 @@ templ Settings() {
 								</section>
 							</div>
 							<div id="tab-danger" class="settings-tab-content hidden">
-								<section class="flex flex-col gap-4 p-6 bg-destructive/10 rounded-lg border border-destructive">
+								<section class="flex flex-col gap-4 p-6 bg-destructive/10 rounded-lg border border-destructive h-full w-full min-h-[320px] flex-1">
 									<h2 class="text-xl font-semibold text-destructive mb-2">Danger Zone</h2>
 									<form class="flex flex-col gap-4 max-w-lg" method="POST" action="/api/user/delete" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
 										@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("destructive")}) {
