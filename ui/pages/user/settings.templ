@@ -22,13 +22,22 @@ templ Settings() {
 				}
 				@card.Content(card.ContentProps{Class: "w-full"}) {
 					<div class="flex flex-col md:flex-row gap-8 w-full justify-center items-start" style="min-width:0;">
-						<!-- Sidebar Navigation -->
+						<!-- Sidebar Navigation (Desktop) -->
 						<nav class="hidden md:block w-56 flex-shrink-0">
 							<ul class="flex flex-col gap-1 sticky top-24">
 								<li><button type="button" class="settings-tab block w-full text-left px-4 py-2 rounded hover:bg-muted/60 font-medium text-primary transition" data-tab="profile">Profile</button></li>
 								<li><button type="button" class="settings-tab block w-full text-left px-4 py-2 rounded hover:bg-muted/60 font-medium text-primary transition" data-tab="security">Security</button></li>
 								<li><button type="button" class="settings-tab block w-full text-left px-4 py-2 rounded hover:bg-muted/60 font-medium text-primary transition" data-tab="preferences">Preferences</button></li>
 								<li><button type="button" class="settings-tab block w-full text-left px-4 py-2 rounded hover:bg-destructive/10 font-medium text-destructive transition" data-tab="danger">Danger Zone</button></li>
+							</ul>
+						</nav>
+						<!-- Mobile Tab Navigation -->
+						<nav class="block md:hidden w-full mb-4">
+							<ul class="flex flex-row gap-1 w-full">
+								<li class="flex-1"><button type="button" class="settings-tab w-full px-2 py-2 rounded hover:bg-muted/60 font-medium text-primary transition" data-tab="profile">Profile</button></li>
+								<li class="flex-1"><button type="button" class="settings-tab w-full px-2 py-2 rounded hover:bg-muted/60 font-medium text-primary transition" data-tab="security">Security</button></li>
+								<li class="flex-1"><button type="button" class="settings-tab w-full px-2 py-2 rounded hover:bg-muted/60 font-medium text-primary transition" data-tab="preferences">Preferences</button></li>
+								<li class="flex-1"><button type="button" class="settings-tab w-full px-2 py-2 rounded hover:bg-destructive/10 font-medium text-destructive transition" data-tab="danger">Danger Zone</button></li>
 							</ul>
 						</nav>
 						<!-- Tab Content -->
@@ -39,11 +48,11 @@ templ Settings() {
 									<div class="flex flex-col md:flex-row md:items-center gap-4 mb-2">
 										<div class="flex-1">
 											<span class="block text-muted-foreground text-sm">Current Display Name</span>
-											<span class="block font-medium text-lg" id="current-display-name">John Doe</span>
+											<span class="block font-medium text-lg" id="current-display-name"></span>
 										</div>
 										<div class="flex-1">
 											<span class="block text-muted-foreground text-sm">Current Email</span>
-											<span class="block font-medium text-lg" id="current-email">john@example.com</span>
+											<span class="block font-medium text-lg" id="current-email"></span>
 										</div>
 									</div>
 									<form class="flex flex-col gap-4 max-w-lg" method="POST" action="/api/user/profile">
@@ -125,7 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	tabButtons[0].classList.add('bg-muted', 'font-bold');
 	tabContents[0].classList.remove('hidden');
 	// Load user info and prefill form
-	fetch("/api/user/profile", {headers: {"Authorization": localStorage.getItem("authToken") ? `Bearer ${localStorage.getItem("authToken")}` : undefined}})
+	fetch("/api/user/profile")
 		.then(resp => resp.ok ? resp.json() : null)
 		.then(data => {
 			if (data) {
@@ -138,7 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 		});
 	// Load user preferences and preselect theme
-	fetch("/api/user/preferences", {headers: {"Authorization": localStorage.getItem("authToken") ? `Bearer ${localStorage.getItem("authToken")}` : undefined}})
+	fetch("/api/user/preferences")
 		.then(resp => resp.ok ? resp.json() : null)
 		.then(data => {
 			if (data && data.theme) {
