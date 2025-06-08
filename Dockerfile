@@ -30,6 +30,8 @@ RUN apk update && apk upgrade && apk add ca-certificates
 
 # Copy the binary from the build stage
 COPY --from=build /app/main .
+# Copy assets (migrations, static files) into the runtime image
+COPY assets/ assets/
 
 # Expose the port your application runs on
 EXPOSE 8090
