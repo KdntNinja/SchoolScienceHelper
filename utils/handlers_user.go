@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"os"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type UserProfile struct {
@@ -145,6 +147,7 @@ func HandleAuthCallback(w http.ResponseWriter, r *http.Request) {
 	}
 	var req AuthCallbackRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.Token == "" {
+		log.Warnf("[HandleAuthCallback] Invalid token in request: err=%v, body=%v", err, r.Body)
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("invalid token"))
 		return
@@ -163,6 +166,7 @@ func HandleAuthCallback(w http.ResponseWriter, r *http.Request) {
 		Expires:  time.Now().Add(30 * 24 * time.Hour), // 30 days
 	}
 	http.SetCookie(w, cookie)
+	log.Infof("[HandleAuthCallback] Set auth_token cookie for remote=%s, secure=%v, path=%s, expires=%v", r.RemoteAddr, secure, cookie.Path, cookie.Expires)
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("ok"))
 }

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"strings"
 	"sync"
 	"time"
 
@@ -87,29 +86,7 @@ func ValidateAndParseJWT(tokenStr string) (jwt.MapClaims, error) {
 	return claims, nil
 }
 
-// GetUserIDFromAuthHeader extracts the user ID (sub claim) from the Authorization header.
-func GetUserIDFromAuthHeader(r *http.Request) (string, error) {
-	header := r.Header.Get("Authorization")
-	if !strings.HasPrefix(header, "Bearer ") {
-		return "", fmt.Errorf("missing bearer token")
-	}
-	tokenStr := strings.TrimPrefix(header, "Bearer ")
-	token, _, err := new(jwt.Parser).ParseUnverified(tokenStr, jwt.MapClaims{})
-	if err != nil {
-		return "", fmt.Errorf("invalid token: %w", err)
-	}
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok {
-		return "", fmt.Errorf("invalid claims")
-	}
-	userID, ok := claims["sub"].(string)
-	if !ok {
-		return "", fmt.Errorf("missing sub claim")
-	}
-	return userID, nil
-}
-
-// Helper: get JWT from cookie or Authorization header
+// GetJWTFromRequest extracts the JWT from the request, checking both the Authorization header and cookies.
 func GetJWTFromRequest(r *http.Request) string {
 	// Try cookie first
 	if cookie, err := r.Cookie("auth_token"); err == nil {
@@ -122,7 +99,8 @@ func GetJWTFromRequest(r *http.Request) string {
 	return ""
 }
 
-// Update GetUserIDFromRequest to use validation
+// GetUserIDFromRequest extracts the user ID (sub claim) from a validated Auth0 JWT in the request.
+// This function performs full signature and claims validation using Auth0 JWKS.
 func GetUserIDFromRequest(r *http.Request) (string, error) {
 	tokenStr := GetJWTFromRequest(r)
 	if tokenStr == "" {
