@@ -93,6 +93,15 @@ func main() {
 	mux.HandleFunc("/api/project/delete", utils.HandleProjectDelete)
 	mux.HandleFunc("/api/project/publish", utils.HandleProjectPublish)
 	mux.HandleFunc("/api/project/public", utils.HandleProjectLoadPublic)
+	mux.HandleFunc("/api/user/profile", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet {
+			utils.HandleUserProfile(w, r)
+		} else if r.Method == http.MethodPost {
+			utils.HandleUserProfileUpdate(w, r)
+		} else {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+		}
+	})
 	// Handler registration for error pages
 	mux.HandleFunc("/forbidden", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusForbidden)

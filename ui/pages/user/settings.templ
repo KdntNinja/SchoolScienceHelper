@@ -12,55 +12,89 @@ templ Settings() {
 	@layouts.BaseLayout() {
 		<main class="flex flex-col items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12">
 			@card.Card(card.Props{Class: "bg-card dark:bg-card rounded-lg shadow-xl w-full max-w-2xl p-10 border border-border flex flex-col gap-8"}) {
-				@card.Header(card.HeaderProps{}) {
-					@card.Title(card.TitleProps{Class: "text-3xl font-extrabold text-center mb-2 text-primary tracking-tight"}) {
+				@card.Header(card.HeaderProps{Class: "border-b border-border pb-4 mb-4"}) {
+					@card.Title(card.TitleProps{Class: "text-3xl font-extrabold text-left mb-1 text-primary tracking-tight"}) {
 						Account Settings
 					}
-					@card.Description(card.DescriptionProps{Class: "text-center text-lg text-muted-foreground mb-6"}) {
+					@card.Description(card.DescriptionProps{Class: "text-left text-base text-muted-foreground"}) {
 						Manage your profile, security, and preferences.
 					}
 				}
-				@card.Content(card.ContentProps{Class: "flex flex-col gap-10"}) {
-					<section class="flex flex-col gap-6">
-						<h2 class="text-xl font-semibold text-primary">Profile</h2>
-						<form class="flex flex-col gap-4 max-w-md" method="POST" action="/api/user/profile">
-							@label.Label(label.Props{}) { Display Name }
-							@input.Input(input.Props{Type: "text", Name: "displayName", Placeholder: "Your display name", Class: "input input-bordered w-full"})
-							@label.Label(label.Props{}) { Email }
-							@input.Input(input.Props{Type: "email", Name: "email", Placeholder: "you@email.com", Class: "input input-bordered w-full"})
-							@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("primary")}) { Save Profile }
-						</form>
-					</section>
-					<section class="flex flex-col gap-6">
-						<h2 class="text-xl font-semibold text-primary">Security</h2>
-						<form class="flex flex-col gap-4 max-w-md" method="POST" action="/api/user/password">
-							@label.Label(label.Props{}) { New Password }
-							@input.Input(input.Props{Type: "password", Name: "newPassword", Placeholder: "New password", Class: "input input-bordered w-full"})
-							@label.Label(label.Props{}) { Confirm Password }
-							@input.Input(input.Props{Type: "password", Name: "confirmPassword", Placeholder: "Confirm password", Class: "input input-bordered w-full"})
-							@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("primary")}) { Change Password }
-						</form>
-					</section>
-					<section class="flex flex-col gap-6">
-						<h2 class="text-xl font-semibold text-primary">Preferences</h2>
-						<form class="flex flex-col gap-4 max-w-md" method="POST" action="/api/user/preferences">
-							@label.Label(label.Props{}) { Theme }
-							<select name="theme" class="input input-bordered w-full">
-								<option value="system">System</option>
-								<option value="light">Light</option>
-								<option value="dark">Dark</option>
-							</select>
-							@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("primary")}) { Save Preferences }
-						</form>
-					</section>
-					<section class="flex flex-col gap-6">
-						<h2 class="text-xl font-semibold text-destructive">Danger Zone</h2>
-						<form class="flex flex-col gap-4 max-w-md" method="POST" action="/api/user/delete" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
-							@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("destructive")}) { Delete Account }
-						</form>
-					</section>
+				@card.Content(card.ContentProps{Class: "flex flex-col md:flex-row gap-8 w-full"}) {
+					<!-- Sidebar Navigation -->
+					<nav class="w-full md:w-64 flex-shrink-0 mb-8 md:mb-0">
+						<ul class="flex md:flex-col gap-2 md:gap-0">
+							<li><a href="#profile" class="block px-4 py-2 rounded hover:bg-muted/60 font-medium text-primary">Profile</a></li>
+							<li><a href="#security" class="block px-4 py-2 rounded hover:bg-muted/60 font-medium text-primary">Security</a></li>
+							<li><a href="#preferences" class="block px-4 py-2 rounded hover:bg-muted/60 font-medium text-primary">Preferences</a></li>
+							<li><a href="#danger" class="block px-4 py-2 rounded hover:bg-destructive/10 font-medium text-destructive">Danger Zone</a></li>
+						</ul>
+					</nav>
+					<!-- Main Content -->
+					<div class="flex-1 flex flex-col gap-8">
+						<section id="profile" class="flex flex-col gap-4 p-6 bg-muted/40 rounded-lg border border-border">
+							<h2 class="text-xl font-semibold text-primary mb-2">Profile</h2>
+							<div class="flex flex-col md:flex-row md:items-center gap-4 mb-2">
+								<div class="flex-1">
+									<span class="block text-muted-foreground text-sm">Current Display Name</span>
+									<span class="block font-medium text-lg" id="current-display-name">John Doe</span>
+								</div>
+								<div class="flex-1">
+									<span class="block text-muted-foreground text-sm">Current Email</span>
+									<span class="block font-medium text-lg" id="current-email">john@example.com</span>
+								</div>
+							</div>
+							<form class="flex flex-col gap-4 max-w-lg" method="POST" action="/api/user/profile">
+								@label.Label(label.Props{}) { New Display Name }
+								@input.Input(input.Props{Type: "text", Name: "displayName", Placeholder: "Your display name", Class: "input input-bordered w-full"})
+								@label.Label(label.Props{}) { New Email }
+								@input.Input(input.Props{Type: "email", Name: "email", Placeholder: "you@email.com", Class: "input input-bordered w-full"})
+								@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("primary")}) { Save Profile }
+							</form>
+						</section>
+						<section id="security" class="flex flex-col gap-4 p-6 bg-muted/40 rounded-lg border border-border">
+							<h2 class="text-xl font-semibold text-primary mb-2">Security</h2>
+							<form class="flex flex-col gap-4 max-w-lg" method="POST" action="/api/user/password">
+								@label.Label(label.Props{}) { New Password }
+								@input.Input(input.Props{Type: "password", Name: "newPassword", Placeholder: "New password", Class: "input input-bordered w-full"})
+								@label.Label(label.Props{}) { Confirm Password }
+								@input.Input(input.Props{Type: "password", Name: "confirmPassword", Placeholder: "Confirm password", Class: "input input-bordered w-full"})
+								@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("primary")}) { Change Password }
+							</form>
+						</section>
+						<section id="preferences" class="flex flex-col gap-4 p-6 bg-muted/40 rounded-lg border border-border">
+							<h2 class="text-xl font-semibold text-primary mb-2">Preferences</h2>
+							<form class="flex flex-col gap-4 max-w-lg" method="POST" action="/api/user/preferences">
+								@label.Label(label.Props{}) { Theme }
+								<select name="theme" class="input input-bordered w-full">
+									<option value="system">System</option>
+									<option value="light">Light</option>
+									<option value="dark">Dark</option>
+								</select>
+								@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("primary")}) { Save Preferences }
+							</form>
+						</section>
+						<section id="danger" class="flex flex-col gap-4 p-6 bg-destructive/10 rounded-lg border border-destructive">
+							<h2 class="text-xl font-semibold text-destructive mb-2">Danger Zone</h2>
+							<form class="flex flex-col gap-4 max-w-lg" method="POST" action="/api/user/delete" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
+								@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("destructive")}) { Delete Account }
+							</form>
+						</section>
+					</div>
 				}
 			}
 		</main>
+		<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    const resp = await fetch("/api/user/profile", {headers: {"Authorization": localStorage.getItem("authToken") ? `Bearer ${localStorage.getItem("authToken")}` : undefined}});
+    if (resp.ok) {
+      const data = await resp.json();
+      document.getElementById("current-display-name").textContent = data.displayName;
+      document.getElementById("current-email").textContent = data.email;
+    }
+  } catch (e) {}
+});
+</script>
 	}
 }
