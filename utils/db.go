@@ -57,6 +57,37 @@ func SetupDB() *sql.DB {
 		log.Info("'users' table migration applied.")
 	}
 
+	// Ensure projects table exists by running migration if needed
+	err = db.QueryRow(`SELECT EXISTS (
+		SELECT FROM information_schema.tables 
+		WHERE table_schema = 'public' AND table_name = 'projects')`).Scan(&exists)
+	if err != nil {
+		log.Fatalf("Failed to check projects table existence: %v", err)
+	}
+	if !exists {
+		log.Info("'projects' table not found, running migration from assets/projects.sql...")
+		migrationPath := "assets/projects.sql"
+		if _, err := os.Stat(migrationPath); os.IsNotExist(err) {
+			altPath := filepath.Join("/assets", "projects.sql")
+			altPath2 := filepath.Join("/app/assets", "projects.sql")
+			if _, err := os.Stat(altPath); err == nil {
+				migrationPath = altPath
+			} else if _, err := os.Stat(altPath2); err == nil {
+				migrationPath = altPath2
+			} else {
+				log.Fatalf("Failed to find projects.sql migration at %s, %s, or %s", migrationPath, altPath, altPath2)
+			}
+		}
+		migration, err := os.ReadFile(migrationPath)
+		if err != nil {
+			log.Fatalf("Failed to read projects.sql migration: %v", err)
+		}
+		if _, err := db.Exec(string(migration)); err != nil {
+			log.Fatalf("Failed to run projects.sql migration: %v", err)
+		}
+		log.Info("'projects' table migration applied.")
+	}
+
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS projects (
 		id SERIAL PRIMARY KEY,
 		user_id TEXT NOT NULL,
