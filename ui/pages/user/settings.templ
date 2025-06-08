@@ -130,6 +130,9 @@ templ Settings() {
 							</div>
 						</div>
 					</div>
+					<div class="flex flex-row justify-end w-full mt-2">
+						<button id="logout-btn" class="px-4 py-2 rounded bg-destructive text-white font-semibold hover:bg-destructive/80 transition">Log Out</button>
+					</div>
 					<script>
 document.addEventListener("DOMContentLoaded", () => {
 	const tabButtons = document.querySelectorAll('.settings-tab');
@@ -210,6 +213,17 @@ document.addEventListener("DOMContentLoaded", () => {
 			});
 		});
 	}
+
+	document.getElementById('logout-btn')?.addEventListener('click', function() {
+		// Remove all cookies (best effort, domain/path may limit this)
+		document.cookie.split(';').forEach(function(c) {
+			document.cookie = c.replace(/^ +/, '').replace(/=.*/, '=;expires=' + new Date(0).toUTCString() + ';path=/');
+		});
+		// Optionally, call a backend endpoint to invalidate the session if needed
+		fetch('/api/auth/logout', { method: 'POST' }).finally(() => {
+			window.location.href = '/';
+		});
+	});
 					</script>
 				}
 			}
