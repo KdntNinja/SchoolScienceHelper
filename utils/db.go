@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 
 	_ "github.com/lib/pq"
 
@@ -35,7 +36,16 @@ func SetupDB() *sql.DB {
 	}
 	if !exists {
 		log.Info("'users' table not found, running migration from assets/users.sql...")
-		migration, err := ioutil.ReadFile("assets/users.sql")
+		migrationPath := "assets/users.sql"
+		if _, err := os.Stat(migrationPath); os.IsNotExist(err) {
+			altPath := filepath.Join("/assets", "users.sql")
+			if _, err := os.Stat(altPath); err == nil {
+				migrationPath = altPath
+			} else {
+				log.Fatalf("Failed to find users.sql migration at %s or %s", migrationPath, altPath)
+			}
+		}
+		migration, err := ioutil.ReadFile(migrationPath)
 		if err != nil {
 			log.Fatalf("Failed to read users.sql migration: %v", err)
 		}
