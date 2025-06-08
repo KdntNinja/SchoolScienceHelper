@@ -197,3 +197,39 @@ func HandleAuthCallback(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("ok"))
 }
+
+// POST /api/user/delete - delete the current user's account and all their projects
+func HandleUserDelete(w http.ResponseWriter, r *http.Request) {
+	log.Infof("[HandleUserDelete] %s %s from %s", r.Method, r.URL.Path, r.RemoteAddr)
+	if r.Method != http.MethodPost {
+		log.Warnf("[HandleUserDelete] Method not allowed: %s", r.Method)
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+	userID, err := GetUserIDFromRequest(r)
+	if err != nil {
+		log.Warnf("[HandleUserDelete] Unauthorized: %v", err)
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("unauthorized: " + err.Error()))
+		return
+	}
+	// Delete all projects for this user
+	_, err = DB.Exec(`DELETE FROM projects WHERE user_id=$1`, userID)
+	if err != nil {
+		log.Errorf("[HandleUserDelete] DB error (projects): %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("db error: " + err.Error()))
+		return
+	}
+	// Delete the user
+	_, err = DB.Exec(`DELETE FROM users WHERE id=$1`, userID)
+	if err != nil {
+		log.Errorf("[HandleUserDelete] DB error (user): %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("db error: " + err.Error()))
+		return
+	}
+	log.Infof("[HandleUserDelete] Deleted user %s and all their projects", userID)
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("ok"))
+}

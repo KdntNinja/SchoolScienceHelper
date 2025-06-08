@@ -139,15 +139,6 @@ func main() {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 		}
 	})))
-	mux.Handle("/api/user/password", requireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodPost {
-			w.WriteHeader(http.StatusMethodNotAllowed)
-			return
-		}
-		// TODO: Implement password change logic
-		w.WriteHeader(http.StatusNotImplemented)
-		w.Write([]byte("not implemented"))
-	})))
 	mux.Handle("/api/user/preferences", requireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
 			utils.HandleUserPreferences(w, r)
@@ -157,15 +148,7 @@ func main() {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 		}
 	})))
-	mux.Handle("/api/user/delete", requireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodPost {
-			w.WriteHeader(http.StatusMethodNotAllowed)
-			return
-		}
-		// TODO: Implement account deletion logic
-		w.WriteHeader(http.StatusNotImplemented)
-		w.Write([]byte("not implemented"))
-	})))
+	mux.Handle("/api/user/delete", requireAuth(http.HandlerFunc(utils.HandleUserDelete)))
 
 	// --- API: Auth Callback (Public) ---
 	mux.HandleFunc("/api/auth/callback", func(w http.ResponseWriter, r *http.Request) {

@@ -26,7 +26,6 @@ templ Settings() {
 						<nav class="w-56 flex-shrink-0 flex flex-col items-end pr-2">
 							<ul class="flex flex-col gap-1 sticky top-24 w-full">
 								<li><button type="button" class="settings-tab block w-full text-left px-4 py-2 rounded hover:bg-muted/60 font-medium text-primary transition" data-tab="profile">Profile</button></li>
-								<li><button type="button" class="settings-tab block w-full text-left px-4 py-2 rounded hover:bg-muted/60 font-medium text-primary transition" data-tab="security">Security</button></li>
 								<li><button type="button" class="settings-tab block w-full text-left px-4 py-2 rounded hover:bg-muted/60 font-medium text-primary transition" data-tab="preferences">Preferences</button></li>
 								<li><button type="button" class="settings-tab block w-full text-left px-4 py-2 rounded hover:bg-destructive/10 font-medium text-destructive transition" data-tab="danger">Danger Zone</button></li>
 							</ul>
@@ -65,24 +64,6 @@ templ Settings() {
 										</form>
 									</section>
 								</div>
-							</div>
-							<div id="tab-security" class="settings-tab-content w-full hidden">
-								<section class="flex flex-col gap-4 p-6 bg-muted/40 rounded-lg border border-border w-full shadow-md hover:shadow-lg transition-shadow">
-									<h2 class="text-xl font-semibold text-primary mb-2">Security</h2>
-									<form class="flex flex-col gap-4 w-full" method="POST" action="/api/user/password">
-										@label.Label(label.Props{}) {
-											New Password
-										}
-										@input.Input(input.Props{Type: "password", Name: "newPassword", Placeholder: "New password", Class: "input input-bordered w-full"})
-										@label.Label(label.Props{}) {
-											Confirm Password
-										}
-										@input.Input(input.Props{Type: "password", Name: "confirmPassword", Placeholder: "Confirm password", Class: "input input-bordered w-full"})
-										@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("primary")}) {
-											Change Password
-										}
-									</form>
-								</section>
 							</div>
 							<div id="tab-preferences" class="settings-tab-content w-full hidden">
 								<section class="flex flex-col gap-4 p-6 bg-muted/40 rounded-lg border border-border w-full shadow-md hover:shadow-lg transition-shadow">
