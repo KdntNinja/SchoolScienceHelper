@@ -26,6 +26,11 @@ func SetupDB() *sql.DB {
 	}
 	log.Info("Connected to Postgres DB")
 
+	// Print the current database name for debugging
+	var dbName string
+	db.QueryRow("SELECT current_database()").Scan(&dbName)
+	log.Infof("Connected to Postgres DB: %s", dbName)
+
 	// Always run the merged migration file on startup to ensure both users and projects tables exist and are up to date
 	migrationPath := "assets/users.sql"
 	if _, err := os.Stat(migrationPath); os.IsNotExist(err) {
@@ -43,12 +48,14 @@ func SetupDB() *sql.DB {
 	if err != nil {
 		log.Fatalf("Failed to read users.sql migration: %v", err)
 	}
+	log.Infof("Migration SQL to be run (first 500 chars):\n%s", string(migration)[:min(500, len(migration))])
 	// Split and run each statement individually to guarantee all tables are created
 	for _, stmt := range strings.Split(string(migration), ";") {
 		stmt = strings.TrimSpace(stmt)
 		if stmt == "" || strings.HasPrefix(stmt, "--") {
 			continue
 		}
+		log.Infof("Running migration statement: %s", stmt)
 		if _, err := db.Exec(stmt); err != nil {
 			log.Warnf("Migration statement failed: %s\nError: %v", stmt, err)
 		}
@@ -56,4 +63,12 @@ func SetupDB() *sql.DB {
 	log.Info("users.sql migration applied (users and projects tables ensured).")
 
 	return db
+}
+
+// Helper for safe substring
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }
