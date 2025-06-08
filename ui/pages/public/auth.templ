@@ -37,31 +37,30 @@ templ Auth() {
 			  return params;
 			}
 
-			// On page load, check for Auth0 token in hash
 			(function() {
 			  const hashParams = parseHashParams(window.location.hash);
 			  if (hashParams.access_token) {
-				// Store token (choose localStorage or sessionStorage as needed)
-				localStorage.setItem('auth0_id_token', hashParams.access_token);
-				// Clear the hash from the URL
-				window.location.hash = '';
-				// Only redirect if not already on /dash
-				if (!window.location.pathname.startsWith('/dash')) {
-				  window.location.replace('/dash');
-				}
+				// Send token to backend to set cookie
+				fetch('/api/auth/callback', {
+				  method: 'POST',
+				  headers: { 'Content-Type': 'application/json' },
+				  body: JSON.stringify({ token: hashParams.access_token })
+				}).then(resp => {
+				  if (resp.ok) {
+					window.location.hash = '';
+					window.location.replace('/dash');
+				  } else {
+					alert('Authentication failed.');
+				  }
+				});
 				return;
 			  }
-
-			  // Fetch Auth0 config and handle auto-redirect if already authenticated
 			  fetch('/config')
 				.then(res => res.json())
 				.then(cfg => {
 				  window.AUTH0_DOMAIN = cfg.AUTH0_DOMAIN;
 				  window.AUTH0_CLIENT_ID = cfg.AUTH0_CLIENT_ID;
-				  // Only redirect if token is present and not already on /dash or /auth
-				  if ((localStorage.getItem('auth0_id_token') || sessionStorage.getItem('auth0_id_token')) && !window.location.pathname.startsWith('/dash') && !window.location.pathname.startsWith('/auth')) {
-					window.location.replace('/dash');
-				  }
+				  // No localStorage/sessionStorage check needed
 				});
 			})();
 

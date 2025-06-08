@@ -140,13 +140,40 @@ func main() {
 		}
 		userpages.NewProject().Render(r.Context(), w)
 	})
+	mux.HandleFunc("/api/auth/callback", func(w http.ResponseWriter, r *http.Request) {
+		utils.HandleAuthCallback(w, r)
+	})
+
+	// HSTS middleware
+	hstsMiddleware := func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// Only set HSTS in production
+			if os.Getenv("GO_ENV") == "production" {
+				w.Header().Set("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload")
+			}
+			next.ServeHTTP(w, r)
+		})
+	}
+
+	// Wrap mux with HSTS middleware
+	handler := hstsMiddleware(mux)
 
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8090"
 	}
 	log.Infof("Server running on :%s", port)
-	err := http.ListenAndServe(":"+port, mux)
+
+	// HTTP to HTTPS redirect in production
+	if os.Getenv("GO_ENV") == "production" {
+		go func() {
+			http.ListenAndServe(":80", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				http.Redirect(w, r, "https://"+r.Host+r.URL.String(), http.StatusMovedPermanently)
+			}))
+		}()
+	}
+
+	err := http.ListenAndServe(":"+port, handler)
 	if err != nil {
 		return
 	}

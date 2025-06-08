@@ -19,7 +19,7 @@ func HandleProjectSave(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
-	userID, err := GetUserIDFromAuthHeader(r)
+	userID, err := GetUserIDFromRequest(r)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("unauthorized: " + err.Error()))
@@ -57,7 +57,7 @@ func HandleProjectLoad(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
-	userID, err := GetUserIDFromAuthHeader(r)
+	userID, err := GetUserIDFromRequest(r)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("unauthorized: " + err.Error()))
@@ -91,7 +91,7 @@ func HandleProjectList(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
-	userID, err := GetUserIDFromAuthHeader(r)
+	userID, err := GetUserIDFromRequest(r)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("unauthorized: " + err.Error()))
@@ -128,7 +128,7 @@ func HandleProjectDelete(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
-	userID, err := GetUserIDFromAuthHeader(r)
+	userID, err := GetUserIDFromRequest(r)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("unauthorized: " + err.Error()))
@@ -157,7 +157,7 @@ func HandleProjectPublish(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
-	userID, err := GetUserIDFromAuthHeader(r)
+	userID, err := GetUserIDFromRequest(r)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("unauthorized: " + err.Error()))

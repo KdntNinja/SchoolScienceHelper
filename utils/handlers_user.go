@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"net/http"
+	"time"
 )
 
 type UserProfile struct {
@@ -15,13 +16,17 @@ type UserPreferences struct {
 	Theme string `json:"theme"`
 }
 
+type AuthCallbackRequest struct {
+	Token string `json:"token"`
+}
+
 // GET /api/user/profile - returns the current user's profile info
 func HandleUserProfile(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
-	userID, err := GetUserIDFromAuthHeader(r)
+	userID, err := GetUserIDFromRequest(r)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("unauthorized: " + err.Error()))
@@ -48,7 +53,7 @@ func HandleUserProfileUpdate(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
-	userID, err := GetUserIDFromAuthHeader(r)
+	userID, err := GetUserIDFromRequest(r)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("unauthorized: " + err.Error()))
@@ -81,7 +86,7 @@ func HandleUserPreferences(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
-	userID, err := GetUserIDFromAuthHeader(r)
+	userID, err := GetUserIDFromRequest(r)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("unauthorized: " + err.Error()))
@@ -104,7 +109,7 @@ func HandleUserPreferencesUpdate(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
-	userID, err := GetUserIDFromAuthHeader(r)
+	userID, err := GetUserIDFromRequest(r)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("unauthorized: " + err.Error()))
@@ -127,6 +132,32 @@ func HandleUserPreferencesUpdate(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("db error: " + err.Error()))
 		return
 	}
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("ok"))
+}
+
+// POST /api/auth/callback - sets the JWT as a secure, HttpOnly cookie
+func HandleAuthCallback(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+	var req AuthCallbackRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.Token == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("invalid token"))
+		return
+	}
+	cookie := &http.Cookie{
+		Name:     "auth_token",
+		Value:    req.Token,
+		Path:     "/",
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteLaxMode,
+		Expires:  time.Now().Add(30 * 24 * time.Hour), // 30 days
+	}
+	http.SetCookie(w, cookie)
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("ok"))
 }
