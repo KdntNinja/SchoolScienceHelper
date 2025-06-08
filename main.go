@@ -14,7 +14,22 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// Auth middleware for all user related routes
+func requireAuth(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		userID, err := utils.GetUserIDFromRequest(r)
+		if err != nil || userID == "" {
+			http.Redirect(w, r, "/auth", http.StatusFound)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
 func main() {
+	// =====================
+	// Logging & Environment
+	// =====================
 	log.SetFormatter(&log.TextFormatter{FullTimestamp: true})
 	log.SetLevel(log.InfoLevel)
 
@@ -27,15 +42,20 @@ func main() {
 		log.Warn("AUTH0_CLIENT_ID environment variable is not set!")
 	}
 
+	// =============
+	// HTTP Handlers
+	// =============
 	mux := http.NewServeMux()
 
+	// --- Public Config & Assets ---
 	mux.HandleFunc("/config", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		_, _ = fmt.Fprintf(w, `{"AUTH0_DOMAIN":%q,"AUTH0_CLIENT_ID":%q}`, domain, clientID)
+		_, _ = fmt.Fprintf(w, `{"AUTH0_DOMAIN":%q,"AUTH0_CLIENT_ID":%q}`,
+			domain, clientID)
 	})
-
 	SetupAssetsRoutes(mux)
 
+	// --- Public Pages ---
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			w.WriteHeader(http.StatusMethodNotAllowed)
@@ -69,31 +89,46 @@ func main() {
 		}
 		legalpages.Privacy().Render(r.Context(), w)
 	})
+
+	// --- User Pages (Require Auth) ---
 	mux.HandleFunc("/settings", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 			return
 		}
-		userpages.Settings().Render(r.Context(), w)
+		requireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			userpages.Settings().Render(r.Context(), w)
+		})).ServeHTTP(w, r)
 	})
-
-	db := utils.SetupDB()
-	utils.SetDB(db)
-
 	mux.HandleFunc("/dash", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 			return
 		}
-		userpages.Dash().Render(r.Context(), w)
+		requireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			userpages.Dash().Render(r.Context(), w)
+		})).ServeHTTP(w, r)
 	})
-	mux.HandleFunc("/api/project/save", utils.HandleProjectSave)
-	mux.HandleFunc("/api/project/load", utils.HandleProjectLoad)
-	mux.HandleFunc("/api/project/list", utils.HandleProjectList)
-	mux.HandleFunc("/api/project/delete", utils.HandleProjectDelete)
-	mux.HandleFunc("/api/project/publish", utils.HandleProjectPublish)
-	mux.HandleFunc("/api/project/public", utils.HandleProjectLoadPublic)
-	mux.HandleFunc("/api/user/profile", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/newproject", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+		requireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			userpages.NewProject().Render(r.Context(), w)
+		})).ServeHTTP(w, r)
+	})
+
+	// --- API: Project (Require Auth) ---
+	mux.Handle("/api/project/save", requireAuth(http.HandlerFunc(utils.HandleProjectSave)))
+	mux.Handle("/api/project/load", requireAuth(http.HandlerFunc(utils.HandleProjectLoad)))
+	mux.Handle("/api/project/list", requireAuth(http.HandlerFunc(utils.HandleProjectList)))
+	mux.Handle("/api/project/delete", requireAuth(http.HandlerFunc(utils.HandleProjectDelete)))
+	mux.Handle("/api/project/publish", requireAuth(http.HandlerFunc(utils.HandleProjectPublish)))
+	mux.Handle("/api/project/public", requireAuth(http.HandlerFunc(utils.HandleProjectLoadPublic)))
+
+	// --- API: User (Require Auth) ---
+	mux.Handle("/api/user/profile", requireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
 			utils.HandleUserProfile(w, r)
 		} else if r.Method == http.MethodPost {
@@ -101,8 +136,8 @@ func main() {
 		} else {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 		}
-	})
-	mux.HandleFunc("/api/user/password", func(w http.ResponseWriter, r *http.Request) {
+	})))
+	mux.Handle("/api/user/password", requireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 			return
@@ -110,8 +145,8 @@ func main() {
 		// TODO: Implement password change logic
 		w.WriteHeader(http.StatusNotImplemented)
 		w.Write([]byte("not implemented"))
-	})
-	mux.HandleFunc("/api/user/preferences", func(w http.ResponseWriter, r *http.Request) {
+	})))
+	mux.Handle("/api/user/preferences", requireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
 			utils.HandleUserPreferences(w, r)
 		} else if r.Method == http.MethodPost {
@@ -119,8 +154,23 @@ func main() {
 		} else {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 		}
+	})))
+	mux.Handle("/api/user/delete", requireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+		// TODO: Implement account deletion logic
+		w.WriteHeader(http.StatusNotImplemented)
+		w.Write([]byte("not implemented"))
+	})))
+
+	// --- API: Auth Callback (Public) ---
+	mux.HandleFunc("/api/auth/callback", func(w http.ResponseWriter, r *http.Request) {
+		utils.HandleAuthCallback(w, r)
 	})
-	// Handler registration for error pages
+
+	// --- Error Pages ---
 	mux.HandleFunc("/forbidden", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusForbidden)
 		errorpages.Forbidden().Render(r.Context(), w)
@@ -133,17 +183,16 @@ func main() {
 		w.WriteHeader(http.StatusInternalServerError)
 		errorpages.InternalServerError().Render(r.Context(), w)
 	})
-	mux.HandleFunc("/newproject", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodGet {
-			w.WriteHeader(http.StatusMethodNotAllowed)
-			return
-		}
-		userpages.NewProject().Render(r.Context(), w)
-	})
-	mux.HandleFunc("/api/auth/callback", func(w http.ResponseWriter, r *http.Request) {
-		utils.HandleAuthCallback(w, r)
-	})
 
+	// =============
+	// DB Setup
+	// =============
+	db := utils.SetupDB()
+	utils.SetDB(db)
+
+	// =============
+	// Middleware & Server
+	// =============
 	// HSTS middleware
 	hstsMiddleware := func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -155,7 +204,6 @@ func main() {
 		})
 	}
 
-	// Wrap mux with HSTS middleware
 	handler := hstsMiddleware(mux)
 
 	port := os.Getenv("PORT")
