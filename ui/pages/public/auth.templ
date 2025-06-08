@@ -39,12 +39,12 @@ templ Auth() {
 
 			(function() {
 			  const hashParams = parseHashParams(window.location.hash);
-			  if (hashParams.access_token) {
-				// Send token to backend to set cookie
+			  if (hashParams.id_token) {
+				// Send id_token to backend to set cookie
 				fetch('/api/auth/callback', {
 				  method: 'POST',
 				  headers: { 'Content-Type': 'application/json' },
-				  body: JSON.stringify({ token: hashParams.access_token })
+				  body: JSON.stringify({ token: hashParams.id_token })
 				}).then(resp => {
 				  if (resp.ok) {
 					window.location.hash = '';
@@ -68,7 +68,8 @@ templ Auth() {
 			  const domain = window.AUTH0_DOMAIN;
 			  const clientId = window.AUTH0_CLIENT_ID;
 			  const redirectUri = window.location.origin + '/dash';
-			  window.location.href = `https://${domain}/authorize?response_type=token&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&connection=google-oauth2`;
+			  const nonce = Date.now();
+			  window.location.href = `https://${domain}/authorize?response_type=id_token%20token&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=openid%20profile%20email&nonce=${nonce}&connection=google-oauth2`;
 			};
 		</script>
 	}
