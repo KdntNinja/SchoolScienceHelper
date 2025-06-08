@@ -25,12 +25,15 @@ type AuthCallbackRequest struct {
 
 // GET /api/user/profile - returns the current user's profile info
 func HandleUserProfile(w http.ResponseWriter, r *http.Request) {
+	log.Infof("[HandleUserProfile] %s %s from %s", r.Method, r.URL.Path, r.RemoteAddr)
 	if r.Method != http.MethodGet {
+		log.Warnf("[HandleUserProfile] Method not allowed: %s", r.Method)
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
 	userID, err := GetUserIDFromRequest(r)
 	if err != nil {
+		log.Warnf("[HandleUserProfile] Unauthorized: %v", err)
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("unauthorized: " + err.Error()))
 		return
@@ -38,59 +41,72 @@ func HandleUserProfile(w http.ResponseWriter, r *http.Request) {
 	var profile UserProfile
 	err = DB.QueryRow(`SELECT display_name, email FROM users WHERE id=$1`, userID).Scan(&profile.DisplayName, &profile.Email)
 	if err == sql.ErrNoRows {
+		log.Warnf("[HandleUserProfile] User not found: %s", userID)
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte("user not found"))
 		return
 	} else if err != nil {
+		log.Errorf("[HandleUserProfile] DB error: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("db error: " + err.Error()))
 		return
 	}
+	log.Infof("[HandleUserProfile] Success for user %s", userID)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(profile)
 }
 
 // POST /api/user/profile - updates the current user's profile info
 func HandleUserProfileUpdate(w http.ResponseWriter, r *http.Request) {
+	log.Infof("[HandleUserProfileUpdate] %s %s from %s", r.Method, r.URL.Path, r.RemoteAddr)
 	if r.Method != http.MethodPost {
+		log.Warnf("[HandleUserProfileUpdate] Method not allowed: %s", r.Method)
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
 	userID, err := GetUserIDFromRequest(r)
 	if err != nil {
+		log.Warnf("[HandleUserProfileUpdate] Unauthorized: %v", err)
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("unauthorized: " + err.Error()))
 		return
 	}
 	var req UserProfile
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		log.Warnf("[HandleUserProfileUpdate] Invalid JSON: %v", err)
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("invalid json"))
 		return
 	}
 	if req.DisplayName == "" || req.Email == "" {
+		log.Warnf("[HandleUserProfileUpdate] Missing displayName or email")
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("missing displayName or email"))
 		return
 	}
 	_, err = DB.Exec(`UPDATE users SET display_name=$1, email=$2 WHERE id=$3`, req.DisplayName, req.Email, userID)
 	if err != nil {
+		log.Errorf("[HandleUserProfileUpdate] DB error: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("db error: " + err.Error()))
 		return
 	}
+	log.Infof("[HandleUserProfileUpdate] Updated profile for user %s", userID)
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("ok"))
 }
 
 // GET /api/user/preferences - returns the current user's preferences
 func HandleUserPreferences(w http.ResponseWriter, r *http.Request) {
+	log.Infof("[HandleUserPreferences] %s %s from %s", r.Method, r.URL.Path, r.RemoteAddr)
 	if r.Method != http.MethodGet {
+		log.Warnf("[HandleUserPreferences] Method not allowed: %s", r.Method)
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
 	userID, err := GetUserIDFromRequest(r)
 	if err != nil {
+		log.Warnf("[HandleUserPreferences] Unauthorized: %v", err)
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("unauthorized: " + err.Error()))
 		return
@@ -98,50 +114,61 @@ func HandleUserPreferences(w http.ResponseWriter, r *http.Request) {
 	var prefs UserPreferences
 	err = DB.QueryRow(`SELECT theme FROM users WHERE id=$1`, userID).Scan(&prefs.Theme)
 	if err != nil {
+		log.Errorf("[HandleUserPreferences] DB error: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("db error: " + err.Error()))
 		return
 	}
+	log.Infof("[HandleUserPreferences] Success for user %s", userID)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(prefs)
 }
 
 // POST /api/user/preferences - updates the current user's preferences
 func HandleUserPreferencesUpdate(w http.ResponseWriter, r *http.Request) {
+	log.Infof("[HandleUserPreferencesUpdate] %s %s from %s", r.Method, r.URL.Path, r.RemoteAddr)
 	if r.Method != http.MethodPost {
+		log.Warnf("[HandleUserPreferencesUpdate] Method not allowed: %s", r.Method)
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
 	userID, err := GetUserIDFromRequest(r)
 	if err != nil {
+		log.Warnf("[HandleUserPreferencesUpdate] Unauthorized: %v", err)
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("unauthorized: " + err.Error()))
 		return
 	}
 	var req UserPreferences
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		log.Warnf("[HandleUserPreferencesUpdate] Invalid JSON: %v", err)
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("invalid json"))
 		return
 	}
 	if req.Theme == "" {
+		log.Warnf("[HandleUserPreferencesUpdate] Missing theme")
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("missing theme"))
 		return
 	}
 	_, err = DB.Exec(`UPDATE users SET theme=$1 WHERE id=$2`, req.Theme, userID)
 	if err != nil {
+		log.Errorf("[HandleUserPreferencesUpdate] DB error: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("db error: " + err.Error()))
 		return
 	}
+	log.Infof("[HandleUserPreferencesUpdate] Updated preferences for user %s", userID)
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("ok"))
 }
 
 // POST /api/auth/callback - sets the JWT as a secure, HttpOnly cookie
 func HandleAuthCallback(w http.ResponseWriter, r *http.Request) {
+	log.Infof("[HandleAuthCallback] %s %s from %s", r.Method, r.URL.Path, r.RemoteAddr)
 	if r.Method != http.MethodPost {
+		log.Warnf("[HandleAuthCallback] Method not allowed: %s", r.Method)
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
