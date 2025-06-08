@@ -21,27 +21,18 @@ templ Settings() {
 					}
 				}
 				@card.Content(card.ContentProps{Class: "w-full"}) {
-					<div class="flex flex-col md:flex-row gap-8 w-full justify-center items-start" style="min-width:0;">
-						<!-- Sidebar Navigation (Desktop) -->
-						<nav class="hidden md:block w-56 flex-shrink-0">
-							<ul class="flex flex-col gap-1 sticky top-24">
+					<div class="flex flex-row gap-8 w-full justify-center items-start" style="min-width:0;">
+						<!-- Sidebar Navigation (Vertical Tabs, always visible on left) -->
+						<nav class="w-56 flex-shrink-0 flex flex-col items-end pr-2">
+							<ul class="flex flex-col gap-1 sticky top-24 w-full">
 								<li><button type="button" class="settings-tab block w-full text-left px-4 py-2 rounded hover:bg-muted/60 font-medium text-primary transition" data-tab="profile">Profile</button></li>
 								<li><button type="button" class="settings-tab block w-full text-left px-4 py-2 rounded hover:bg-muted/60 font-medium text-primary transition" data-tab="security">Security</button></li>
 								<li><button type="button" class="settings-tab block w-full text-left px-4 py-2 rounded hover:bg-muted/60 font-medium text-primary transition" data-tab="preferences">Preferences</button></li>
 								<li><button type="button" class="settings-tab block w-full text-left px-4 py-2 rounded hover:bg-destructive/10 font-medium text-destructive transition" data-tab="danger">Danger Zone</button></li>
 							</ul>
 						</nav>
-						<!-- Mobile Tab Navigation -->
-						<nav class="block md:hidden w-full mb-4">
-							<ul class="flex flex-row gap-1 w-full">
-								<li class="flex-1"><button type="button" class="settings-tab w-full px-2 py-2 rounded hover:bg-muted/60 font-medium text-primary transition" data-tab="profile">Profile</button></li>
-								<li class="flex-1"><button type="button" class="settings-tab w-full px-2 py-2 rounded hover:bg-muted/60 font-medium text-primary transition" data-tab="security">Security</button></li>
-								<li class="flex-1"><button type="button" class="settings-tab w-full px-2 py-2 rounded hover:bg-muted/60 font-medium text-primary transition" data-tab="preferences">Preferences</button></li>
-								<li class="flex-1"><button type="button" class="settings-tab w-full px-2 py-2 rounded hover:bg-destructive/10 font-medium text-destructive transition" data-tab="danger">Danger Zone</button></li>
-							</ul>
-						</nav>
-						<!-- Tab Content -->
-						<div class="flex-1 min-w-0 max-w-2xl mx-auto flex flex-col gap-8">
+						<!-- Tab Content (centered to the right of sidebar) -->
+						<div class="flex-1 min-w-0 max-w-2xl mx-auto flex flex-col gap-8 items-center justify-center">
 							<div id="tab-profile" class="settings-tab-content">
 								<section class="flex flex-col gap-4 p-6 bg-muted/40 rounded-lg border border-border">
 									<h2 class="text-xl font-semibold text-primary mb-2">Profile</h2>
