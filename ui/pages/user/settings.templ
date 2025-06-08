@@ -68,14 +68,49 @@ templ Settings() {
 							<div id="tab-preferences" class="settings-tab-content w-full hidden">
 								<section class="flex flex-col gap-4 p-6 bg-muted/40 rounded-lg border border-border w-full shadow-md hover:shadow-lg transition-shadow">
 									<h2 class="text-xl font-semibold text-primary mb-2">Preferences</h2>
-									<form class="flex flex-col gap-4 w-full" method="POST" action="/api/user/preferences">
+									<form class="flex flex-col gap-4 w-full" method="POST" action="/api/user/preferences" id="preferences-form">
 										@label.Label(label.Props{}) {
-											Theme
+											Theme 
 										}
 										<select name="theme" class="input input-bordered w-full" id="theme-select">
 											<option value="system">System</option>
 											<option value="light">Light</option>
 											<option value="dark">Dark</option>
+										</select>
+										@label.Label(label.Props{}) {
+											Email Notifications 
+										}
+										<select name="notificationsEmail" class="input input-bordered w-full" id="notifications-email-select">
+											<option value="true">Enabled</option>
+											<option value="false">Disabled</option>
+										</select>
+										@label.Label(label.Props{}) {
+											Language 
+										}
+										<select name="language" class="input input-bordered w-full" id="language-select">
+											<option value="en">English</option>
+											<option value="es">Spanish</option>
+											<option value="fr">French</option>
+											<option value="de">German</option>
+											<option value="zh">Chinese</option>
+											<option value="ja">Japanese</option>
+											<option value="ko">Korean</option>
+											<option value="">Other</option>
+										</select>
+										@label.Label(label.Props{}) {
+											Font Size 
+										}
+										<select name="fontSize" class="input input-bordered w-full" id="font-size-select">
+											<option value="normal">Normal</option>
+											<option value="large">Large</option>
+											<option value="x-large">Extra Large</option>
+										</select>
+										@label.Label(label.Props{}) {
+											High Contrast Mode 
+										}
+										<select name="highContrast" class="input input-bordered w-full" id="high-contrast-select">
+											<option value="false">Off</option>
+											<option value="true">On</option>
 										</select>
 										@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("primary")}) {
 											Save Preferences
@@ -126,12 +161,55 @@ document.addEventListener("DOMContentLoaded", () => {
 	fetch("/api/user/preferences")
 		.then(resp => resp.ok ? resp.json() : null)
 		.then(data => {
-			if (data && data.theme) {
-				const themeSelect = document.getElementById("theme-select");
-				if (themeSelect) themeSelect.value = data.theme;
+			if (data) {
+				if (data.theme) {
+					const themeSelect = document.getElementById("theme-select");
+					if (themeSelect) themeSelect.value = data.theme;
+				}
+				if (typeof data.notificationsEmail !== 'undefined') {
+					const notifSelect = document.getElementById("notifications-email-select");
+					if (notifSelect) notifSelect.value = String(data.notificationsEmail);
+				}
+				if (data.language) {
+					const langSelect = document.getElementById("language-select");
+					if (langSelect) langSelect.value = data.language;
+				}
+				if (data.fontSize) {
+					const fontSizeSelect = document.getElementById("font-size-select");
+					if (fontSizeSelect) fontSizeSelect.value = data.fontSize;
+				}
+				if (typeof data.highContrast !== 'undefined') {
+					const hcSelect = document.getElementById("high-contrast-select");
+					if (hcSelect) hcSelect.value = String(data.highContrast);
+				}
 			}
 		});
-});
+
+	// Intercept preferences form submit to POST JSON
+	const prefsForm = document.getElementById('preferences-form');
+	if (prefsForm) {
+		prefsForm.addEventListener('submit', function(e) {
+			e.preventDefault();
+			const formData = new FormData(prefsForm);
+			const payload = {
+				theme: formData.get('theme'),
+				notificationsEmail: formData.get('notificationsEmail') === 'true',
+				language: formData.get('language'),
+				fontSize: formData.get('fontSize'),
+				highContrast: formData.get('highContrast') === 'true',
+			};
+			fetch('/api/user/preferences', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(payload)
+			}).then(resp => {
+				if (resp.ok) {
+					// Optionally show a toast or reload
+					location.reload();
+				}
+			});
+		});
+	}
 					</script>
 				}
 			}

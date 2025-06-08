@@ -16,7 +16,11 @@ type UserProfile struct {
 }
 
 type UserPreferences struct {
-	Theme string `json:"theme"`
+	Theme              string `json:"theme"`
+	NotificationsEmail bool   `json:"notificationsEmail"`
+	Language           string `json:"language"`
+	FontSize           string `json:"fontSize"`
+	HighContrast       bool   `json:"highContrast"`
 }
 
 type AuthCallbackRequest struct {
@@ -112,7 +116,7 @@ func HandleUserPreferences(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var prefs UserPreferences
-	err = DB.QueryRow(`SELECT theme FROM users WHERE id=$1`, userID).Scan(&prefs.Theme)
+	err = DB.QueryRow(`SELECT theme, notifications_email, language, font_size, high_contrast FROM users WHERE id=$1`, userID).Scan(&prefs.Theme, &prefs.NotificationsEmail, &prefs.Language, &prefs.FontSize, &prefs.HighContrast)
 	if err != nil {
 		log.Errorf("[HandleUserPreferences] DB error: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -152,7 +156,7 @@ func HandleUserPreferencesUpdate(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("missing theme"))
 		return
 	}
-	_, err = DB.Exec(`UPDATE users SET theme=$1 WHERE id=$2`, req.Theme, userID)
+	_, err = DB.Exec(`UPDATE users SET theme=$1, notifications_email=$2, language=$3, font_size=$4, high_contrast=$5 WHERE id=$6`, req.Theme, req.NotificationsEmail, req.Language, req.FontSize, req.HighContrast, userID)
 	if err != nil {
 		log.Errorf("[HandleUserPreferencesUpdate] DB error: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
