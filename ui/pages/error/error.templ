@@ -1,0 +1,111 @@
+package errorpages
+
+import (
+	"github.com/KdntNinja/ScratchClone/ui/components/button"
+	"github.com/KdntNinja/ScratchClone/ui/components/card"
+	"github.com/KdntNinja/ScratchClone/ui/layouts"
+)
+
+templ NotFound() {
+	@layouts.BaseLayout() {
+		<main class="flex flex-col items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12">
+			@card.Card(card.Props{Class: "bg-card dark:bg-card rounded-lg shadow-xl w-full max-w-lg p-10 border border-border flex flex-col items-center gap-6"}) {
+				@card.Header(card.HeaderProps{}) {
+					@card.Title(card.TitleProps{Class: "text-5xl font-extrabold text-primary mb-2 text-center"}) {
+						404
+					}
+					@card.Description(card.DescriptionProps{Class: "text-xl text-muted-foreground mb-4 text-center"}) {
+						Page Not Found
+					}
+				}
+				@card.Content(card.ContentProps{Class: "flex flex-col items-center gap-4 w-full"}) {
+					<p class="text-base text-center text-muted-foreground max-w-md">
+						Sorry, the page you are looking for doesn't exist or has been moved.<br />
+						You can return to the homepage or explore other parts of the site.
+					</p>
+					@button.Button(button.Props{Href: "/", Class: "mt-2 w-full md:w-auto", Variant: button.Variant("primary")}) {
+						Go Home
+					}
+				}
+			}
+		</main>
+	}
+}
+
+templ InternalServerError() {
+	@layouts.BaseLayout() {
+		<main class="flex flex-col items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12">
+			@card.Card(card.Props{Class: "bg-card dark:bg-card rounded-lg shadow-xl w-full max-w-lg p-10 border border-border flex flex-col items-center gap-6"}) {
+				@card.Header(card.HeaderProps{}) {
+					@card.Title(card.TitleProps{Class: "text-5xl font-extrabold text-primary mb-2 text-center"}) {
+						500
+					}
+					@card.Description(card.DescriptionProps{Class: "text-xl text-muted-foreground mb-4 text-center"}) {
+						Internal Server Error
+					}
+				}
+				@card.Content(card.ContentProps{Class: "flex flex-col items-center gap-4 w-full"}) {
+					<p class="text-base text-center text-muted-foreground max-w-md">
+						Oops! Something went wrong on our end.<br />
+						Please try again later or contact support if the problem persists.
+					</p>
+					@button.Button(button.Props{Href: "/", Class: "mt-2 w-full md:w-auto", Variant: button.Variant("primary")}) {
+						Go Home
+					}
+				}
+			}
+		</main>
+	}
+}
+
+templ Forbidden() {
+	@layouts.BaseLayout() {
+		<main class="flex flex-col items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12">
+			@card.Card(card.Props{Class: "bg-card dark:bg-card rounded-lg shadow-xl w-full max-w-lg p-10 border border-border flex flex-col items-center gap-6"}) {
+				@card.Header(card.HeaderProps{}) {
+					@card.Title(card.TitleProps{Class: "text-5xl font-extrabold text-primary mb-2 text-center"}) {
+						403
+					}
+					@card.Description(card.DescriptionProps{Class: "text-xl text-muted-foreground mb-4 text-center"}) {
+						Forbidden
+					}
+				}
+				@card.Content(card.ContentProps{Class: "flex flex-col items-center gap-4 w-full"}) {
+					<p class="text-base text-center text-muted-foreground max-w-md">
+						You do not have permission to access this page or resource.<br />
+						If you believe this is an error, please contact support.
+					</p>
+					@button.Button(button.Props{Href: "/", Class: "mt-2 w-full md:w-auto", Variant: button.Variant("primary")}) {
+						Go Home
+					}
+				}
+			}
+		</main>
+	}
+}
+
+templ BadRequest() {
+	@layouts.BaseLayout() {
+		<main class="flex flex-col items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12">
+			@card.Card(card.Props{Class: "bg-card dark:bg-card rounded-lg shadow-xl w-full max-w-lg p-10 border border-border flex flex-col items-center gap-6"}) {
+				@card.Header(card.HeaderProps{}) {
+					@card.Title(card.TitleProps{Class: "text-5xl font-extrabold text-primary mb-2 text-center"}) {
+						400
+					}
+					@card.Description(card.DescriptionProps{Class: "text-xl text-muted-foreground mb-4 text-center"}) {
+						Bad Request
+					}
+				}
+				@card.Content(card.ContentProps{Class: "flex flex-col items-center gap-4 w-full"}) {
+					<p class="text-base text-center text-muted-foreground max-w-md">
+						The request could not be understood or was missing required parameters.<br />
+						Please check your input and try again.
+					</p>
+					@button.Button(button.Props{Href: "/", Class: "mt-2 w-full md:w-auto", Variant: button.Variant("primary")}) {
+						Go Home
+					}
+				}
+			}
+		</main>
+	}
+}

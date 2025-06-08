@@ -1,0 +1,66 @@
+package pages
+
+import (
+	"github.com/KdntNinja/ScratchClone/ui/components/button"
+	"github.com/KdntNinja/ScratchClone/ui/components/card"
+	"github.com/KdntNinja/ScratchClone/ui/components/input"
+	"github.com/KdntNinja/ScratchClone/ui/components/label"
+	"github.com/KdntNinja/ScratchClone/ui/layouts"
+)
+
+templ Settings() {
+	@layouts.BaseLayout() {
+		<main class="flex flex-col items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12">
+			@card.Card(card.Props{Class: "bg-card dark:bg-card rounded-lg shadow-xl w-full max-w-2xl p-10 border border-border flex flex-col gap-8"}) {
+				@card.Header(card.HeaderProps{}) {
+					@card.Title(card.TitleProps{Class: "text-3xl font-extrabold text-center mb-2 text-primary tracking-tight"}) {
+						Account Settings
+					}
+					@card.Description(card.DescriptionProps{Class: "text-center text-lg text-muted-foreground mb-6"}) {
+						Manage your profile, security, and preferences.
+					}
+				}
+				@card.Content(card.ContentProps{Class: "flex flex-col gap-10"}) {
+					<section class="flex flex-col gap-6">
+						<h2 class="text-xl font-semibold text-primary">Profile</h2>
+						<form class="flex flex-col gap-4 max-w-md" method="POST" action="/api/user/profile">
+							@label.Label(label.Props{}) { Display Name }
+							@input.Input(input.Props{Type: "text", Name: "displayName", Placeholder: "Your display name", Class: "input input-bordered w-full"})
+							@label.Label(label.Props{}) { Email }
+							@input.Input(input.Props{Type: "email", Name: "email", Placeholder: "you@email.com", Class: "input input-bordered w-full"})
+							@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("primary")}) { Save Profile }
+						</form>
+					</section>
+					<section class="flex flex-col gap-6">
+						<h2 class="text-xl font-semibold text-primary">Security</h2>
+						<form class="flex flex-col gap-4 max-w-md" method="POST" action="/api/user/password">
+							@label.Label(label.Props{}) { New Password }
+							@input.Input(input.Props{Type: "password", Name: "newPassword", Placeholder: "New password", Class: "input input-bordered w-full"})
+							@label.Label(label.Props{}) { Confirm Password }
+							@input.Input(input.Props{Type: "password", Name: "confirmPassword", Placeholder: "Confirm password", Class: "input input-bordered w-full"})
+							@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("primary")}) { Change Password }
+						</form>
+					</section>
+					<section class="flex flex-col gap-6">
+						<h2 class="text-xl font-semibold text-primary">Preferences</h2>
+						<form class="flex flex-col gap-4 max-w-md" method="POST" action="/api/user/preferences">
+							@label.Label(label.Props{}) { Theme }
+							<select name="theme" class="input input-bordered w-full">
+								<option value="system">System</option>
+								<option value="light">Light</option>
+								<option value="dark">Dark</option>
+							</select>
+							@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("primary")}) { Save Preferences }
+						</form>
+					</section>
+					<section class="flex flex-col gap-6">
+						<h2 class="text-xl font-semibold text-destructive">Danger Zone</h2>
+						<form class="flex flex-col gap-4 max-w-md" method="POST" action="/api/user/delete" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
+							@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("destructive")}) { Delete Account }
+						</form>
+					</section>
+				}
+			}
+		</main>
+	}
+}

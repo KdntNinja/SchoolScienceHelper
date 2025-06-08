@@ -6,9 +6,11 @@ import (
 	"os"
 
 	"github.com/KdntNinja/ScratchClone/assets"
-	"github.com/KdntNinja/ScratchClone/ui/pages"
+	errorpages "github.com/KdntNinja/ScratchClone/ui/pages/error"
+	legalpages "github.com/KdntNinja/ScratchClone/ui/pages/legal"
+	publicpages "github.com/KdntNinja/ScratchClone/ui/pages/public"
+	userpages "github.com/KdntNinja/ScratchClone/ui/pages/user"
 	"github.com/KdntNinja/ScratchClone/utils"
-	"github.com/a-h/templ"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -39,47 +41,78 @@ func main() {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 			return
 		}
-		templ.Handler(pages.Landing()).ServeHTTP(w, r)
+		if r.URL.Path != "/" {
+			w.WriteHeader(http.StatusNotFound)
+			errorpages.NotFound().Render(r.Context(), w)
+			return
+		}
+		publicpages.Landing().Render(r.Context(), w)
 	})
 	mux.HandleFunc("/auth", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 			return
 		}
-		templ.Handler(pages.Auth()).ServeHTTP(w, r)
+		publicpages.Auth().Render(r.Context(), w)
 	})
 	mux.HandleFunc("/terms", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 			return
 		}
-		templ.Handler(pages.Terms()).ServeHTTP(w, r)
+		legalpages.Terms().Render(r.Context(), w)
 	})
 	mux.HandleFunc("/privacy", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 			return
 		}
-		templ.Handler(pages.Privacy()).ServeHTTP(w, r)
+		legalpages.Privacy().Render(r.Context(), w)
 	})
 	mux.HandleFunc("/settings", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 			return
 		}
-		templ.Handler(pages.Settings()).ServeHTTP(w, r)
+		userpages.Settings().Render(r.Context(), w)
 	})
 
 	db := utils.SetupDB()
 	utils.SetDB(db)
 
-	mux.HandleFunc("/dash", handleDash)
+	mux.HandleFunc("/dash", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+		userpages.Dash().Render(r.Context(), w)
+	})
 	mux.HandleFunc("/api/project/save", utils.HandleProjectSave)
 	mux.HandleFunc("/api/project/load", utils.HandleProjectLoad)
 	mux.HandleFunc("/api/project/list", utils.HandleProjectList)
 	mux.HandleFunc("/api/project/delete", utils.HandleProjectDelete)
 	mux.HandleFunc("/api/project/publish", utils.HandleProjectPublish)
 	mux.HandleFunc("/api/project/public", utils.HandleProjectLoadPublic)
+	// Handler registration for error pages
+	mux.HandleFunc("/forbidden", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusForbidden)
+		errorpages.Forbidden().Render(r.Context(), w)
+	})
+	mux.HandleFunc("/badrequest", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusBadRequest)
+		errorpages.BadRequest().Render(r.Context(), w)
+	})
+	mux.HandleFunc("/error", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusInternalServerError)
+		errorpages.InternalServerError().Render(r.Context(), w)
+	})
+	mux.HandleFunc("/newproject", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+		userpages.NewProject().Render(r.Context(), w)
+	})
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -107,15 +140,4 @@ func SetupAssetsRoutes(mux *http.ServeMux) {
 		fs.ServeHTTP(w, r)
 	})
 	mux.Handle("GET /assets/", http.StripPrefix("/assets/", assetHandler))
-}
-
-func handleDash(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		return
-	}
-	// No need to fetch projects here; frontend loads them via /api/project/list
-	if err := pages.Dash().Render(r.Context(), w); err != nil {
-		http.Error(w, "Failed to render dashboard", http.StatusInternalServerError)
-	}
 }

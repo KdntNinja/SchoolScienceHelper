@@ -1,0 +1,39 @@
+package pages
+
+import (
+	"github.com/KdntNinja/ScratchClone/ui/components/button"
+	"github.com/KdntNinja/ScratchClone/ui/components/card"
+	"github.com/KdntNinja/ScratchClone/ui/layouts"
+)
+
+templ NewProject() {
+	@layouts.BaseLayout() {
+		<main class="flex flex-col items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12">
+			@card.Card(card.Props{Class: "bg-card dark:bg-card rounded-lg shadow-xl w-full max-w-lg p-10 border border-border flex flex-col gap-8"}) {
+				@card.Header(card.HeaderProps{}) {
+					@card.Title(card.TitleProps{Class: "text-3xl font-extrabold text-center mb-4 text-primary tracking-tight"}) {
+						Create New Project
+					}
+					@card.Description(card.DescriptionProps{Class: "text-center text-lg text-muted-foreground mb-8"}) {
+						Start a new Scratch-like project. Give it a name and description to get started!
+					}
+				}
+				@card.Content(card.ContentProps{}) {
+					<form id="new-project-form" class="flex flex-col gap-6" method="POST" action="/api/project/save">
+						<label class="flex flex-col gap-2">
+							<span class="font-medium">Project Name</span>
+							<input name="name" type="text" required class="input input-bordered w-full" placeholder="My Awesome Project" />
+						</label>
+						<label class="flex flex-col gap-2">
+							<span class="font-medium">Description</span>
+							<textarea name="description" class="input input-bordered w-full min-h-[80px]" placeholder="What is this project about?"></textarea>
+						</label>
+						@button.Button(button.Props{Type: "submit", Class: "w-full mt-4", Variant: button.Variant("primary")}) {
+							Create Project
+						}
+					</form>
+				}
+			}
+		</main>
+	}
+}
