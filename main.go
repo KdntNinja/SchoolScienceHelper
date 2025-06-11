@@ -93,15 +93,13 @@ func main() {
 	})
 
 	// --- User Pages (Require Auth) ---
-	mux.HandleFunc("/settings", func(w http.ResponseWriter, r *http.Request) {
+	mux.Handle("/settings", requireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 			return
 		}
-		requireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			userpages.Settings().Render(r.Context(), w)
-		})).ServeHTTP(w, r)
-	})
+		userpages.Settings().Render(r.Context(), w)
+	})))
 	mux.HandleFunc("/dash", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			w.WriteHeader(http.StatusMethodNotAllowed)
