@@ -18,101 +18,92 @@ templ Settings() {
 				}
 				@card.Content(card.ContentProps{}) {
 					<!-- Profile Section -->
-					<section class="mb-8">
-						<h2 class="text-xl font-semibold mb-2">Profile</h2>
-						<form id="profile-form" method="post" action="/api/user/profile" class="space-y-4">
-							<div>
-								@label.Label(label.Props{For: "username", Class: "block font-medium"}) { Username }
+					<section class="mb-10">
+						<h2 class="text-xl font-semibold mb-4 border-b border-border pb-2">Profile</h2>
+						<form id="profile-form" method="post" action="/api/user/profile" class="space-y-6">
+							<div class="flex flex-col gap-1">
+								@label.Label(label.Props{For: "username", Class: "font-medium"}) { Username }
 								@input.Input(input.Props{ID: "username", Name: "username", Type: input.TypeText, Required: true, Class: "input input-bordered w-full"})
 							</div>
-							<div>
-								@label.Label(label.Props{For: "email", Class: "block font-medium"}) { Email }
-								@input.Input(input.Props{ID: "email", Name: "email", Type: input.TypeEmail, Required: true, Disabled: true, Class: "input input-bordered w-full"})
+							<div class="flex justify-end">
+								@button.Button(button.Props{Type: "submit", Class: "btn btn-primary"}) { Save Profile }
 							</div>
-							@button.Button(button.Props{Type: "submit", Class: "btn btn-primary"}) { Save Profile }
 						</form>
 					</section>
 
 					<!-- Preferences Section -->
-					<section class="mb-8">
-						<h2 class="text-xl font-semibold mb-2">Preferences</h2>
-						<form id="preferences-form" method="post" action="/api/user/preferences" class="space-y-4">
-							<div>
-								@label.Label(label.Props{For: "theme", Class: "block font-medium"}) { Theme }
+					<section class="mb-10">
+						<h2 class="text-xl font-semibold mb-4 border-b border-border pb-2">Preferences</h2>
+						<form id="preferences-form" method="post" action="/api/user/preferences" class="space-y-6">
+							<div class="flex flex-col gap-1">
+								@label.Label(label.Props{For: "theme", Class: "font-medium"}) { Theme }
 								<select id="theme" name="theme" class="select select-bordered w-full">
 									<option value="light">Light</option>
 									<option value="dark">Dark</option>
 									<option value="system">System</option>
 								</select>
 							</div>
-							<div>
-								@label.Label(label.Props{For: "language", Class: "block font-medium"}) { Language }
-								<select id="language" name="language" class="select select-bordered w-full">
-									<option value="en">English</option>
-									<option value="es">Spanish</option>
-									<option value="fr">French</option>
-									<!-- Add more languages as needed -->
-								</select>
+							<div class="flex justify-end">
+								@button.Button(button.Props{Type: "submit", Class: "btn btn-primary"}) { Save Preferences }
 							</div>
-							@button.Button(button.Props{Type: "submit", Class: "btn btn-primary"}) { Save Preferences }
 						</form>
 						<script>
-	// On page load, fetch user preferences and set theme selector
-	document.addEventListener('DOMContentLoaded', function() {
-		fetch('/api/user/preferences', { credentials: 'include' })
-			.then(r => r.ok ? r.json() : null)
-			.then(prefs => {
-				if (!prefs) return;
-				const themeSel = document.getElementById('theme');
-				if (themeSel && prefs.theme) {
-					themeSel.value = prefs.theme;
-					if (prefs.theme === 'dark' || prefs.theme === 'light') {
-						localStorage.setItem('appTheme', prefs.theme);
-						document.documentElement.classList.toggle('dark', prefs.theme === 'dark');
-					} else {
-						localStorage.removeItem('appTheme');
-						document.documentElement.classList.add('dark'); // default
-					}
-				}
-				const langSel = document.getElementById('language');
-				if (langSel && prefs.language) langSel.value = prefs.language;
-			});
+						document.addEventListener('DOMContentLoaded', function() {
+							fetch('/api/user/preferences', { credentials: 'include' })
+								.then(r => r.ok ? r.json() : null)
+								.then(prefs => {
+									if (!prefs) return;
+									const themeSel = document.getElementById('theme');
+									if (themeSel && prefs.theme) {
+										themeSel.value = prefs.theme;
+										if (prefs.theme === 'dark' || prefs.theme === 'light') {
+											localStorage.setItem('appTheme', prefs.theme);
+											document.documentElement.classList.toggle('dark', prefs.theme === 'dark');
+										} else {
+											localStorage.removeItem('appTheme');
+											document.documentElement.classList.add('dark');
+										}
+									}
+								});
 
-		// Keep theme selector and theme switcher in sync
-		const themeSel = document.getElementById('theme');
-		if (themeSel) {
-			themeSel.addEventListener('change', function() {
-				const val = themeSel.value;
-				if (val === 'dark' || val === 'light') {
-					localStorage.setItem('appTheme', val);
-					document.documentElement.classList.toggle('dark', val === 'dark');
-				} else {
-					localStorage.removeItem('appTheme');
-					document.documentElement.classList.add('dark');
-				}
-				// If Alpine/Templ themeHandler exists, update it
-				if (window.Alpine && Alpine.store && Alpine.store('themeHandler')) {
-					Alpine.store('themeHandler').isDark = (val === 'dark');
-				}
-			});
-		}
-	});
-	</script>
+							const themeSel = document.getElementById('theme');
+							if (themeSel) {
+								themeSel.addEventListener('change', function() {
+									const val = themeSel.value;
+									if (val === 'dark' || val === 'light') {
+										localStorage.setItem('appTheme', val);
+										document.documentElement.classList.toggle('dark', val === 'dark');
+									} else {
+										localStorage.removeItem('appTheme');
+										document.documentElement.classList.add('dark');
+									}
+									if (window.Alpine && Alpine.store && Alpine.store('themeHandler')) {
+										Alpine.store('themeHandler').isDark = (val === 'dark');
+									}
+								});
+							}
+						});
+						</script>
 					</section>
 
 					<!-- Security Section -->
-					<section class="mb-8">
-						<h2 class="text-xl font-semibold mb-2">Security</h2>
+					<section class="mb-10">
+						<h2 class="text-xl font-semibold mb-4 border-b border-border pb-2">Security</h2>
 						<div class="mb-4">
 							<p class="mb-2">Authentication is managed via Google. To change your password or manage your account, use your Google Account settings.</p>
-							@button.Button(button.Props{Href: "https://myaccount.google.com/security", Class: "btn btn-secondary", Target: "_blank"}) { Manage Google Account }
+							@button.Button(button.Props{
+								Href: "https://myaccount.google.com/security",
+								Class: "btn btn-secondary",
+								Target: "_blank"
+							}) { Manage Google Account }
 						</div>
 					</section>
 
 					<!-- Danger Zone -->
 					<section>
-						<h2 class="text-xl font-semibold mb-2 text-red-600">Danger Zone</h2>
-						<form id="delete-account-form" method="post" action="/api/user/delete" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
+						<h2 class="text-xl font-semibold mb-4 text-red-600 border-b border-border pb-2">Danger Zone</h2>
+						<form id="delete-account-form" method="post" action="/api/user/delete"
+							onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
 							@button.Button(button.Props{Type: "submit", Class: "btn btn-error"}) { Delete Account }
 						</form>
 					</section>
