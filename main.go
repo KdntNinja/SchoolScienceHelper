@@ -7,7 +7,6 @@ import (
 
 	"github.com/KdntNinja/ScratchClone/assets"
 	errorpages "github.com/KdntNinja/ScratchClone/ui/pages/error"
-	legalpages "github.com/KdntNinja/ScratchClone/ui/pages/legal"
 	publicpages "github.com/KdntNinja/ScratchClone/ui/pages/public"
 	userpages "github.com/KdntNinja/ScratchClone/ui/pages/user"
 	"github.com/KdntNinja/ScratchClone/utils"
@@ -78,20 +77,14 @@ func main() {
 		publicpages.Auth().Render(r.Context(), w)
 	})
 	mux.HandleFunc("/terms", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodGet {
-			w.WriteHeader(http.StatusMethodNotAllowed)
-			return
-		}
-		legalpages.Terms().Render(r.Context(), w)
+	mux.HandleFunc("/terms", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNotImplemented)
+		fmt.Fprintln(w, "Terms page not implemented")
 	})
 	mux.HandleFunc("/privacy", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodGet {
-			w.WriteHeader(http.StatusMethodNotAllowed)
-			return
-		}
-		legalpages.Privacy().Render(r.Context(), w)
+		w.WriteHeader(http.StatusNotImplemented)
+		fmt.Fprintln(w, "Privacy page not implemented")
 	})
-
 	// --- User Pages (Require Auth) ---
 	mux.Handle("/settings", requireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
