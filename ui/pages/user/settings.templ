@@ -10,309 +10,112 @@ import (
 
 templ Settings() {
 	@layouts.BaseLayout() {
-		<main class="flex flex-col items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12">
-			@card.Card(card.Props{Class: "bg-card dark:bg-card rounded-lg shadow-xl w-full max-w-2xl p-10 border border-border flex flex-col gap-8"}) {
-				@card.Header(card.HeaderProps{Class: "border-b border-border pb-4 mb-4"}) {
-					@card.Title(card.TitleProps{Class: "text-3xl font-extrabold text-left mb-1 text-primary tracking-tight"}) {
-						Account Settings
-					}
-					@card.Description(card.DescriptionProps{Class: "text-left text-base text-muted-foreground"}) {
-						Manage your profile, security, and preferences.
+		<main class="flex flex-col items-center min-h-[calc(100vh-72px)] bg-background px-4 py-12">
+			@card.Card(card.Props{Class: "max-w-2xl w-full py-12 px-6 bg-background text-foreground rounded-xl shadow-lg border border-border"}) {
+				@card.Header(card.HeaderProps{}) {
+					@card.Title(card.TitleProps{Class: "text-3xl font-bold mb-2 text-primary"}) { Account Settings }
+					@card.Description(card.DescriptionProps{Class: "mb-6 text-muted-foreground"}) { Manage your profile, preferences, and account. }
+				}
+				@card.Content(card.ContentProps{}) {
+					<!-- Profile Section -->
+					<section class="mb-8">
+						<h2 class="text-xl font-semibold mb-2">Profile</h2>
+						<form id="profile-form" method="post" action="/api/user/profile" class="space-y-4">
+							<div>
+								@label.Label(label.Props{For: "username", Class: "block font-medium"}) { Username }
+								@input.Input(input.Props{ID: "username", Name: "username", Type: input.TypeText, Required: true, Class: "input input-bordered w-full"})
+							</div>
+							<div>
+								@label.Label(label.Props{For: "email", Class: "block font-medium"}) { Email }
+								@input.Input(input.Props{ID: "email", Name: "email", Type: input.TypeEmail, Required: true, Disabled: true, Class: "input input-bordered w-full"})
+							</div>
+							@button.Button(button.Props{Type: "submit", Class: "btn btn-primary"}) { Save Profile }
+						</form>
+					</section>
+
+					<!-- Preferences Section -->
+					<section class="mb-8">
+						<h2 class="text-xl font-semibold mb-2">Preferences</h2>
+						<form id="preferences-form" method="post" action="/api/user/preferences" class="space-y-4">
+							<div>
+								@label.Label(label.Props{For: "theme", Class: "block font-medium"}) { Theme }
+								<select id="theme" name="theme" class="select select-bordered w-full">
+									<option value="light">Light</option>
+									<option value="dark">Dark</option>
+									<option value="system">System</option>
+								</select>
+							</div>
+							<div>
+								@label.Label(label.Props{For: "language", Class: "block font-medium"}) { Language }
+								<select id="language" name="language" class="select select-bordered w-full">
+									<option value="en">English</option>
+									<option value="es">Spanish</option>
+									<option value="fr">French</option>
+									<!-- Add more languages as needed -->
+								</select>
+							</div>
+							@button.Button(button.Props{Type: "submit", Class: "btn btn-primary"}) { Save Preferences }
+						</form>
+						<script>
+	// On page load, fetch user preferences and set theme selector
+	document.addEventListener('DOMContentLoaded', function() {
+		fetch('/api/user/preferences', { credentials: 'include' })
+			.then(r => r.ok ? r.json() : null)
+			.then(prefs => {
+				if (!prefs) return;
+				const themeSel = document.getElementById('theme');
+				if (themeSel && prefs.theme) {
+					themeSel.value = prefs.theme;
+					if (prefs.theme === 'dark' || prefs.theme === 'light') {
+						localStorage.setItem('appTheme', prefs.theme);
+						document.documentElement.classList.toggle('dark', prefs.theme === 'dark');
+					} else {
+						localStorage.removeItem('appTheme');
+						document.documentElement.classList.add('dark'); // default
 					}
 				}
-				@card.Content(card.ContentProps{Class: "w-full"}) {
-					<div class="flex flex-row gap-8 w-full justify-center items-start xl:gap-16 xl:px-8" style="min-width:0;">
-						<!-- Sidebar Navigation (Vertical Tabs, always visible on left) -->
-						<nav class="w-56 flex-shrink-0 flex flex-col items-end pr-2 xl:pr-6">
-							<ul class="flex flex-col gap-1 sticky top-24 w-full">
-								<li><button type="button" class="settings-tab block w-full text-left px-4 py-2 rounded hover:bg-muted/60 font-medium text-primary transition" data-tab="profile">Profile</button></li>
-								<li><button type="button" class="settings-tab block w-full text-left px-4 py-2 rounded hover:bg-muted/60 font-medium text-primary transition" data-tab="security">Security</button></li>
-								<li><button type="button" class="settings-tab block w-full text-left px-4 py-2 rounded hover:bg-muted/60 font-medium text-primary transition" data-tab="preferences">Preferences</button></li>
-								<li><button type="button" class="settings-tab block w-full text-left px-4 py-2 rounded hover:bg-destructive/10 font-medium text-destructive transition" data-tab="danger">Danger Zone</button></li>
-							</ul>
-						</nav>
-						<!-- Tab Content (centered to the right of sidebar) -->
-						<div class="flex-1 min-w-0 max-w-4xl mx-auto flex flex-col gap-8 items-stretch justify-center xl:flex-row xl:gap-12 xl:items-start">
-							<div class="w-full xl:w-3/4 flex flex-col gap-8">
-								<div id="tab-profile" class="settings-tab-content">
-									<section class="flex flex-col gap-4 p-6 bg-muted/40 rounded-lg border border-border h-full w-full min-h-[320px] flex-1 xl:min-h-[400px] xl:p-10 xl:gap-8 xl:justify-center xl:shadow-lg">
-										<h2 class="text-xl font-semibold text-primary mb-2">Profile</h2>
-										<div class="flex flex-col md:flex-row md:items-center gap-4 mb-2">
-											<div class="flex-1">
-												<span class="block text-muted-foreground text-sm">Current Display Name</span>
-												<span class="block font-medium text-lg" id="current-display-name">Loading...</span>
-											</div>
-											<div class="flex-1">
-												<span class="block text-muted-foreground text-sm">Current Email</span>
-												<span class="block font-medium text-lg" id="current-email">Loading...</span>
-											</div>
-										</div>
-										<form class="flex flex-col gap-4 max-w-lg" method="POST" action="/api/user/profile">
-											@label.Label(label.Props{}) {
-												New Display Name
-											}
-											@input.Input(input.Props{Type: "text", Name: "displayName", Placeholder: "Your display name", Class: "input input-bordered w-full"})
-											@label.Label(label.Props{}) {
-												New Email
-											}
-											@input.Input(input.Props{Type: "email", Name: "email", Placeholder: "you@email.com", Class: "input input-bordered w-full"})
-											@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("primary")}) {
-												Save Profile
-											}
-										</form>
-									</section>
-								</div>
-								<div id="tab-security" class="settings-tab-content hidden">
-									<section class="flex flex-col gap-4 p-6 bg-muted/40 rounded-lg border border-border h-full w-full min-h-[320px] flex-1 xl:min-h-[400px] xl:p-10 xl:gap-8 xl:justify-center xl:shadow-lg">
-										<h2 class="text-xl font-semibold text-primary mb-2">Security</h2>
-										<form class="flex flex-col gap-4 max-w-lg" method="POST" action="/api/user/password">
-											@label.Label(label.Props{}) {
-												New Password
-											}
-											@input.Input(input.Props{Type: "password", Name: "newPassword", Placeholder: "New password", Class: "input input-bordered w-full"})
-											@label.Label(label.Props{}) {
-												Confirm Password
-											}
-											@input.Input(input.Props{Type: "password", Name: "confirmPassword", Placeholder: "Confirm password", Class: "input input-bordered w-full"})
-											@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("primary")}) {
-												Change Password
-											}
-										</form>
-									</section>
-								</div>
-								<div id="tab-preferences" class="settings-tab-content hidden">
-									<section class="flex flex-col gap-4 p-6 bg-muted/40 rounded-lg border border-border h-full w-full min-h-[320px] flex-1 xl:min-h-[400px] xl:p-10 xl:gap-8 xl:justify-center xl:shadow-lg">
-										<h2 class="text-xl font-semibold text-primary mb-2">Preferences</h2>
-										<form class="flex flex-col gap-4 max-w-lg" method="POST" action="/api/user/preferences">
-											@label.Label(label.Props{}) {
-												Theme
-											}
-											<select name="theme" class="input input-bordered w-full" id="theme-select">
-												<option value="system">System</option>
-												<option value="light">Light</option>
-												<option value="dark">Dark</option>
-											</select>
-											@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("primary")}) {
-												Save Preferences
-											}
-										</form>
-									</section>
-								</div>
-								<div id="tab-danger" class="settings-tab-content hidden">
-									<section class="flex flex-col gap-4 p-6 bg-destructive/10 rounded-lg border border-destructive h-full w-full min-h-[320px] flex-1 xl:min-h-[400px] xl:p-10 xl:gap-8 xl:justify-center xl:shadow-lg">
-										<h2 class="text-xl font-semibold text-destructive mb-2">Danger Zone</h2>
-										<form class="flex flex-col gap-4 max-w-lg" method="POST" action="/api/user/delete" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
-											@button.Button(button.Props{Type: "submit", Class: "w-full mt-2", Variant: button.Variant("destructive")}) {
-												Delete Account
-											}
-										</form>
-									</section>
-								</div>
-							</div>
-						</div>
-					</div>
-					<!-- Feedback containers for forms -->
-					<div id="profile-feedback" class="text-sm mt-2"></div>
-					<div id="password-feedback" class="text-sm mt-2"></div>
-					<div id="preferences-feedback" class="text-sm mt-2"></div>
-					<div id="danger-feedback" class="text-sm mt-2"></div>
-					<script>
-document.addEventListener("DOMContentLoaded", () => {
-	const tabButtons = document.querySelectorAll('.settings-tab');
-	const tabContents = document.querySelectorAll('.settings-tab-content');
-	tabButtons.forEach(btn => {
-		btn.addEventListener('click', (e) => {
-			tabButtons.forEach(b => b.classList.remove('bg-muted', 'font-bold', 'ring-2', 'ring-primary'));
-			tabContents.forEach(c => c.classList.add('hidden'));
-			btn.classList.add('bg-muted', 'font-bold', 'ring-2', 'ring-primary');
-			document.getElementById('tab-' + btn.dataset.tab).classList.remove('hidden');
-			btn.focus();
-		});
-		btn.setAttribute('tabindex', '0');
-		btn.setAttribute('aria-controls', 'tab-' + btn.dataset.tab);
-	});
-	// Keyboard navigation for tabs
-	document.querySelector('nav').addEventListener('keydown', (e) => {
-		if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-			const idx = Array.from(tabButtons).indexOf(document.activeElement);
-			if (idx !== -1) {
-				const next = e.key === 'ArrowDown' ? (idx + 1) % tabButtons.length : (idx - 1 + tabButtons.length) % tabButtons.length;
-				tabButtons[next].focus();
-				e.preventDefault();
-			}
+				const langSel = document.getElementById('language');
+				if (langSel && prefs.language) langSel.value = prefs.language;
+			});
+
+		// Keep theme selector and theme switcher in sync
+		const themeSel = document.getElementById('theme');
+		if (themeSel) {
+			themeSel.addEventListener('change', function() {
+				const val = themeSel.value;
+				if (val === 'dark' || val === 'light') {
+					localStorage.setItem('appTheme', val);
+					document.documentElement.classList.toggle('dark', val === 'dark');
+				} else {
+					localStorage.removeItem('appTheme');
+					document.documentElement.classList.add('dark');
+				}
+				// If Alpine/Templ themeHandler exists, update it
+				if (window.Alpine && Alpine.store && Alpine.store('themeHandler')) {
+					Alpine.store('themeHandler').isDark = (val === 'dark');
+				}
+			});
 		}
 	});
-	// Default to first tab
-	tabButtons[0].classList.add('bg-muted', 'font-bold', 'ring-2', 'ring-primary');
-	tabContents[0].classList.remove('hidden');
+	</script>
+					</section>
 
-	// --- Profile form ---
-	const profileForm = document.querySelector('form[action="/api/user/profile"]');
-	if (profileForm) {
-		profileForm.addEventListener('submit', async (e) => {
-			e.preventDefault();
-			const feedback = document.getElementById('profile-feedback');
-			feedback.textContent = 'Saving...';
-			feedback.className = 'text-sm mt-2 text-muted-foreground';
-			const displayName = profileForm.querySelector('input[name="displayName"]').value;
-			const email = profileForm.querySelector('input[name="email"]').value;
-			try {
-				const resp = await fetch('/api/user/profile', {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ displayName, email })
-				});
-				if (resp.ok) {
-					feedback.textContent = 'Profile updated!';
-					feedback.className = 'text-sm mt-2 text-green-600';
-					const data = await resp.json();
-					document.getElementById("current-display-name").textContent = data.displayName;
-					document.getElementById("current-email").textContent = data.email;
-				} else {
-					const err = await resp.text();
-					feedback.textContent = err || 'Failed to update profile.';
-					feedback.className = 'text-sm mt-2 text-red-600 font-bold bg-red-100 border border-red-400 rounded px-3 py-2 animate-shake';
-					feedback.style.display = 'block';
-					feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
-				}
-			} catch {
-				feedback.textContent = 'Network error.';
-				feedback.className = 'text-sm mt-2 text-red-600 font-bold bg-red-100 border border-red-400 rounded px-3 py-2 animate-shake';
-				feedback.style.display = 'block';
-				feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
-			}
-		});
-	}
+					<!-- Security Section -->
+					<section class="mb-8">
+						<h2 class="text-xl font-semibold mb-2">Security</h2>
+						<div class="mb-4">
+							<p class="mb-2">Authentication is managed via Google. To change your password or manage your account, use your Google Account settings.</p>
+							@button.Button(button.Props{Href: "https://myaccount.google.com/security", Class: "btn btn-secondary", Target: "_blank"}) { Manage Google Account }
+						</div>
+					</section>
 
-	// --- Password form ---
-	const passwordForm = document.querySelector('form[action="/api/user/password"]');
-	if (passwordForm) {
-		passwordForm.addEventListener('submit', async (e) => {
-			e.preventDefault();
-			const feedback = document.getElementById('password-feedback');
-			feedback.textContent = 'Saving...';
-			feedback.className = 'text-sm mt-2 text-muted-foreground';
-			const formData = new FormData(passwordForm);
-			try {
-				const resp = await fetch('/api/user/password', {
-					method: 'POST',
-					body: formData
-				});
-				if (resp.ok) {
-					feedback.textContent = 'Password changed!';
-					feedback.className = 'text-sm mt-2 text-green-600';
-					passwordForm.reset();
-				} else {
-					const err = await resp.text();
-					feedback.textContent = err || 'Failed to change password.';
-					feedback.className = 'text-sm mt-2 text-red-600 font-bold bg-red-100 border border-red-400 rounded px-3 py-2 animate-shake';
-					feedback.style.display = 'block';
-					feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
-				}
-			} catch {
-				feedback.textContent = 'Network error.';
-				feedback.className = 'text-sm mt-2 text-red-600 font-bold bg-red-100 border border-red-400 rounded px-3 py-2 animate-shake';
-				feedback.style.display = 'block';
-				feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
-			}
-		});
-	}
-
-	// --- Preferences form ---
-	const preferencesForm = document.querySelector('form[action="/api/user/preferences"]');
-	if (preferencesForm) {
-		preferencesForm.addEventListener('submit', async (e) => {
-			e.preventDefault();
-			const feedback = document.getElementById('preferences-feedback');
-			feedback.textContent = 'Saving...';
-			feedback.className = 'text-sm mt-2 text-muted-foreground';
-			const formData = new FormData(preferencesForm);
-			try {
-				const resp = await fetch('/api/user/preferences', {
-					method: 'POST',
-					body: formData
-				});
-				if (resp.ok) {
-					feedback.textContent = 'Preferences saved!';
-					feedback.className = 'text-sm mt-2 text-green-600';
-				} else {
-					const err = await resp.text();
-					feedback.textContent = err || 'Failed to save preferences.';
-					feedback.className = 'text-sm mt-2 text-red-600 font-bold bg-red-100 border border-red-400 rounded px-3 py-2 animate-shake';
-					feedback.style.display = 'block';
-					feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
-				}
-			} catch {
-				feedback.textContent = 'Network error.';
-				feedback.className = 'text-sm mt-2 text-red-600 font-bold bg-red-100 border border-red-400 rounded px-3 py-2 animate-shake';
-				feedback.style.display = 'block';
-				feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
-			}
-		});
-	}
-
-	// --- Danger form ---
-	const dangerForm = document.querySelector('form[action="/api/user/delete"]');
-	if (dangerForm) {
-		dangerForm.addEventListener('submit', async (e) => {
-			const feedback = document.getElementById('danger-feedback');
-			feedback.textContent = 'Processing...';
-			feedback.className = 'text-sm mt-2 text-muted-foreground';
-			const formData = new FormData(dangerForm);
-			try {
-				const resp = await fetch('/api/user/delete', {
-					method: 'POST',
-					body: formData
-				});
-				if (resp.ok) {
-					feedback.textContent = 'Account deleted.';
-					feedback.className = 'text-sm mt-2 text-green-600';
-					setTimeout(() => { window.location.href = '/'; }, 1500);
-				} else {
-					const err = await resp.text();
-					feedback.textContent = err || 'Failed to delete account.';
-					feedback.className = 'text-sm mt-2 text-red-600 font-bold bg-red-100 border border-red-400 rounded px-3 py-2 animate-shake';
-					feedback.style.display = 'block';
-					feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
-				}
-			} catch {
-				feedback.textContent = 'Network error.';
-				feedback.className = 'text-sm mt-2 text-red-600 font-bold bg-red-100 border border-red-400 rounded px-3 py-2 animate-shake';
-				feedback.style.display = 'block';
-				feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
-			}
-		});
-	}
-
-	// Load user info and prefill form
-	fetch("/api/user/profile")
-		.then(resp => resp.ok ? resp.json() : null)
-		.then(data => {
-			const displayNameSpan = document.getElementById("current-display-name");
-			const emailSpan = document.getElementById("current-email");
-			if (data) {
-				if (displayNameSpan) displayNameSpan.textContent = data.displayName || '(not set)';
-				if (emailSpan) emailSpan.textContent = data.email || '(not set)';
-				const displayNameInput = document.querySelector('input[name="displayName"]');
-				const emailInput = document.querySelector('input[name="email"]');
-				if (displayNameInput) displayNameInput.value = data.displayName;
-				if (emailInput) emailInput.value = data.email;
-			} else {
-				if (displayNameSpan) displayNameSpan.textContent = '(not set)';
-				if (emailSpan) emailSpan.textContent = '(not set)';
-			}
-		});
-	// Load user preferences and preselect theme
-	fetch("/api/user/preferences")
-		.then(resp => resp.ok ? resp.json() : null)
-		.then(data => {
-			if (data && data.theme) {
-				const themeSelect = document.getElementById("theme-select");
-				if (themeSelect) themeSelect.value = data.theme;
-			}
-		});
-});
-</script>
+					<!-- Danger Zone -->
+					<section>
+						<h2 class="text-xl font-semibold mb-2 text-red-600">Danger Zone</h2>
+						<form id="delete-account-form" method="post" action="/api/user/delete" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
+							@button.Button(button.Props{Type: "submit", Class: "btn btn-error"}) { Delete Account }
+						</form>
+					</section>
 				}
 			}
 		</main>
