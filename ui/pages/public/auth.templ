@@ -6,26 +6,29 @@ import (
 
 templ Auth() {
 	@layouts.BaseLayout() {
-		<main class="flex items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12 transition-colors">
-			<div class="bg-card dark:bg-card rounded-2xl shadow-2xl w-full max-w-md p-0 border-4 border-border flex flex-col items-center relative overflow-hidden">
-				<div class="w-full flex flex-col items-center justify-center bg-muted py-6 mb-4 border-b border-border">
-					<h2 class="text-3xl font-extrabold text-center text-primary drop-shadow-lg">
+		<main class="flex items-center justify-center min-h-[calc(100vh-72px)] bg-gradient-to-br from-blue-50 via-white to-purple-100 dark:from-gray-900 dark:via-gray-950 dark:to-indigo-900 px-4 py-12 transition-colors">
+			<div class="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl w-full max-w-md p-0 border-4 border-border flex flex-col items-center relative overflow-hidden">
+				<div class="w-full flex flex-col items-center justify-center bg-gradient-to-r from-blue-200 via-purple-200 to-pink-200 dark:from-gray-800 dark:via-gray-900 dark:to-indigo-900 py-8 mb-4 border-b border-border">
+					<img src="/assets/favicon.svg" alt="Logo" class="w-16 h-16 mb-2 rounded-full shadow-lg bg-white dark:bg-gray-900 border-2 border-primary"/>
+					<h2 class="text-3xl font-extrabold text-center text-primary drop-shadow-lg tracking-tight">
 						SchoolScienceHelper
 					</h2>
+					<p class="text-xs text-muted-foreground mt-1">Empowering students and teachers</p>
 				</div>
 				<p class="mb-8 text-center text-foreground font-medium px-2">
 					Your all-in-one platform for
 					<span class="text-primary font-bold">science revision</span>,
 					<span class="text-secondary-foreground font-bold">quizzes</span>, and
-					<span class="text-muted-foreground font-bold">learning</span>.<br/>
-					<span class="text-primary font-semibold">Empowering students and teachers.</span>
+					<span class="text-muted-foreground font-bold">learning</span>.
 				</p>
-				<div id="auth-forms" class="w-full">
+				<div id="auth-forms" class="w-full px-6 pb-6">
 					<!-- Login Form -->
 					<form id="auth-login-form" class="w-full flex flex-col gap-4 mt-2">
-						<input type="email" name="email" placeholder="Email" required class="input input-bordered w-full bg-input border-border focus:border-primary transition" autocomplete="username" />
-						<input type="password" name="password" placeholder="Password" required class="input input-bordered w-full bg-input border-border focus:border-primary transition" autocomplete="current-password" />
-						<button type="submit" class="w-full flex items-center justify-center gap-3 rounded-lg px-4 py-3 bg-primary text-primary-foreground font-semibold text-base shadow hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all min-h-[48px] min-w-[220px]">
+						<label class="text-sm font-semibold text-foreground">Email</label>
+						<input type="email" name="email" placeholder="Email" required class="input input-bordered w-full bg-input border-border focus:border-primary transition rounded-lg px-3 py-2" autocomplete="username" />
+						<label class="text-sm font-semibold text-foreground">Password</label>
+						<input type="password" name="password" placeholder="Password" required class="input input-bordered w-full bg-input border-border focus:border-primary transition rounded-lg px-3 py-2" autocomplete="current-password" />
+						<button type="submit" class="w-full flex items-center justify-center gap-3 rounded-lg px-4 py-3 bg-primary text-primary-foreground font-semibold text-base shadow hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all min-h-[48px] min-w-[220px] mt-2">
 							Sign in
 						</button>
 						<p class="text-xs text-center mt-2">
@@ -35,9 +38,11 @@ templ Auth() {
 					</form>
 					<!-- Signup Form (hidden by default) -->
 					<form id="auth-signup-form" class="w-full flex flex-col gap-4 mt-2 hidden">
-						<input type="email" name="email" placeholder="Email" required class="input input-bordered w-full bg-input border-border focus:border-primary transition" autocomplete="username" />
-						<input type="password" name="password" placeholder="Password" required class="input input-bordered w-full bg-input border-border focus:border-primary transition" autocomplete="new-password" />
-						<button type="submit" class="w-full flex items-center justify-center gap-3 rounded-lg px-4 py-3 bg-secondary text-secondary-foreground font-semibold text-base shadow hover:bg-secondary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all min-h-[48px] min-w-[220px]">
+						<label class="text-sm font-semibold text-foreground">Email</label>
+						<input type="email" name="email" placeholder="Email" required class="input input-bordered w-full bg-input border-border focus:border-primary transition rounded-lg px-3 py-2" autocomplete="username" />
+						<label class="text-sm font-semibold text-foreground">Password</label>
+						<input type="password" name="password" placeholder="Password" required class="input input-bordered w-full bg-input border-border focus:border-primary transition rounded-lg px-3 py-2" autocomplete="new-password" />
+						<button type="submit" class="w-full flex items-center justify-center gap-3 rounded-lg px-4 py-3 bg-secondary text-secondary-foreground font-semibold text-base shadow hover:bg-secondary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all min-h-[48px] min-w-[220px] mt-2">
 							Sign up
 						</button>
 						<p class="text-xs text-center mt-2">
@@ -45,9 +50,9 @@ templ Auth() {
 							<button type="button" id="show-login" class="text-primary underline hover:text-primary-foreground">Sign in</button>
 						</p>
 					</form>
-					<div id="auth-feedback" class="text-sm mt-2"></div>
+					<div id="auth-feedback" class="text-sm mt-2 min-h-[32px] text-center"></div>
 				</div>
-				<p class="mt-6 text-xs text-muted-foreground text-center">
+				<p class="mt-2 text-xs text-muted-foreground text-center px-4 pb-4">
 					By continuing, you agree to our
 					<a href="/terms" class="text-primary hover:underline">Terms & Conditions</a>
 					and
@@ -72,16 +77,26 @@ templ Auth() {
 				loginForm.classList.add('hidden');
 				signupForm.classList.remove('hidden');
 				feedback.textContent = '';
+				feedback.className = 'text-sm mt-2 min-h-[32px] text-center';
 			};
 			document.getElementById('show-login').onclick = function() {
 				signupForm.classList.add('hidden');
 				loginForm.classList.remove('hidden');
 				feedback.textContent = '';
+				feedback.className = 'text-sm mt-2 min-h-[32px] text-center';
 			};
+			function showError(msg, detail, status) {
+				feedback.innerHTML = `<span class='font-bold text-red-600'>${msg}</span>` + (status ? ` <span class='text-xs text-muted-foreground'>(HTTP ${status})</span>` : '') + (detail ? `<pre class='block mt-1 text-xs text-red-700 bg-red-50 dark:bg-red-900/40 rounded p-2 overflow-x-auto'>${detail}</pre>` : '');
+				feedback.className = 'text-sm mt-2 min-h-[32px] text-center font-bold bg-red-100 dark:bg-red-900 border border-red-400 rounded px-3 py-2 animate-shake';
+			}
+			function showSuccess(msg) {
+				feedback.textContent = msg;
+				feedback.className = 'text-sm mt-2 min-h-[32px] text-center text-green-700 bg-green-100 dark:bg-green-900 border border-green-400 rounded px-3 py-2';
+			}
 			loginForm.onsubmit = async function(e) {
 				e.preventDefault();
 				feedback.textContent = 'Signing in...';
-				feedback.className = 'text-sm mt-2 text-muted-foreground';
+				feedback.className = 'text-sm mt-2 min-h-[32px] text-center text-muted-foreground';
 				const email = this.email.value;
 				const password = this.password.value;
 				try {
@@ -107,19 +122,18 @@ templ Auth() {
 						});
 						window.location.replace('/dash');
 					} else {
-						const err = await resp.json();
-						feedback.textContent = err.error_description || 'Login failed.';
-						feedback.className = 'text-sm mt-2 text-red-600 font-bold bg-red-100 dark:bg-red-900 border border-red-400 rounded px-3 py-2 animate-shake';
+						let err, text;
+						try { err = await resp.json(); text = JSON.stringify(err, null, 2); } catch { text = await resp.text(); }
+						showError(err?.error_description || 'Login failed.', text, resp.status);
 					}
-				} catch {
-					feedback.textContent = 'Network error.';
-					feedback.className = 'text-sm mt-2 text-red-600 font-bold bg-red-100 dark:bg-red-900 border border-red-400 rounded px-3 py-2 animate-shake';
+				} catch (ex) {
+					showError('Network or unexpected error.', ex?.message || ex);
 				}
 			};
 			signupForm.onsubmit = async function(e) {
 				e.preventDefault();
 				feedback.textContent = 'Signing up...';
-				feedback.className = 'text-sm mt-2 text-muted-foreground';
+				feedback.className = 'text-sm mt-2 min-h-[32px] text-center text-muted-foreground';
 				const email = this.email.value;
 				const password = this.password.value;
 				try {
@@ -134,20 +148,18 @@ templ Auth() {
 						})
 					});
 					if (resp.ok) {
-						feedback.textContent = 'Signup successful! You can now sign in.';
-						feedback.className = 'text-sm mt-2 text-green-600';
+						showSuccess('Signup successful! You can now sign in.');
 						setTimeout(() => {
 							signupForm.classList.add('hidden');
 							loginForm.classList.remove('hidden');
 						}, 1200);
 					} else {
-						const err = await resp.json();
-						feedback.textContent = err.description || err.error_description || 'Signup failed.';
-						feedback.className = 'text-sm mt-2 text-red-600 font-bold bg-red-100 dark:bg-red-900 border border-red-400 rounded px-3 py-2 animate-shake';
+						let err, text;
+						try { err = await resp.json(); text = JSON.stringify(err, null, 2); } catch { text = await resp.text(); }
+						showError(err?.description || err?.error_description || 'Signup failed.', text, resp.status);
 					}
-				} catch {
-					feedback.textContent = 'Network error.';
-					feedback.className = 'text-sm mt-2 text-red-600 font-bold bg-red-100 dark:bg-red-900 border border-red-400 rounded px-3 py-2 animate-shake';
+				} catch (ex) {
+					showError('Network or unexpected error.', ex?.message || ex);
 				}
 			};
 		})();
