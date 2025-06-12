@@ -1,58 +1,24 @@
 package pages
 
 import (
-	"github.com/KdntNinja/SchoolScienceHelper/ui/layouts"
+	"github.com/KdntNinja/ScratchClone/ui/components/button"
+	"github.com/KdntNinja/ScratchClone/ui/layouts"
 )
 
 templ Auth() {
 	@layouts.BaseLayout() {
-		<main class="flex items-center justify-center min-h-[calc(100vh-72px)] bg-gradient-to-br from-blue-50 via-white to-purple-100 dark:from-gray-900 dark:via-gray-950 dark:to-indigo-900 px-4 py-12 transition-colors">
-			<div class="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl w-full max-w-md p-0 border-4 border-border flex flex-col items-center relative overflow-hidden">
-				<div class="w-full flex flex-col items-center justify-center bg-gradient-to-r from-blue-200 via-purple-200 to-pink-200 dark:from-gray-800 dark:via-gray-900 dark:to-indigo-900 py-8 mb-4 border-b border-border">
-					<img src="/assets/favicon.svg" alt="Logo" class="w-16 h-16 mb-2 rounded-full shadow-lg bg-white dark:bg-gray-900 border-2 border-primary"/>
-					<h2 class="text-3xl font-extrabold text-center text-primary drop-shadow-lg tracking-tight">
-						SchoolScienceHelper
-					</h2>
-					<p class="text-xs text-muted-foreground mt-1">Empowering students and teachers</p>
-				</div>
-				<p class="mb-8 text-center text-foreground font-medium px-2">
-					Your all-in-one platform for
-					<span class="text-primary font-bold">science revision</span>,
-					<span class="text-secondary-foreground font-bold">quizzes</span>, and
-					<span class="text-muted-foreground font-bold">learning</span>.
-				</p>
-				<div id="auth-forms" class="w-full px-6 pb-6">
-					<!-- Login Form -->
-					<form id="auth-login-form" class="w-full flex flex-col gap-4 mt-2">
-						<label class="text-sm font-semibold text-foreground">Email</label>
-						<input type="email" name="email" placeholder="Email" required class="input input-bordered w-full bg-input border-border focus:border-primary transition rounded-lg px-3 py-2" autocomplete="username" />
-						<label class="text-sm font-semibold text-foreground">Password</label>
-						<input type="password" name="password" placeholder="Password" required class="input input-bordered w-full bg-input border-border focus:border-primary transition rounded-lg px-3 py-2" autocomplete="current-password" />
-						<button type="submit" class="w-full flex items-center justify-center gap-3 rounded-lg px-4 py-3 bg-primary text-primary-foreground font-semibold text-base shadow hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all min-h-[48px] min-w-[220px] mt-2">
-							Sign in
-						</button>
-						<p class="text-xs text-center mt-2">
-							Don't have an account?
-							<button type="button" id="show-signup" class="text-primary underline hover:text-primary-foreground">Sign up</button>
-						</p>
-					</form>
-					<!-- Signup Form (hidden by default) -->
-					<form id="auth-signup-form" class="w-full flex flex-col gap-4 mt-2 hidden">
-						<label class="text-sm font-semibold text-foreground">Email</label>
-						<input type="email" name="email" placeholder="Email" required class="input input-bordered w-full bg-input border-border focus:border-primary transition rounded-lg px-3 py-2" autocomplete="username" />
-						<label class="text-sm font-semibold text-foreground">Password</label>
-						<input type="password" name="password" placeholder="Password" required class="input input-bordered w-full bg-input border-border focus:border-primary transition rounded-lg px-3 py-2" autocomplete="new-password" />
-						<button type="submit" class="w-full flex items-center justify-center gap-3 rounded-lg px-4 py-3 bg-secondary text-secondary-foreground font-semibold text-base shadow hover:bg-secondary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all min-h-[48px] min-w-[220px] mt-2">
-							Sign up
-						</button>
-						<p class="text-xs text-center mt-2">
-							Already have an account?
-							<button type="button" id="show-login" class="text-primary underline hover:text-primary-foreground">Sign in</button>
-						</p>
-					</form>
-					<div id="auth-feedback" class="text-sm mt-2 min-h-[32px] text-center"></div>
-				</div>
-				<p class="mt-2 text-xs text-muted-foreground text-center px-4 pb-4">
+		<main class="flex items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12">
+			<div class="bg-card dark:bg-card rounded-lg shadow-xl w-full max-w-md p-8 border border-border flex flex-col items-center">
+				<h2 class="text-3xl font-bold text-center mb-6 text-primary">Welcome</h2>
+				<p class="mb-8 text-center text-muted-foreground">Sign in or sign up securely using our trusted authentication provider.</p>
+				@button.Button(button.Props{
+					ID:    "auth-external-btn",
+					Class: "w-full flex items-center justify-center gap-3 rounded-lg px-4 py-3 bg-white text-[#3c4043] font-medium text-base shadow border border-[#dadce0] hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#4285F4] focus:ring-offset-2 transition-all min-h-[48px] min-w-[220px]",
+				}) {
+					<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Google Logo" class="h-6 w-6 flex-shrink-0" style="width:24px;height:24px;object-fit:contain;background:transparent;"/>
+					<span class="font-medium dark:text-[#3c4043]">Sign in with Google</span>
+				}
+				<p class="mt-6 text-xs text-muted-foreground text-center">
 					By continuing, you agree to our
 					<a href="/terms" class="text-primary hover:underline">Terms & Conditions</a>
 					and
@@ -61,108 +27,50 @@ templ Auth() {
 			</div>
 		</main>
 		<script>
-		(function() {
-			let AUTH0_DOMAIN, AUTH0_CLIENT_ID, AUTH0_DB_CONN;
-			fetch('/config')
+			// Helper: parse hash params
+			function parseHashParams(hash) {
+			  const params = {};
+			  hash.replace(/^#/, '').split('&').forEach(kv => {
+				const [k, v] = kv.split('=');
+				if (k) params[k] = decodeURIComponent(v || '');
+			  });
+			  return params;
+			}
+
+			(function() {
+			  const hashParams = parseHashParams(window.location.hash);
+			  if (hashParams.id_token) {
+				// Send id_token to backend to set cookie
+				fetch('/api/auth/callback', {
+				  method: 'POST',
+				  headers: { 'Content-Type': 'application/json' },
+				  body: JSON.stringify({ token: hashParams.id_token })
+				}).then(resp => {
+				  if (resp.ok) {
+					window.location.hash = '';
+					window.location.replace('/dash');
+				  } else {
+					alert('Authentication failed.');
+				  }
+				});
+				return;
+			  }
+			  fetch('/config')
 				.then(res => res.json())
 				.then(cfg => {
-					AUTH0_DOMAIN = cfg.AUTH0_DOMAIN;
-					AUTH0_CLIENT_ID = cfg.AUTH0_CLIENT_ID;
-					AUTH0_DB_CONN = cfg.AUTH0_DB_CONN || 'Username-Password-Authentication';
+				  window.AUTH0_DOMAIN = cfg.AUTH0_DOMAIN;
+				  window.AUTH0_CLIENT_ID = cfg.AUTH0_CLIENT_ID;
+				  // No localStorage/sessionStorage check needed
 				});
-			const loginForm = document.getElementById('auth-login-form');
-			const signupForm = document.getElementById('auth-signup-form');
-			const feedback = document.getElementById('auth-feedback');
-			document.getElementById('show-signup').onclick = function() {
-				loginForm.classList.add('hidden');
-				signupForm.classList.remove('hidden');
-				feedback.textContent = '';
-				feedback.className = 'text-sm mt-2 min-h-[32px] text-center';
+			})();
+
+			document.getElementById('auth-external-btn').onclick = () => {
+			  const domain = window.AUTH0_DOMAIN;
+			  const clientId = window.AUTH0_CLIENT_ID;
+			  const redirectUri = window.location.origin + '/dash';
+			  const nonce = Date.now();
+			  window.location.href = `https://${domain}/authorize?response_type=id_token%20token&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=openid%20profile%20email&nonce=${nonce}&connection=google-oauth2`;
 			};
-			document.getElementById('show-login').onclick = function() {
-				signupForm.classList.add('hidden');
-				loginForm.classList.remove('hidden');
-				feedback.textContent = '';
-				feedback.className = 'text-sm mt-2 min-h-[32px] text-center';
-			};
-			function showError(msg, detail, status) {
-				feedback.innerHTML = `<span class='font-bold text-red-600'>${msg}</span>` + (status ? ` <span class='text-xs text-muted-foreground'>(HTTP ${status})</span>` : '') + (detail ? `<pre class='block mt-1 text-xs text-red-700 bg-red-50 dark:bg-red-900/40 rounded p-2 overflow-x-auto'>${detail}</pre>` : '');
-				feedback.className = 'text-sm mt-2 min-h-[32px] text-center font-bold bg-red-100 dark:bg-red-900 border border-red-400 rounded px-3 py-2 animate-shake';
-			}
-			function showSuccess(msg) {
-				feedback.textContent = msg;
-				feedback.className = 'text-sm mt-2 min-h-[32px] text-center text-green-700 bg-green-100 dark:bg-green-900 border border-green-400 rounded px-3 py-2';
-			}
-			loginForm.onsubmit = async function(e) {
-				e.preventDefault();
-				feedback.textContent = 'Signing in...';
-				feedback.className = 'text-sm mt-2 min-h-[32px] text-center text-muted-foreground';
-				const email = this.email.value;
-				const password = this.password.value;
-				try {
-					const resp = await fetch(`https://${AUTH0_DOMAIN}/oauth/token`, {
-						method: 'POST',
-						headers: { 'Content-Type': 'application/json' },
-						body: JSON.stringify({
-							grant_type: 'password',
-							username: email,
-							password: password,
-							client_id: AUTH0_CLIENT_ID,
-							scope: 'openid profile email',
-							realm: AUTH0_DB_CONN
-						})
-					});
-					if (resp.ok) {
-						const data = await resp.json();
-						// Send id_token to backend to set cookie
-						await fetch('/api/auth/callback', {
-							method: 'POST',
-							headers: { 'Content-Type': 'application/json' },
-							body: JSON.stringify({ token: data.id_token })
-						});
-						window.location.replace('/dash');
-					} else {
-						let err, text;
-						try { err = await resp.json(); text = JSON.stringify(err, null, 2); } catch { text = await resp.text(); }
-						showError(err?.error_description || 'Login failed.', text, resp.status);
-					}
-				} catch (ex) {
-					showError('Network or unexpected error.', ex?.message || ex);
-				}
-			};
-			signupForm.onsubmit = async function(e) {
-				e.preventDefault();
-				feedback.textContent = 'Signing up...';
-				feedback.className = 'text-sm mt-2 min-h-[32px] text-center text-muted-foreground';
-				const email = this.email.value;
-				const password = this.password.value;
-				try {
-					const resp = await fetch(`https://${AUTH0_DOMAIN}/dbconnections/signup`, {
-						method: 'POST',
-						headers: { 'Content-Type': 'application/json' },
-						body: JSON.stringify({
-							client_id: AUTH0_CLIENT_ID,
-							email: email,
-							password: password,
-							connection: AUTH0_DB_CONN
-						})
-					});
-					if (resp.ok) {
-						showSuccess('Signup successful! You can now sign in.');
-						setTimeout(() => {
-							signupForm.classList.add('hidden');
-							loginForm.classList.remove('hidden');
-						}, 1200);
-					} else {
-						let err, text;
-						try { err = await resp.json(); text = JSON.stringify(err, null, 2); } catch { text = await resp.text(); }
-						showError(err?.description || err?.error_description || 'Signup failed.', text, resp.status);
-					}
-				} catch (ex) {
-					showError('Network or unexpected error.', ex?.message || ex);
-				}
-			};
-		})();
 		</script>
 	}
 }
