@@ -1,76 +1,83 @@
 package pages
 
 import (
-	"github.com/KdntNinja/ScratchClone/ui/components/button"
 	"github.com/KdntNinja/ScratchClone/ui/layouts"
 )
 
 templ Auth() {
 	@layouts.BaseLayout() {
-		<main class="flex items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12">
-			<div class="bg-card dark:bg-card rounded-lg shadow-xl w-full max-w-md p-8 border border-border flex flex-col items-center">
-				<h2 class="text-3xl font-bold text-center mb-6 text-primary">Welcome</h2>
-				<p class="mb-8 text-center text-muted-foreground">Sign in or sign up securely using our trusted authentication provider.</p>
-				@button.Button(button.Props{
-					ID:    "auth-external-btn",
-					Class: "w-full flex items-center justify-center gap-3 rounded-lg px-4 py-3 bg-white text-[#3c4043] font-medium text-base shadow border border-[#dadce0] hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#4285F4] focus:ring-offset-2 transition-all min-h-[48px] min-w-[220px]",
-				}) {
-					<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Google Logo" class="h-6 w-6 flex-shrink-0" style="width:24px;height:24px;object-fit:contain;background:transparent;"/>
-					<span class="font-medium dark:text-[#3c4043]">Sign in with Google</span>
-				}
-				<p class="mt-6 text-xs text-muted-foreground text-center">
+		<main class="flex items-center justify-center min-h-[calc(100vh-72px)] bg-gradient-to-br from-blue-50 via-white to-green-100 px-4 py-12">
+			<div class="bg-white dark:bg-card rounded-2xl shadow-2xl w-full max-w-md p-10 border border-blue-200 flex flex-col items-center relative">
+				<div class="absolute -top-12 left-1/2 -translate-x-1/2 bg-blue-100 rounded-full p-4 shadow-md border border-blue-200">
+					<!-- Science/education icon -->
+					<svg width="48" height="48" fill="none" viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#e0f2fe" stroke="#38bdf8" stroke-width="2"/><path d="M16 32c0-4 8-4 8-8V12m0 0v12c0 4 8 4 8 8" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="24" cy="36" r="2" fill="#2563eb"/></svg>
+				</div>
+				<h2 class="text-3xl font-extrabold text-center mb-2 text-blue-900 mt-8">SchoolScienceHelper</h2>
+				<p class="mb-8 text-center text-blue-700 font-medium">Your all-in-one platform for science revision, quizzes, and learning.<br/><span class="text-green-700 font-semibold">Empowering students and teachers.</span></p>
+				<form id="auth-login-form" class="w-full flex flex-col gap-4 mt-2">
+					<input type="email" name="email" placeholder="Email" required class="input input-bordered w-full bg-blue-50 border-blue-200 focus:border-blue-400" autocomplete="username" />
+					<input type="password" name="password" placeholder="Password" required class="input input-bordered w-full bg-blue-50 border-blue-200 focus:border-blue-400" autocomplete="current-password" />
+					<button type="submit" class="w-full flex items-center justify-center gap-3 rounded-lg px-4 py-3 bg-blue-600 text-white font-semibold text-base shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition-all min-h-[48px] min-w-[220px]">Sign in</button>
+				</form>
+				<div id="auth-feedback" class="text-sm mt-2"></div>
+				<p class="mt-6 text-xs text-blue-700 text-center">
 					By continuing, you agree to our
-					<a href="/terms" class="text-primary hover:underline">Terms & Conditions</a>
+					<a href="/terms" class="text-blue-800 hover:underline">Terms & Conditions</a>
 					and
-					<a href="/privacy" class="text-primary hover:underline">Privacy Policy</a>.
+					<a href="/privacy" class="text-blue-800 hover:underline">Privacy Policy</a>.
 				</p>
 			</div>
 		</main>
 		<script>
-			// Helper: parse hash params
-			function parseHashParams(hash) {
-			  const params = {};
-			  hash.replace(/^#/, '').split('&').forEach(kv => {
-				const [k, v] = kv.split('=');
-				if (k) params[k] = decodeURIComponent(v || '');
-			  });
-			  return params;
-			}
-
 			(function() {
-			  const hashParams = parseHashParams(window.location.hash);
-			  if (hashParams.id_token) {
-				// Send id_token to backend to set cookie
-				fetch('/api/auth/callback', {
-				  method: 'POST',
-				  headers: { 'Content-Type': 'application/json' },
-				  body: JSON.stringify({ token: hashParams.id_token })
-				}).then(resp => {
-				  if (resp.ok) {
-					window.location.hash = '';
-					window.location.replace('/dash');
-				  } else {
-					alert('Authentication failed.');
-				  }
-				});
-				return;
-			  }
-			  fetch('/config')
-				.then(res => res.json())
-				.then(cfg => {
-				  window.AUTH0_DOMAIN = cfg.AUTH0_DOMAIN;
-				  window.AUTH0_CLIENT_ID = cfg.AUTH0_CLIENT_ID;
-				  // No localStorage/sessionStorage check needed
-				});
+				let AUTH0_DOMAIN, AUTH0_CLIENT_ID, AUTH0_DB_CONN;
+				fetch('/config')
+					.then(res => res.json())
+					.then(cfg => {
+						AUTH0_DOMAIN = cfg.AUTH0_DOMAIN;
+						AUTH0_CLIENT_ID = cfg.AUTH0_CLIENT_ID;
+						AUTH0_DB_CONN = cfg.AUTH0_DB_CONN || 'Username-Password-Authentication';
+					});
+				document.getElementById('auth-login-form').onsubmit = async function(e) {
+					e.preventDefault();
+					const feedback = document.getElementById('auth-feedback');
+					feedback.textContent = 'Signing in...';
+					feedback.className = 'text-sm mt-2 text-muted-foreground';
+					const email = this.email.value;
+					const password = this.password.value;
+					try {
+						const resp = await fetch(`https://${AUTH0_DOMAIN}/oauth/token`, {
+							method: 'POST',
+							headers: { 'Content-Type': 'application/json' },
+							body: JSON.stringify({
+								grant_type: 'password',
+								username: email,
+								password: password,
+								client_id: AUTH0_CLIENT_ID,
+								scope: 'openid profile email',
+								realm: AUTH0_DB_CONN
+							})
+						});
+						if (resp.ok) {
+							const data = await resp.json();
+							// Send id_token to backend to set cookie
+							await fetch('/api/auth/callback', {
+								method: 'POST',
+								headers: { 'Content-Type': 'application/json' },
+								body: JSON.stringify({ token: data.id_token })
+							});
+							window.location.replace('/dash');
+						} else {
+							const err = await resp.json();
+							feedback.textContent = err.error_description || 'Login failed.';
+							feedback.className = 'text-sm mt-2 text-red-600 font-bold bg-red-100 border border-red-400 rounded px-3 py-2 animate-shake';
+						}
+					} catch {
+						feedback.textContent = 'Network error.';
+						feedback.className = 'text-sm mt-2 text-red-600 font-bold bg-red-100 border border-red-400 rounded px-3 py-2 animate-shake';
+					}
+				};
 			})();
-
-			document.getElementById('auth-external-btn').onclick = () => {
-			  const domain = window.AUTH0_DOMAIN;
-			  const clientId = window.AUTH0_CLIENT_ID;
-			  const redirectUri = window.location.origin + '/dash';
-			  const nonce = Date.now();
-			  window.location.href = `https://${domain}/authorize?response_type=id_token%20token&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=openid%20profile%20email&nonce=${nonce}&connection=google-oauth2`;
-			};
 		</script>
 	}
 }

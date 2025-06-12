@@ -77,7 +77,6 @@ func main() {
 		publicpages.Auth().Render(r.Context(), w)
 	})
 	mux.HandleFunc("/terms", func(w http.ResponseWriter, r *http.Request) {
-	mux.HandleFunc("/terms", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotImplemented)
 		fmt.Fprintln(w, "Terms page not implemented")
 	})
@@ -86,13 +85,6 @@ func main() {
 		fmt.Fprintln(w, "Privacy page not implemented")
 	})
 	// --- User Pages (Require Auth) ---
-	mux.Handle("/settings", requireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodGet {
-			w.WriteHeader(http.StatusMethodNotAllowed)
-			return
-		}
-		userpages.Settings().Render(r.Context(), w)
-	})))
 	mux.HandleFunc("/dash", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			w.WriteHeader(http.StatusMethodNotAllowed)
@@ -102,23 +94,6 @@ func main() {
 			userpages.Dash().Render(r.Context(), w)
 		})).ServeHTTP(w, r)
 	})
-	mux.HandleFunc("/newproject", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodGet {
-			w.WriteHeader(http.StatusMethodNotAllowed)
-			return
-		}
-		requireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			userpages.NewProject().Render(r.Context(), w)
-		})).ServeHTTP(w, r)
-	})
-
-	// --- API: Project (Require Auth) ---
-	mux.Handle("/api/project/save", requireAuth(http.HandlerFunc(utils.HandleProjectSave)))
-	mux.Handle("/api/project/load", requireAuth(http.HandlerFunc(utils.HandleProjectLoad)))
-	mux.Handle("/api/project/list", requireAuth(http.HandlerFunc(utils.HandleProjectList)))
-	mux.Handle("/api/project/delete", requireAuth(http.HandlerFunc(utils.HandleProjectDelete)))
-	mux.Handle("/api/project/publish", requireAuth(http.HandlerFunc(utils.HandleProjectPublish)))
-	mux.Handle("/api/project/public", requireAuth(http.HandlerFunc(utils.HandleProjectLoadPublic)))
 
 	// --- API: User (Require Auth) ---
 	mux.Handle("/api/user/profile", requireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -126,15 +101,6 @@ func main() {
 			utils.HandleUserProfile(w, r)
 		} else if r.Method == http.MethodPost {
 			utils.HandleUserProfileUpdate(w, r)
-		} else {
-			w.WriteHeader(http.StatusMethodNotAllowed)
-		}
-	})))
-	mux.Handle("/api/user/preferences", requireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodGet {
-			utils.HandleUserPreferences(w, r)
-		} else if r.Method == http.MethodPost {
-			utils.HandleUserPreferencesUpdate(w, r)
 		} else {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 		}
