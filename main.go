@@ -94,24 +94,6 @@ func main() {
 			userpages.Dash().Render(r.Context(), w)
 		})).ServeHTTP(w, r)
 	})
-
-	// --- API: User (Require Auth) ---
-	mux.Handle("/api/user/profile", requireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodGet {
-			utils.HandleUserProfile(w, r)
-		} else if r.Method == http.MethodPost {
-			utils.HandleUserProfileUpdate(w, r)
-		} else {
-			w.WriteHeader(http.StatusMethodNotAllowed)
-		}
-	})))
-	mux.Handle("/api/user/delete", requireAuth(http.HandlerFunc(utils.HandleUserDelete)))
-
-	// --- API: Auth Callback (Public) ---
-	mux.HandleFunc("/api/auth/callback", func(w http.ResponseWriter, r *http.Request) {
-		utils.HandleAuthCallback(w, r)
-	})
-
 	// --- Error Pages ---
 	mux.HandleFunc("/forbidden", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusForbidden)
@@ -125,12 +107,6 @@ func main() {
 		w.WriteHeader(http.StatusInternalServerError)
 		errorpages.InternalServerError().Render(r.Context(), w)
 	})
-
-	// =============
-	// DB Setup
-	// =============
-	db := utils.SetupDB()
-	utils.SetDB(db)
 
 	// =============
 	// Middleware & Server

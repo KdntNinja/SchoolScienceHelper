@@ -11,11 +11,14 @@ templ Landing() {
 		<main class="flex flex-col min-h-[calc(100vh-72px)] bg-background text-foreground px-6 py-20 space-y-24">
 			<!-- Hero Section -->
 			<section class="flex flex-col items-center text-center">
-				<h1 class="text-6xl font-black text-primary mb-6 leading-tight">
-					🚀 Welcome to ScratchClone
+				<div class="mb-6">
+					<svg width="64" height="64" fill="none" viewBox="0 0 48 48" class="mx-auto mb-4"><circle cx="24" cy="24" r="22" fill="#e0f2fe" stroke="#38bdf8" stroke-width="2"/><path d="M16 32c0-4 8-4 8-8V12m0 0v12c0 4 8 4 8 8" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="24" cy="36" r="2" fill="#2563eb"/></svg>
+				</div>
+				<h1 class="text-5xl md:text-6xl font-black text-primary mb-6 leading-tight">
+					🔬 Welcome to SchoolScienceHelper
 				</h1>
 				<p class="max-w-2xl text-lg text-muted-foreground leading-relaxed mb-10">
-					You've scaffolded your next big idea. Explore our tools and community to bring your creative coding projects to life. ✨
+					Your all-in-one platform for science revision, quizzes, and learning. Empowering students and teachers to master science, together!
 				</p>
 				<div class="flex flex-wrap justify-center gap-6">
 					@button.Button(button.Props{
@@ -35,24 +38,24 @@ templ Landing() {
 			</section>
 			<!-- Features Section -->
 			<section class="max-w-5xl mx-auto text-center">
-				<h2 class="text-3xl font-bold mb-6 text-primary">Why ScratchClone?</h2>
+				<h2 class="text-3xl font-bold mb-6 text-primary">Why SchoolScienceHelper?</h2>
 				<div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
 					@card.Card(card.Props{Class: "p-6 bg-card rounded-xl shadow border border-border"}) {
-						<h3 class="text-xl font-semibold mb-2">🎨 Visual Programming</h3>
+						<h3 class="text-xl font-semibold mb-2">🧪 Interactive Science Quizzes</h3>
 						<p class="text-muted-foreground">
-							Drag-and-drop coding made simple for creators of all ages, inspired by Scratch but built with modern tech.
+							Test your knowledge with engaging, curriculum-aligned quizzes for Biology, Chemistry, and Physics.
 						</p>
 					}
 					@card.Card(card.Props{Class: "p-6 bg-card rounded-xl shadow border border-border"}) {
-						<h3 class="text-xl font-semibold mb-2">⚡ Built with Go & Templ</h3>
+						<h3 class="text-xl font-semibold mb-2">📚 Revision Resources</h3>
 						<p class="text-muted-foreground">
-							Fast, efficient, and easy to deploy. Enjoy clean, reactive UIs with lightning performance.
+							Access concise revision notes, diagrams, and flashcards to boost your science grades.
 						</p>
 					}
 					@card.Card(card.Props{Class: "p-6 bg-card rounded-xl shadow border border-border"}) {
-						<h3 class="text-xl font-semibold mb-2">🌐 Open Source</h3>
+						<h3 class="text-xl font-semibold mb-2">👩‍🏫 Teacher Tools</h3>
 						<p class="text-muted-foreground">
-							Transparent, extensible, and community-driven. Fork it, contribute, or just explore!
+							Track student progress, assign quizzes, and support learning in and out of the classroom.
 						</p>
 					}
 				</div>
