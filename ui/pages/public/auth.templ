@@ -10,14 +10,17 @@ templ Auth() {
 		<main class="flex items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12">
 			<div class="bg-card dark:bg-card rounded-lg shadow-xl w-full max-w-md p-8 border border-border flex flex-col items-center">
 				<h2 class="text-3xl font-bold text-center mb-6 text-primary">Welcome</h2>
-				<p class="mb-8 text-center text-muted-foreground">Sign in or sign up securely using our trusted authentication provider.</p>
-				@button.Button(button.Props{
-					ID:    "auth-external-btn",
-					Class: "w-full flex items-center justify-center gap-3 rounded-lg px-4 py-3 bg-white text-[#3c4043] font-medium text-base shadow border border-[#dadce0] hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#4285F4] focus:ring-offset-2 transition-all min-h-[48px] min-w-[220px]",
-				}) {
-					<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Google Logo" class="h-6 w-6 flex-shrink-0" style="width:24px;height:24px;object-fit:contain;background:transparent;"/>
-					<span class="font-medium dark:text-[#3c4043]">Sign in with Google</span>
-				}
+				<p class="mb-8 text-center text-muted-foreground">Sign in securely with your username and password.</p>
+				<form id="auth-form" class="w-full flex flex-col gap-4">
+					<input id="username" name="username" type="text" required placeholder="Username" class="w-full rounded-lg px-4 py-3 border border-border focus:outline-none focus:ring-2 focus:ring-primary" />
+					<input id="password" name="password" type="password" required placeholder="Password" class="w-full rounded-lg px-4 py-3 border border-border focus:outline-none focus:ring-2 focus:ring-primary" />
+					@button.Button(button.Props{
+						ID:    "auth-submit-btn",
+						Class: "w-full flex items-center justify-center gap-3 rounded-lg px-4 py-3 bg-primary text-white font-medium text-base shadow hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all min-h-[48px] min-w-[220px]",
+					}) {
+						<span class="font-medium">Sign in</span>
+					}
+				</form>
 				<p class="mt-6 text-xs text-muted-foreground text-center">
 					By continuing, you agree to our
 					<a href="/terms" class="text-primary hover:underline">Terms & Conditions</a>
@@ -27,49 +30,20 @@ templ Auth() {
 			</div>
 		</main>
 		<script>
-			// Helper: parse hash params
-			function parseHashParams(hash) {
-			  const params = {};
-			  hash.replace(/^#/, '').split('&').forEach(kv => {
-				const [k, v] = kv.split('=');
-				if (k) params[k] = decodeURIComponent(v || '');
-			  });
-			  return params;
-			}
-
-			(function() {
-			  const hashParams = parseHashParams(window.location.hash);
-			  if (hashParams.id_token) {
-				// Send id_token to backend to set cookie
-				fetch('/api/auth/callback', {
-				  method: 'POST',
-				  headers: { 'Content-Type': 'application/json' },
-				  body: JSON.stringify({ token: hashParams.id_token })
-				}).then(resp => {
-				  if (resp.ok) {
-					window.location.hash = '';
+			document.getElementById('auth-form').onsubmit = async function(e) {
+				e.preventDefault();
+				const username = document.getElementById('username').value;
+				const password = document.getElementById('password').value;
+				const resp = await fetch('/api/auth/login', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ username, password })
+				});
+				if (resp.ok) {
 					window.location.replace('/dash');
-				  } else {
-					alert('Authentication failed.');
-				  }
-				});
-				return;
-			  }
-			  fetch('/config')
-				.then(res => res.json())
-				.then(cfg => {
-				  window.AUTH0_DOMAIN = cfg.AUTH0_DOMAIN;
-				  window.AUTH0_CLIENT_ID = cfg.AUTH0_CLIENT_ID;
-				  // No localStorage/sessionStorage check needed
-				});
-			})();
-
-			document.getElementById('auth-external-btn').onclick = () => {
-			  const domain = window.AUTH0_DOMAIN;
-			  const clientId = window.AUTH0_CLIENT_ID;
-			  const redirectUri = window.location.origin + '/dash';
-			  const nonce = Date.now();
-			  window.location.href = `https://${domain}/authorize?response_type=id_token%20token&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=openid%20profile%20email&nonce=${nonce}&connection=google-oauth2`;
+				} else {
+					alert('Invalid username or password.');
+				}
 			};
 		</script>
 	}
