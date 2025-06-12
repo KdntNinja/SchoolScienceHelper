@@ -5,11 +5,11 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/KdntNinja/ScratchClone/assets"
-	errorpages "github.com/KdntNinja/ScratchClone/ui/pages/error"
-	publicpages "github.com/KdntNinja/ScratchClone/ui/pages/public"
-	userpages "github.com/KdntNinja/ScratchClone/ui/pages/user"
-	"github.com/KdntNinja/ScratchClone/utils"
+	"github.com/KdntNinja/SchoolScienceHelper/assets"
+	errorpages "github.com/KdntNinja/SchoolScienceHelper/ui/pages/error"
+	publicpages "github.com/KdntNinja/SchoolScienceHelper/ui/pages/public"
+	userpages "github.com/KdntNinja/SchoolScienceHelper/ui/pages/user"
+	"github.com/KdntNinja/SchoolScienceHelper/utils"
 	log "github.com/sirupsen/logrus"
 )
 

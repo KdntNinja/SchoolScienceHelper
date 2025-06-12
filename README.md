@@ -1,4 +1,4 @@
-# ScratchClone
+# SchoolScienceHelper
 
 A modern, open-source visual programming platform inspired by Scratch, built with Go, Templ, and Tailwind CSS.
 
@@ -23,8 +23,8 @@ A modern, open-source visual programming platform inspired by Scratch, built wit
 1. **Clone the repository:**
 
    ```sh
-   git clone https://github.com/KdntNinja/ScratchClone.git
-   cd ScratchClone
+   git clone https://github.com/KdntNinja/SchoolScienceHelper.git
+   cd SchoolScienceHelper
    ```
 
 2. **Copy the example environment file and edit as needed:**
@@ -35,7 +35,7 @@ A modern, open-source visual programming platform inspired by Scratch, built wit
    ```
 
    - `MONGODB_URI`: Your MongoDB connection string. You can use a local instance or a cloud provider like MongoDB Atlas.
-   - `MONGODB_DB`: The database name to use (default: `scratchclone`).
+   - `MONGODB_DB`: The database name to use (default: `SchoolScienceHelper`).
    - `SESSION_HASH_KEY` and `SESSION_BLOCK_KEY`: Random strings for secure cookie sessions. You can generate them with:
 
      ```sh
@@ -58,8 +58,8 @@ A modern, open-source visual programming platform inspired by Scratch, built wit
    ```sh
    go run main.go
    # or with Docker
-   docker build -t scratchclone .
-   docker run --env-file .env -p 8090:8090 scratchclone
+   docker build -t SchoolScienceHelper .
+   docker run --env-file .env -p 8090:8090 SchoolScienceHelper
    ```
 
 5. **Visit** [http://localhost:8090](http://localhost:8090) in your browser.

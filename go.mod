@@ -1,4 +1,4 @@
-module github.com/KdntNinja/ScratchClone
+module github.com/KdntNinja/SchoolScienceHelper
 
 go 1.24.0
 
