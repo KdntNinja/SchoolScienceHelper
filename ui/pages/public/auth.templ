@@ -21,6 +21,7 @@ templ Auth() {
 						<span class="font-medium">Sign in</span>
 					}
 				</form>
+				<div id="auth-error" class="text-red-500 text-sm mt-2 text-center"></div>
 				<p class="mt-6 text-xs text-muted-foreground text-center">
 					By continuing, you agree to our
 					<a href="/terms" class="text-primary hover:underline">Terms & Conditions</a>
@@ -30,19 +31,44 @@ templ Auth() {
 			</div>
 		</main>
 		<script>
-			document.getElementById('auth-form').onsubmit = async function(e) {
+			const form = document.getElementById('auth-form');
+			const errorDiv = document.createElement('div');
+			errorDiv.id = 'auth-error';
+			errorDiv.className = 'text-red-500 text-sm mt-2 text-center';
+			form.parentNode.insertBefore(errorDiv, form.nextSibling);
+
+			form.onsubmit = async function(e) {
 				e.preventDefault();
+				errorDiv.textContent = '';
 				const username = document.getElementById('username').value;
 				const password = document.getElementById('password').value;
-				const resp = await fetch('/api/auth/login', {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ username, password })
-				});
+				let resp;
+				try {
+					resp = await fetch('/api/auth/login', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ username, password })
+					});
+				} catch (err) {
+					errorDiv.textContent = 'Network error: ' + err;
+					return;
+				}
 				if (resp.ok) {
 					window.location.replace('/dash');
 				} else {
-					alert('Invalid username or password.');
+					let msg = 'Invalid username or password.';
+					try {
+						const data = await resp.json();
+						if (data && data.error) msg = data.error;
+						else if (data && data.message) msg = data.message;
+					} catch (e) {
+						// Not JSON, try text
+						try {
+							const text = await resp.text();
+							if (text) msg = text;
+						} catch {}
+					}
+					errorDiv.textContent = msg;
 				}
 			};
 		</script>
