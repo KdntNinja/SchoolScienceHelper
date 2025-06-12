@@ -6,24 +6,43 @@ import (
 
 templ Auth() {
 	@layouts.BaseLayout() {
-		<main class="flex items-center justify-center min-h-[calc(100vh-72px)] bg-gradient-to-br from-blue-50 via-white to-green-100 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900 px-4 py-12 transition-colors">
-			<div class="bg-white dark:bg-card rounded-2xl shadow-2xl w-full max-w-md p-10 border border-blue-200 dark:border-gray-700 flex flex-col items-center relative">
-				<h2 class="text-3xl font-extrabold text-center mb-2 text-blue-900 dark:text-blue-200 mt-2">SchoolScienceHelper</h2>
-				<p class="mb-8 text-center text-blue-700 dark:text-blue-300 font-medium">
-					Your all-in-one platform for science revision, quizzes, and learning.<br/>
-					<span class="text-green-700 dark:text-green-400 font-semibold">Empowering students and teachers.</span>
+		<main class="flex items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12 transition-colors">
+			<div class="bg-card dark:bg-card rounded-2xl shadow-2xl w-full max-w-md p-0 border-4 border-border flex flex-col items-center relative overflow-hidden">
+				<!-- Science Icon Header -->
+				<div class="w-full flex flex-col items-center justify-center bg-muted py-6 mb-4 border-b border-border">
+					<svg width="56" height="56" fill="none" viewBox="0 0 48 48" class="mb-2">
+						<circle cx="24" cy="24" r="22" fill="var(--muted)" stroke="var(--primary)" stroke-width="2"/>
+						<path d="M16 32c0-4 8-4 8-8V12m0 0v12c0 4 8 4 8 8" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+						<circle cx="24" cy="36" r="2" fill="var(--primary)"/>
+					</svg>
+					<h2 class="text-3xl font-extrabold text-center text-primary drop-shadow-lg">SchoolScienceHelper</h2>
+				</div>
+				<p class="mb-8 text-center text-foreground font-medium px-2">
+					Your all-in-one platform for <span class="text-primary font-bold">science revision</span>, <span class="text-secondary-foreground font-bold">quizzes</span>, and <span class="text-muted-foreground font-bold">learning</span>.<br/>
+					<span class="text-primary font-semibold">Empowering students and teachers.</span>
 				</p>
-				<form id="auth-login-form" class="w-full flex flex-col gap-4 mt-2">
-					<input type="email" name="email" placeholder="Email" required class="input input-bordered w-full" autocomplete="username" />
-					<input type="password" name="password" placeholder="Password" required class="input input-bordered w-full" autocomplete="current-password" />
-					<button type="submit" class="w-full flex items-center justify-center gap-3 rounded-lg px-4 py-3 bg-blue-600 dark:bg-blue-700 text-white font-semibold text-base shadow hover:bg-blue-700 dark:hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition-all min-h-[48px] min-w-[220px]">Sign in</button>
-				</form>
-				<div id="auth-feedback" class="text-sm mt-2"></div>
-				<p class="mt-6 text-xs text-blue-700 dark:text-blue-300 text-center">
+				<div id="auth-forms" class="w-full">
+					<!-- Login Form -->
+					<form id="auth-login-form" class="w-full flex flex-col gap-4 mt-2">
+						<input type="email" name="email" placeholder="Email" required class="input input-bordered w-full bg-input border-border focus:border-primary transition" autocomplete="username" />
+						<input type="password" name="password" placeholder="Password" required class="input input-bordered w-full bg-input border-border focus:border-primary transition" autocomplete="current-password" />
+						<button type="submit" class="w-full flex items-center justify-center gap-3 rounded-lg px-4 py-3 bg-primary text-primary-foreground font-semibold text-base shadow hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all min-h-[48px] min-w-[220px]">Sign in</button>
+						<p class="text-xs text-center mt-2">Don't have an account? <button type="button" id="show-signup" class="text-primary underline hover:text-primary-foreground">Sign up</button></p>
+					</form>
+					<!-- Signup Form (hidden by default) -->
+					<form id="auth-signup-form" class="w-full flex flex-col gap-4 mt-2 hidden">
+						<input type="email" name="email" placeholder="Email" required class="input input-bordered w-full bg-input border-border focus:border-primary transition" autocomplete="username" />
+						<input type="password" name="password" placeholder="Password" required class="input input-bordered w-full bg-input border-border focus:border-primary transition" autocomplete="new-password" />
+						<button type="submit" class="w-full flex items-center justify-center gap-3 rounded-lg px-4 py-3 bg-secondary text-secondary-foreground font-semibold text-base shadow hover:bg-secondary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all min-h-[48px] min-w-[220px]">Sign up</button>
+						<p class="text-xs text-center mt-2">Already have an account? <button type="button" id="show-login" class="text-primary underline hover:text-primary-foreground">Sign in</button></p>
+					</form>
+					<div id="auth-feedback" class="text-sm mt-2"></div>
+				</div>
+				<p class="mt-6 text-xs text-muted-foreground text-center">
 					By continuing, you agree to our
-					<a href="/terms" class="text-blue-800 dark:text-blue-300 hover:underline">Terms & Conditions</a>
+					<a href="/terms" class="text-primary hover:underline">Terms & Conditions</a>
 					and
-					<a href="/privacy" class="text-blue-800 dark:text-blue-300 hover:underline">Privacy Policy</a>.
+					<a href="/privacy" class="text-primary hover:underline">Privacy Policy</a>.
 				</p>
 			</div>
 		</main>
@@ -37,9 +56,21 @@ templ Auth() {
 						AUTH0_CLIENT_ID = cfg.AUTH0_CLIENT_ID;
 						AUTH0_DB_CONN = cfg.AUTH0_DB_CONN || 'Username-Password-Authentication';
 					});
-				document.getElementById('auth-login-form').onsubmit = async function(e) {
+				const loginForm = document.getElementById('auth-login-form');
+				const signupForm = document.getElementById('auth-signup-form');
+				const feedback = document.getElementById('auth-feedback');
+				document.getElementById('show-signup').onclick = function() {
+					loginForm.classList.add('hidden');
+					signupForm.classList.remove('hidden');
+					feedback.textContent = '';
+				};
+				document.getElementById('show-login').onclick = function() {
+					signupForm.classList.add('hidden');
+					loginForm.classList.remove('hidden');
+					feedback.textContent = '';
+				};
+				loginForm.onsubmit = async function(e) {
 					e.preventDefault();
-					const feedback = document.getElementById('auth-feedback');
 					feedback.textContent = 'Signing in...';
 					feedback.className = 'text-sm mt-2 text-muted-foreground';
 					const email = this.email.value;
@@ -69,6 +100,40 @@ templ Auth() {
 						} else {
 							const err = await resp.json();
 							feedback.textContent = err.error_description || 'Login failed.';
+							feedback.className = 'text-sm mt-2 text-red-600 font-bold bg-red-100 dark:bg-red-900 border border-red-400 rounded px-3 py-2 animate-shake';
+						}
+					} catch {
+						feedback.textContent = 'Network error.';
+						feedback.className = 'text-sm mt-2 text-red-600 font-bold bg-red-100 dark:bg-red-900 border border-red-400 rounded px-3 py-2 animate-shake';
+					}
+				};
+				signupForm.onsubmit = async function(e) {
+					e.preventDefault();
+					feedback.textContent = 'Signing up...';
+					feedback.className = 'text-sm mt-2 text-muted-foreground';
+					const email = this.email.value;
+					const password = this.password.value;
+					try {
+						const resp = await fetch(`https://${AUTH0_DOMAIN}/dbconnections/signup`, {
+							method: 'POST',
+							headers: { 'Content-Type': 'application/json' },
+							body: JSON.stringify({
+								client_id: AUTH0_CLIENT_ID,
+								email: email,
+								password: password,
+								connection: AUTH0_DB_CONN
+							})
+						});
+						if (resp.ok) {
+							feedback.textContent = 'Signup successful! You can now sign in.';
+							feedback.className = 'text-sm mt-2 text-green-600';
+							setTimeout(() => {
+								signupForm.classList.add('hidden');
+								loginForm.classList.remove('hidden');
+							}, 1200);
+						} else {
+							const err = await resp.json();
+							feedback.textContent = err.description || err.error_description || 'Signup failed.';
 							feedback.className = 'text-sm mt-2 text-red-600 font-bold bg-red-100 dark:bg-red-900 border border-red-400 rounded px-3 py-2 animate-shake';
 						}
 					} catch {
