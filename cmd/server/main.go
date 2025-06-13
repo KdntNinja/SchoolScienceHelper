@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 
@@ -30,13 +29,6 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/config", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		_, _ = fmt.Fprintf(w, `{"AUTH0_DOMAIN":%q,"AUTH0_CLIENT_ID":%q}`,
-			domain, clientID)
-	})
-	SetupAssetsRoutes(mux)
-
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			w.WriteHeader(http.StatusMethodNotAllowed)
@@ -47,7 +39,9 @@ func main() {
 			errorpages.NotFound().Render(r.Context(), w)
 			return
 		}
-		publicpages.Landing().Render(r.Context(), w)
+		domain := os.Getenv("AUTH0_DOMAIN")
+		clientID := os.Getenv("AUTH0_CLIENT_ID")
+		publicpages.Landing(domain, clientID).Render(r.Context(), w)
 	})
 	mux.HandleFunc("/api/auth/callback", handlers.HandleAuthCallback)
 	mux.HandleFunc("/terms", func(w http.ResponseWriter, r *http.Request) {

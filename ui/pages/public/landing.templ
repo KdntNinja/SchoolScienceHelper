@@ -6,7 +6,7 @@ import (
 	"SchoolScienceHelper/ui/layouts"
 )
 
-templ Landing() {
+templ Landing(auth0Domain string, auth0ClientID string) {
 	@layouts.BaseLayout() {
 		<main class="flex flex-col min-h-[calc(100vh-72px)] bg-background text-foreground px-6 py-20 space-y-24">
 			<!-- Hero Section -->
@@ -33,29 +33,22 @@ templ Landing() {
 						Get Started
 					}
 				</div>
-				<div class="flex items-center justify-center mt-4">
-					<span class="text-xs text-muted-foreground select-none">
-						By continuing, I agree to the <a href="/terms" class="text-primary hover:underline">Terms & Conditions</a> and <a href="/privacy" class="text-primary hover:underline">Privacy Policy</a>.
-					</span>
-				</div>
 				<script>
 					document.addEventListener('DOMContentLoaded', function() {
 						const btn = document.getElementById('get-started-btn');
-						const terms = document.getElementById('terms-checkbox');
 						btn.onclick = function(e) {
 							e.preventDefault();
-							if (!terms.checked) {
-								alert('You must agree to the Terms & Conditions and Privacy Policy to continue.');
+							// Auth0 config injected from Go backend
+							const domain = "{{auth0Domain}}";
+							const clientId = "{{auth0ClientID}}"
+							;
+							if (!domain || !clientId) {
+								alert('Auth0 configuration is missing.');
 								return;
 							}
-							// Auth0 config fetch
-							fetch('/config').then(res => res.json()).then(cfg => {
-								const domain = cfg.AUTH0_DOMAIN;
-								const clientId = cfg.AUTH0_CLIENT_ID;
-								const redirectUri = window.location.origin + '/';
-								const nonce = Date.now();
-								window.location.href = `https://${domain}/authorize?response_type=id_token%20token&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=openid%20profile%20email&nonce=${nonce}`;
-							});
+							const redirectUri = window.location.origin + '/';
+							const nonce = Date.now();
+							window.location.href = `https://${domain}/authorize?response_type=id_token%20token&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=openid%20profile%20email&nonce=${nonce}`;
 						};
 						// If already authenticated, redirect to /dash
 						fetch('/api/auth/check', { credentials: 'include' }).then(r => r.json()).then(data => {
