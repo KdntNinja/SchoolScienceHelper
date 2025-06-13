@@ -11,9 +11,6 @@ templ Landing() {
 		<main class="flex flex-col min-h-[calc(100vh-72px)] bg-background text-foreground px-6 py-20 space-y-24">
 			<!-- Hero Section -->
 			<section class="flex flex-col items-center text-center">
-				<div class="mb-6">
-					<svg width="64" height="64" fill="none" viewBox="0 0 48 48" class="mx-auto mb-4"><circle cx="24" cy="24" r="22" fill="#e0f2fe" stroke="#38bdf8" stroke-width="2"/><path d="M16 32c0-4 8-4 8-8V12m0 0v12c0 4 8 4 8 8" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="24" cy="36" r="2" fill="#2563eb"/></svg>
-				</div>
 				<h1 class="text-5xl md:text-6xl font-black text-primary mb-6 leading-tight">
 					Welcome to SchoolScienceHelper
 				</h1>
@@ -30,11 +27,45 @@ templ Landing() {
 					}
 					@button.Button(button.Props{
 						Variant: "secondary",
-						Href:    "/auth",
+						ID:      "get-started-btn",
+						Type:    "button",
 					}) {
 						Get Started
 					}
+					<div class="flex items-center justify-center mt-4">
+						<input type="checkbox" id="terms-checkbox" class="mr-2" />
+						<label for="terms-checkbox" class="text-xs text-muted-foreground select-none">
+							I agree to the <a href="/terms" class="text-primary hover:underline">Terms & Conditions</a> and <a href="/privacy" class="text-primary hover:underline">Privacy Policy</a>.
+						</label>
+					</div>
 				</div>
+				<script>
+					document.addEventListener('DOMContentLoaded', function() {
+						const btn = document.getElementById('get-started-btn');
+						const terms = document.getElementById('terms-checkbox');
+						btn.onclick = function(e) {
+							e.preventDefault();
+							if (!terms.checked) {
+								alert('You must agree to the Terms & Conditions and Privacy Policy to continue.');
+								return;
+							}
+							// Auth0 config fetch
+							fetch('/config').then(res => res.json()).then(cfg => {
+								const domain = cfg.AUTH0_DOMAIN;
+								const clientId = cfg.AUTH0_CLIENT_ID;
+								const redirectUri = window.location.origin + '/';
+								const nonce = Date.now();
+								window.location.href = `https://${domain}/authorize?response_type=id_token%20token&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=openid%20profile%20email&nonce=${nonce}`;
+							});
+						};
+						// If already authenticated, redirect to /dash
+						fetch('/api/auth/check', { credentials: 'include' }).then(r => r.json()).then(data => {
+							if (data && data.authenticated) {
+								window.location.replace('/dash');
+							}
+						});
+					});
+				</script>
 			</section>
 			<!-- Features Section -->
 			<section class="max-w-5xl mx-auto text-center">
