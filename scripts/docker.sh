@@ -1,3 +1,3 @@
 clear
-docker build -t SchoolScienceHelper .
-docker run -p 8090:8090 SchoolScienceHelper
+docker build -t school-science-helper .
+docker run -p 8090:8090 school-science-helper
