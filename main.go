@@ -76,6 +76,10 @@ func main() {
 		}
 		publicpages.Auth().Render(r.Context(), w)
 	})
+
+	// --- Auth Callback API ---
+	mux.HandleFunc("/api/auth/callback", utils.HandleAuthCallback)
+
 	mux.HandleFunc("/terms", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotImplemented)
 		fmt.Fprintln(w, "Terms page not implemented")
