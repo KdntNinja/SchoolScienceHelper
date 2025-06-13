@@ -8,6 +8,7 @@ import (
 	"SchoolScienceHelper/assets"
 	"SchoolScienceHelper/internal/handlers"
 	errorpages "SchoolScienceHelper/ui/pages/error"
+	legalpages "SchoolScienceHelper/ui/pages/legal"
 	publicpages "SchoolScienceHelper/ui/pages/public"
 	userpages "SchoolScienceHelper/ui/pages/user"
 
@@ -50,12 +51,10 @@ func main() {
 	})
 	mux.HandleFunc("/api/auth/callback", handlers.HandleAuthCallback)
 	mux.HandleFunc("/terms", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusNotImplemented)
-		fmt.Fprintln(w, "Terms page not implemented")
+		legalpages.Terms().Render(r.Context(), w)
 	})
 	mux.HandleFunc("/privacy", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusNotImplemented)
-		fmt.Fprintln(w, "Privacy page not implemented")
+		legalpages.Privacy().Render(r.Context(), w)
 	})
 	mux.HandleFunc("/dash", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
