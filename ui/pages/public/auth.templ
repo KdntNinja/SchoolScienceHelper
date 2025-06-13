@@ -27,6 +27,35 @@ templ Auth() {
 		</main>
 		<script>
 			(function() {
+				// Helper: parse hash params
+				function parseHashParams(hash) {
+					const params = {};
+					hash.replace(/^#/, '').split('&').forEach(kv => {
+						const [k, v] = kv.split('=');
+						if (k) params[k] = decodeURIComponent(v || '');
+					});
+					return params;
+				}
+
+				// If redirected back with tokens, process them
+				const hashParams = parseHashParams(window.location.hash);
+				if (hashParams.id_token) {
+					// Send id_token to backend to set cookie/session
+					fetch('/api/auth/callback', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ token: hashParams.id_token })
+					}).then(resp => {
+						if (resp.ok) {
+							window.location.hash = '';
+							window.location.replace('/dash');
+						} else {
+							alert('Authentication failed.');
+						}
+					});
+					return;
+				}
+
 				fetch('/config')
 					.then(res => res.json())
 					.then(cfg => {
