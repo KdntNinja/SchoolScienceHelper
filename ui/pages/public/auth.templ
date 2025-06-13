@@ -8,7 +8,7 @@ import (
 templ Auth() {
 	@layouts.BaseLayout() {
 		<main class="flex items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12">
-			<div class="bg-card dark:bg-card rounded-lg shadow-xl w-full max-w-md p-8 border border-border flex flex-col items-center">
+			<div class="bg-card dark:bg-card rounded-lg shadow-xl w-full max-w-md p-8 border border-border flex flex-col items-center" id="auth-container">
 				<h2 class="text-3xl font-bold text-center mb-6 text-primary">Welcome</h2>
 				<p class="mb-8 text-center text-muted-foreground">Sign in securely using our trusted authentication provider.</p>
 				@button.Button(button.Props{
@@ -23,6 +23,7 @@ templ Auth() {
 					and
 					<a href="/privacy" class="text-primary hover:underline">Privacy Policy</a>.
 				</p>
+				<div id="auth-status" class="mt-4 text-center text-sm text-muted-foreground"></div>
 			</div>
 		</main>
 		<script>
@@ -39,7 +40,10 @@ templ Auth() {
 
 				// If redirected back with tokens, process them
 				const hashParams = parseHashParams(window.location.hash);
+				const statusDiv = document.getElementById('auth-status');
 				if (hashParams.id_token) {
+					// Show loading
+					if (statusDiv) statusDiv.textContent = 'Signing you in...';
 					// Send id_token to backend to set cookie/session
 					fetch('/api/auth/callback', {
 						method: 'POST',
@@ -50,8 +54,12 @@ templ Auth() {
 							window.location.hash = '';
 							window.location.replace('/dash');
 						} else {
-							alert('Authentication failed.');
+							if (statusDiv) statusDiv.textContent = 'Authentication failed. Please try again.';
+							setTimeout(() => window.location.replace('/auth'), 2000);
 						}
+					}).catch(() => {
+						if (statusDiv) statusDiv.textContent = 'Could not reach server. Redirecting...';
+						setTimeout(() => window.location.replace('/dash'), 2000);
 					});
 					return;
 				}
@@ -67,7 +75,7 @@ templ Auth() {
 			document.getElementById('auth-external-btn').onclick = () => {
 				const domain = window.AUTH0_DOMAIN;
 				const clientId = window.AUTH0_CLIENT_ID;
-				const redirectUri = window.location.origin + '/dash';
+				const redirectUri = window.location.origin + '/auth';
 				const nonce = Date.now();
 				window.location.href = `https://${domain}/authorize?response_type=id_token%20token&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=openid%20profile%20email&nonce=${nonce}`;
 			};
