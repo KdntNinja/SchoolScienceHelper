@@ -6,31 +6,14 @@ import (
 	"os"
 
 	"github.com/KdntNinja/SchoolScienceHelper/assets"
+	"github.com/KdntNinja/SchoolScienceHelper/internal/handlers"
 	errorpages "github.com/KdntNinja/SchoolScienceHelper/ui/pages/error"
 	publicpages "github.com/KdntNinja/SchoolScienceHelper/ui/pages/public"
 	userpages "github.com/KdntNinja/SchoolScienceHelper/ui/pages/user"
-	"github.com/KdntNinja/SchoolScienceHelper/utils"
 	log "github.com/sirupsen/logrus"
 )
 
-// Auth middleware for all user related routes
-func requireAuth(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		userID, err := utils.GetUserIDFromRequest(r)
-		if err != nil || userID == "" {
-			log.Warnf("[requireAuth] Unauthorized access: %v, remote=%s, path=%s, cookie=%v", err, r.RemoteAddr, r.URL.Path, r.Header.Get("Cookie"))
-			http.Redirect(w, r, "/auth", http.StatusFound)
-			return
-		}
-		log.Infof("[requireAuth] Authenticated user: %s, remote=%s, path=%s", userID, r.RemoteAddr, r.URL.Path)
-		next.ServeHTTP(w, r)
-	})
-}
-
 func main() {
-	// =====================
-	// Logging & Environment
-	// =====================
 	log.SetFormatter(&log.TextFormatter{FullTimestamp: true})
 	log.SetLevel(log.InfoLevel)
 
@@ -43,12 +26,8 @@ func main() {
 		log.Warn("AUTH0_CLIENT_ID environment variable is not set!")
 	}
 
-	// =============
-	// HTTP Handlers
-	// =============
 	mux := http.NewServeMux()
 
-	// --- Public Config & Assets ---
 	mux.HandleFunc("/config", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		_, _ = fmt.Fprintf(w, `{"AUTH0_DOMAIN":%q,"AUTH0_CLIENT_ID":%q}`,
@@ -56,7 +35,6 @@ func main() {
 	})
 	SetupAssetsRoutes(mux)
 
-	// --- Public Pages ---
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			w.WriteHeader(http.StatusMethodNotAllowed)
@@ -76,10 +54,7 @@ func main() {
 		}
 		publicpages.Auth().Render(r.Context(), w)
 	})
-
-	// --- Auth Callback API ---
-	mux.HandleFunc("/api/auth/callback", utils.HandleAuthCallback)
-
+	mux.HandleFunc("/api/auth/callback", handlers.HandleAuthCallback)
 	mux.HandleFunc("/terms", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotImplemented)
 		fmt.Fprintln(w, "Terms page not implemented")
@@ -88,17 +63,15 @@ func main() {
 		w.WriteHeader(http.StatusNotImplemented)
 		fmt.Fprintln(w, "Privacy page not implemented")
 	})
-	// --- User Pages (Require Auth) ---
 	mux.HandleFunc("/dash", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 			return
 		}
-		requireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			userpages.Dash().Render(r.Context(), w)
 		})).ServeHTTP(w, r)
 	})
-	// --- Error Pages ---
 	mux.HandleFunc("/forbidden", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusForbidden)
 		errorpages.Forbidden().Render(r.Context(), w)
@@ -112,13 +85,8 @@ func main() {
 		errorpages.InternalServerError().Render(r.Context(), w)
 	})
 
-	// =============
-	// Middleware & Server
-	// =============
-	// HSTS middleware
 	hstsMiddleware := func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			// Only set HSTS in production
 			if os.Getenv("GO_ENV") == "production" {
 				w.Header().Set("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload")
 			}
@@ -134,7 +102,6 @@ func main() {
 	}
 	log.Infof("Server running on :%s", port)
 
-	// HTTP to HTTPS redirect in production
 	if os.Getenv("GO_ENV") == "production" {
 		go func() {
 			http.ListenAndServe(":80", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

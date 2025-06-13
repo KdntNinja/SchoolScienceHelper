@@ -18,8 +18,8 @@ RUN templ generate
 # Install build dependencies
 RUN apk add gcc musl-dev
 
-# Build the application
-RUN CGO_ENABLED=1 GOOS=linux go build -o main ./main.go
+# Build the application (new entry point)
+RUN CGO_ENABLED=1 GOOS=linux go build -o main ./cmd/server/main.go
 
 # Deploy-Stage
 FROM alpine:latest
