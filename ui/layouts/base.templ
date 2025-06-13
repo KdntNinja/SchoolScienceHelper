@@ -45,12 +45,5 @@ templ BaseLayout(footerExtra ...any) {
 			@modules.Navbar()
 			{ children... }
 		</body>
-		<script nonce={ templ.GetNonce(ctx) }>
-			// Force dark mode by default
-			document.documentElement.classList.add('dark');
-			if (localStorage.getItem('appTheme') === 'light') {
-				document.documentElement.classList.remove('dark');
-			}
-		</script>
 	</html>
 }
