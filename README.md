@@ -1,13 +1,13 @@
 # SchoolScienceHelper
 
-A modern, open-source visual programming platform inspired by Scratch, built with Go, Templ, and Tailwind CSS.
+A modern, open-source visual programming and quiz platform inspired by KayScience and Educake, built with Go, Templ, Tailwind CSS, and Neon (PostgreSQL).
 
 ## Features
 
 - Visual drag-and-drop programming
-- User authentication and account management
+- User authentication and account management (Auth0)
 - Theme switching (light/dark)
-- Project and user data stored in MongoDB
+- Quiz and user data stored in Neon (PostgreSQL)
 - Fully containerized with Docker
 
 ## Getting Started
@@ -16,7 +16,7 @@ A modern, open-source visual programming platform inspired by Scratch, built wit
 
 - Go 1.21 or newer
 - Docker (optional, for containerized deployment)
-- MongoDB instance (local or remote)
+- Neon (PostgreSQL) database instance
 
 ### Setup
 
@@ -31,11 +31,12 @@ A modern, open-source visual programming platform inspired by Scratch, built wit
 
    ```sh
    cp .env.example .env
-   # Edit .env with your MongoDB URI, database name, and session keys
+   # Edit .env with your Neon DB URL, Auth0 credentials, and session keys
    ```
 
-   - `MONGODB_URI`: Your MongoDB connection string. You can use a local instance or a cloud provider like MongoDB Atlas.
-   - `MONGODB_DB`: The database name to use (default: `SchoolScienceHelper`).
+   - `NEON_DATABASE_URL`: Your Neon (PostgreSQL) connection string. Get this from the Neon dashboard.
+   - `AUTH0_DOMAIN`: Your Auth0 domain (e.g., `dev-xxxxxx.eu.auth0.com`).
+   - `AUTH0_CLIENT_ID`: Your Auth0 client ID.
    - `SESSION_HASH_KEY` and `SESSION_BLOCK_KEY`: Random strings for secure cookie sessions. You can generate them with:
 
      ```sh
@@ -44,6 +45,7 @@ A modern, open-source visual programming platform inspired by Scratch, built wit
      ```
 
    - `GO_ENV`: Set to `development` or `production` as needed.
+   - `PORT`: (Optional) Port to run the server on (default: 8090).
 
 3. **Install dependencies and generate Templ files:**
 
@@ -56,7 +58,7 @@ A modern, open-source visual programming platform inspired by Scratch, built wit
 4. **Run the application:**
 
    ```sh
-   go run main.go
+   go run cmd/server/main.go
    # or with Docker
    docker build -t SchoolScienceHelper .
    docker run --env-file .env -p 8090:8090 SchoolScienceHelper
