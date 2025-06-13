@@ -48,13 +48,6 @@ func main() {
 		}
 		publicpages.Landing().Render(r.Context(), w)
 	})
-	mux.HandleFunc("/auth", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodGet {
-			w.WriteHeader(http.StatusMethodNotAllowed)
-			return
-		}
-		publicpages.Auth().Render(r.Context(), w)
-	})
 	mux.HandleFunc("/api/auth/callback", handlers.HandleAuthCallback)
 	mux.HandleFunc("/terms", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotImplemented)
