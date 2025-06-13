@@ -7,7 +7,7 @@ templ:
 # Run air to detect any go file changes to re-build and re-run the server.
 server:
 	air \
-	--build.cmd "go build -o tmp/bin/main ./main.go" \
+	--build.cmd "go build -o tmp/bin/main cmd/server/main.go" \
 	--build.bin "tmp/bin/main" \
 	--build.delay "100" \
 	--build.exclude_dir "node_modules" \

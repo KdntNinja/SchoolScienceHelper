@@ -1,6 +1,6 @@
 {
   "componentsDir": "ui/components",
   "utilsDir": "utils",
-  "moduleName": "github.com/KdntNinja/SchoolScienceHelper",
+  "moduleName": "SchoolScienceHelper",
   "jsDir": "assets/js/components"
 }

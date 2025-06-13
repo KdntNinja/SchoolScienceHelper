@@ -23,7 +23,7 @@ A modern, open-source visual programming platform inspired by Scratch, built wit
 1. **Clone the repository:**
 
    ```sh
-   git clone https://github.com/KdntNinja/SchoolScienceHelper.git
+   git clone https://SchoolScienceHelper.git
    cd SchoolScienceHelper
    ```
 

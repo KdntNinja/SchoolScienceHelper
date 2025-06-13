@@ -5,11 +5,12 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/KdntNinja/SchoolScienceHelper/assets"
-	"github.com/KdntNinja/SchoolScienceHelper/internal/handlers"
-	errorpages "github.com/KdntNinja/SchoolScienceHelper/ui/pages/error"
-	publicpages "github.com/KdntNinja/SchoolScienceHelper/ui/pages/public"
-	userpages "github.com/KdntNinja/SchoolScienceHelper/ui/pages/user"
+	"SchoolScienceHelper/assets"
+	"SchoolScienceHelper/internal/handlers"
+	errorpages "SchoolScienceHelper/ui/pages/error"
+	publicpages "SchoolScienceHelper/ui/pages/public"
+	userpages "SchoolScienceHelper/ui/pages/user"
+
 	log "github.com/sirupsen/logrus"
 )
 
