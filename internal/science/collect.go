@@ -358,10 +358,13 @@ func ScrapeAndStoreOcrSpecs(ctx context.Context, db *sql.DB) error {
 }
 
 func fetchOcrSpecContent(url string) (string, error) {
+	log.Printf("[Collect] HTTP GET %s", url)
 	resp, err := http.Get(url)
 	if err != nil {
+		log.Printf("[Collect] HTTP GET %s failed: %v", url, err)
 		return "", err
 	}
+	log.Printf("[Collect] HTTP GET %s status: %d", url, resp.StatusCode)
 	defer resp.Body.Close()
 	if resp.StatusCode != 200 {
 		return "", fmt.Errorf("bad status: %d", resp.StatusCode)
@@ -395,10 +398,13 @@ func fetchOcrSpecContent(url string) (string, error) {
 // --- OCR PAPERS SCRAPER ---
 func ScrapeAndStoreOcrPapers(ctx context.Context, db *sql.DB) error {
 	url := "https://www.ocr.org.uk/qualifications/past-papers/"
+	log.Printf("[Collect] HTTP GET %s", url)
 	resp, err := http.Get(url)
 	if err != nil {
+		log.Printf("[Collect] HTTP GET %s failed: %v", url, err)
 		return err
 	}
+	log.Printf("[Collect] HTTP GET %s status: %d", url, resp.StatusCode)
 	defer resp.Body.Close()
 	if resp.StatusCode != 200 {
 		return fmt.Errorf("bad status: %d", resp.StatusCode)
@@ -446,6 +452,8 @@ func ScrapeAndStoreOcrPapers(ctx context.Context, db *sql.DB) error {
 				log.Printf("[Collect] Upserting paper: board=%s, year=%d, subject=%s, url=%s", p.Board, p.Year, p.Subject, p.URL)
 				if err := UpsertPaper(ctx, db, p); err != nil {
 					log.Printf("[Collect] Error upserting paper: %v", err)
+				} else {
+					log.Printf("[Collect] Upserted paper successfully: %+v", p)
 				}
 			}
 			inRow = false
@@ -523,10 +531,13 @@ func ScrapeAndStoreEdexcelSpecs(ctx context.Context, db *sql.DB) error {
 }
 
 func fetchEdexcelSpecContent(url string) (string, error) {
+	log.Printf("[Collect] HTTP GET %s", url)
 	resp, err := http.Get(url)
 	if err != nil {
+		log.Printf("[Collect] HTTP GET %s failed: %v", url, err)
 		return "", err
 	}
+	log.Printf("[Collect] HTTP GET %s status: %d", url, resp.StatusCode)
 	defer resp.Body.Close()
 	if resp.StatusCode != 200 {
 		return "", fmt.Errorf("bad status: %d", resp.StatusCode)
@@ -611,6 +622,8 @@ func ScrapeAndStoreEdexcelPapers(ctx context.Context, db *sql.DB) error {
 				log.Printf("[Collect] Upserting paper: board=%s, year=%d, subject=%s, url=%s", p.Board, p.Year, p.Subject, p.URL)
 				if err := UpsertPaper(ctx, db, p); err != nil {
 					log.Printf("[Collect] Error upserting paper: %v", err)
+				} else {
+					log.Printf("[Collect] Upserted paper successfully: %+v", p)
 				}
 			}
 			inRow = false
