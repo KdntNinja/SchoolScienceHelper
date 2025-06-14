@@ -1,4 +1,4 @@
-# SchoolScienceHelper
+# KdnSite
 
 A modern, open-source visual programming and quiz platform inspired by KayScience and Educake, built with Go, Templ, Tailwind CSS, and Neon (PostgreSQL).
 
@@ -23,8 +23,8 @@ A modern, open-source visual programming and quiz platform inspired by KayScienc
 1. **Clone the repository:**
 
    ```sh
-   git clone https://SchoolScienceHelper.git
-   cd SchoolScienceHelper
+   git clone https://KdnSite.git
+   cd KdnSite
    ```
 
 2. **Copy the example environment file and edit as needed:**
@@ -60,8 +60,8 @@ A modern, open-source visual programming and quiz platform inspired by KayScienc
    ```sh
    go run cmd/server/main.go
    # or with Docker
-   docker build -t SchoolScienceHelper .
-   docker run --env-file .env -p 8090:8090 SchoolScienceHelper
+   docker build -t KdnSite .
+   docker run --env-file .env -p 8090:8090 KdnSite
    ```
 
 5. **Visit** [http://localhost:8090](http://localhost:8090) in your browser.

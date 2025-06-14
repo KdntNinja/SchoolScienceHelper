@@ -8,14 +8,14 @@ import (
 
 	_ "github.com/lib/pq"
 
-	"SchoolScienceHelper/assets"
-	"SchoolScienceHelper/internal/handlers"
-	science "SchoolScienceHelper/internal/science"
-	errorpages "SchoolScienceHelper/ui/pages/error"
-	legalpages "SchoolScienceHelper/ui/pages/legal"
-	publicpages "SchoolScienceHelper/ui/pages/public"
-	userpages "SchoolScienceHelper/ui/pages/user"
-	sciencepages "SchoolScienceHelper/ui/pages/user/science"
+	"KdnSite/assets"
+	"KdnSite/internal/handlers"
+	science "KdnSite/internal/science"
+	errorpages "KdnSite/ui/pages/error"
+	legalpages "KdnSite/ui/pages/legal"
+	publicpages "KdnSite/ui/pages/public"
+	userpages "KdnSite/ui/pages/user"
+	sciencepages "KdnSite/ui/pages/user/science"
 
 	"context"
 

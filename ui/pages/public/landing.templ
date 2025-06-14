@@ -1,9 +1,9 @@
 package pages
 
 import (
-	"SchoolScienceHelper/ui/components/button"
-	"SchoolScienceHelper/ui/components/card"
-	"SchoolScienceHelper/ui/layouts"
+	"KdnSite/ui/components/button"
+	"KdnSite/ui/components/card"
+	"KdnSite/ui/layouts"
 )
 
 templ Landing(auth0Domain string, auth0ClientID string) {
@@ -12,7 +12,7 @@ templ Landing(auth0Domain string, auth0ClientID string) {
 			<!-- Hero Section -->
 			<section class="flex flex-col items-center text-center">
 				<h1 class="text-5xl md:text-6xl font-black text-primary mb-6 leading-tight">
-					Welcome to SchoolScienceHelper
+					Welcome to KdnSite
 				</h1>
 				<p class="max-w-2xl text-lg text-muted-foreground leading-relaxed mb-10">
 					Your all-in-one platform for science revision, quizzes, and learning. Empowering students and teachers to master science, together!
@@ -20,7 +20,7 @@ templ Landing(auth0Domain string, auth0ClientID string) {
 				<div class="flex flex-wrap justify-center gap-6">
 					@button.Button(button.Props{
 						Variant: "outline",
-						Href:    "https://github.com/KdntNinja/SchoolScienceHelper",
+						Href:    "https://github.com/KdntNinja/KdnSite",
 						Target:  "_blank",
 					}) {
 						View on GitHub
@@ -90,7 +90,7 @@ templ Landing(auth0Domain string, auth0ClientID string) {
 			</section>
 			<!-- Features Section -->
 			<section class="max-w-5xl mx-auto text-center">
-				<h2 class="text-3xl font-bold mb-6 text-primary">Why SchoolScienceHelper?</h2>
+				<h2 class="text-3xl font-bold mb-6 text-primary">Why KdnSite?</h2>
 				<div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
 					@card.Card(card.Props{Class: "p-6 bg-card rounded-xl shadow border border-border"}) {
 						<h3 class="text-xl font-semibold mb-2">🧪 Interactive Science Quizzes</h3>
@@ -116,7 +116,7 @@ templ Landing(auth0Domain string, auth0ClientID string) {
 			<footer class="text-sm text-muted-foreground text-center pt-10 border-t border-border">
 				Have questions or want to get involved? Join the
 				<a
-					href="https://SchoolScienceHelper/discussions"
+					href="https://KdnSite/discussions"
 					target="_blank"
 					class="text-primary hover:underline ml-1"
 				>

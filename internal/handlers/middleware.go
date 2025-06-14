@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 
-	"SchoolScienceHelper/internal/auth"
+	"KdnSite/internal/auth"
 
 	log "github.com/sirupsen/logrus"
 )

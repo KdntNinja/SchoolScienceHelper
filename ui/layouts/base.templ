@@ -1,6 +1,6 @@
 package layouts
 
-import "SchoolScienceHelper/ui/modules"
+import "KdnSite/ui/modules"
 
 templ ThemeSwitcherScript() {
 	{{ handle := templ.NewOnceHandle() }}
@@ -35,7 +35,7 @@ templ BaseLayout(footerExtra ...any) {
 			<!-- Tailwind CSS (output) -->
 			<link href="/assets/css/output.css" rel="stylesheet"/>
 			<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-			<title>SchoolScienceHelper</title>
+			<title>KdnSite</title>
 			@ThemeSwitcherScript()
 		</head>
 		<body
