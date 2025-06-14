@@ -6,58 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="f3f2d531-c0ce-4474-bb2c-bfb123b6a391" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/server/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/server/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/handlers/middleware.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/handlers/middleware.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/accordion/accordion.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/accordion/accordion.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/alert/alert.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/alert/alert.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/aspectratio/aspectratio.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/aspectratio/aspectratio.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/avatar/avatar.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/avatar/avatar.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/badge/badge.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/badge/badge.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/breadcrumb/breadcrumb.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/breadcrumb/breadcrumb.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/button/button.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/button/button.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/calendar/calendar.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/calendar/calendar.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/card/card.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/card/card.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/carousel/carousel.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/carousel/carousel.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/chart/chart.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/chart/chart.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/checkbox/checkbox.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/checkbox/checkbox.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/checkboxcard/checkboxcard.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/checkboxcard/checkboxcard.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/code/code.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/code/code.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/datepicker/datepicker.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/datepicker/datepicker.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/drawer/drawer.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/drawer/drawer.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/dropdown/dropdown.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/dropdown/dropdown.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/form/form.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/form/form.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/input/input.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/input/input.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/inputotp/inputotp.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/inputotp/inputotp.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/label/label.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/label/label.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/modal/modal.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/modal/modal.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/pagination/pagination.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/pagination/pagination.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/popover/popover.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/popover/popover.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/progress/progress.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/progress/progress.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/radio/radio.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/radio/radio.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/radiocard/radiocard.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/radiocard/radiocard.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/rating/rating.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/rating/rating.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/selectbox/selectbox.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/selectbox/selectbox.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/separator/separator.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/separator/separator.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/skeleton/skeleton.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/skeleton/skeleton.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/slider/slider.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/slider/slider.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/spinner/spinner.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/spinner/spinner.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/table/table.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/table/table.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/tabs/tabs.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/tabs/tabs.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/textarea/textarea.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/textarea/textarea.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/toast/toast.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/toast/toast.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/toggle/toggle.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/toggle/toggle.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/components/tooltip/tooltip.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/tooltip/tooltip.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/layouts/base.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/layouts/base.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/modules/navbar.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/modules/navbar.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/modules/themeswitcher.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/modules/themeswitcher.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/pages/error/error.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/pages/error/error.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/pages/legal/privacy.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/pages/legal/privacy.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/pages/legal/terms.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/pages/legal/terms.templ" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ui/pages/public/landing.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/pages/public/landing.templ" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ui/pages/user/dash.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/pages/user/dash.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/pages/user/science/index.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/pages/user/science/index.templ" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ui/pages/user/science/papers.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/pages/user/science/papers.templ" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ui/pages/user/science/questions.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/pages/user/science/questions.templ" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ui/pages/user/science/revision.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/pages/user/science/revision.templ" afterDir="false" />
