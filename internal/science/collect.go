@@ -18,18 +18,26 @@ func CollectAllBoardData(ctx context.Context, db *sql.DB) {
 		log.Printf("[Collect] Scraping specs for %s...", board)
 		if err := ScrapeAndStoreSpecs(ctx, db, board); err != nil {
 			log.Printf("[Collect] Error scraping specs for %s: %v", board, err)
+		} else {
+			log.Printf("[Collect] Finished scraping specs for %s", board)
 		}
 		log.Printf("[Collect] Scraping papers for %s...", board)
 		if err := ScrapeAndStorePapers(ctx, db, board); err != nil {
 			log.Printf("[Collect] Error scraping papers for %s: %v", board, err)
+		} else {
+			log.Printf("[Collect] Finished scraping papers for %s", board)
 		}
 		log.Printf("[Collect] Scraping questions for %s...", board)
 		if err := ScrapeAndStoreQuestions(ctx, db, board); err != nil {
 			log.Printf("[Collect] Error scraping questions for %s: %v", board, err)
+		} else {
+			log.Printf("[Collect] Finished scraping questions for %s", board)
 		}
 		log.Printf("[Collect] Scraping revision for %s...", board)
 		if err := ScrapeAndStoreRevision(ctx, db, board); err != nil {
 			log.Printf("[Collect] Error scraping revision for %s: %v", board, err)
+		} else {
+			log.Printf("[Collect] Finished scraping revision for %s", board)
 		}
 	}
 }
@@ -242,7 +250,10 @@ func ScrapeAndStoreAqaPapers(ctx context.Context, db *sql.DB) error {
 					Subject: subject,
 					URL:     paperURL,
 				}
-				_ = UpsertPaper(ctx, db, p)
+				log.Printf("[Collect] Upserting paper: board=%s, year=%d, subject=%s, url=%s", p.Board, p.Year, p.Subject, p.URL)
+				if err := UpsertPaper(ctx, db, p); err != nil {
+					log.Printf("[Collect] Error upserting paper: %v", err)
+				}
 			}
 			inRow = false
 		}
@@ -424,7 +435,10 @@ func ScrapeAndStoreOcrPapers(ctx context.Context, db *sql.DB) error {
 					Subject: subject,
 					URL:     paperURL,
 				}
-				_ = UpsertPaper(ctx, db, p)
+				log.Printf("[Collect] Upserting paper: board=%s, year=%d, subject=%s, url=%s", p.Board, p.Year, p.Subject, p.URL)
+				if err := UpsertPaper(ctx, db, p); err != nil {
+					log.Printf("[Collect] Error upserting paper: %v", err)
+				}
 			}
 			inRow = false
 		}
@@ -586,7 +600,10 @@ func ScrapeAndStoreEdexcelPapers(ctx context.Context, db *sql.DB) error {
 					Subject: subject,
 					URL:     paperURL,
 				}
-				_ = UpsertPaper(ctx, db, p)
+				log.Printf("[Collect] Upserting paper: board=%s, year=%d, subject=%s, url=%s", p.Board, p.Year, p.Subject, p.URL)
+				if err := UpsertPaper(ctx, db, p); err != nil {
+					log.Printf("[Collect] Error upserting paper: %v", err)
+				}
 			}
 			inRow = false
 		}
