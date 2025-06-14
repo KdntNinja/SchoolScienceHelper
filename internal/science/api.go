@@ -1,4 +1,6 @@
-package aqa
+// moved from internal/aqa/api.go
+
+package science
 
 import (
 	"database/sql"

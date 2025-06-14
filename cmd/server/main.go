@@ -8,13 +8,13 @@ import (
 	_ "github.com/lib/pq"
 
 	"SchoolScienceHelper/assets"
-	"SchoolScienceHelper/internal/aqa"
 	"SchoolScienceHelper/internal/handlers"
+	science "SchoolScienceHelper/internal/science"
 	errorpages "SchoolScienceHelper/ui/pages/error"
 	legalpages "SchoolScienceHelper/ui/pages/legal"
 	publicpages "SchoolScienceHelper/ui/pages/public"
 	userpages "SchoolScienceHelper/ui/pages/user"
-	science "SchoolScienceHelper/ui/pages/user/science"
+	sciencepages "SchoolScienceHelper/ui/pages/user/science"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -26,10 +26,10 @@ func main() {
 	domain := os.Getenv("AUTH0_DOMAIN")
 	clientID := os.Getenv("AUTH0_CLIENT_ID")
 	if domain == "" {
-		log.Warn("AUTH0_DOMAIN environment variable is not set!")
+		log.Fatal("AUTH0_DOMAIN environment variable is not set!")
 	}
 	if clientID == "" {
-		log.Warn("AUTH0_CLIENT_ID environment variable is not set!")
+		log.Fatal("AUTH0_CLIENT_ID environment variable is not set!")
 	}
 
 	dbURL := os.Getenv("NEON_DATABASE_URL")
@@ -51,20 +51,32 @@ func main() {
 		}
 		if r.URL.Path != "/" {
 			w.WriteHeader(http.StatusNotFound)
-			errorpages.NotFound().Render(r.Context(), w)
+			err := errorpages.NotFound().Render(r.Context(), w)
+			if err != nil {
+				log.Errorf("Render error (NotFound): %v", err)
+			}
 			return
 		}
 		domain := os.Getenv("AUTH0_DOMAIN")
 		clientID := os.Getenv("AUTH0_CLIENT_ID")
-		publicpages.Landing(domain, clientID).Render(r.Context(), w)
+		err := publicpages.Landing(domain, clientID).Render(r.Context(), w)
+		if err != nil {
+			log.Errorf("Render error (Landing): %v", err)
+		}
 	})
 	mux.HandleFunc("/api/auth/check", handlers.AuthStatusHandler)
 	mux.HandleFunc("/api/auth/callback", handlers.HandleAuthCallback)
 	mux.HandleFunc("/terms", func(w http.ResponseWriter, r *http.Request) {
-		legalpages.Terms().Render(r.Context(), w)
+		err := legalpages.Terms().Render(r.Context(), w)
+		if err != nil {
+			log.Errorf("Render error (Terms): %v", err)
+		}
 	})
 	mux.HandleFunc("/privacy", func(w http.ResponseWriter, r *http.Request) {
-		legalpages.Privacy().Render(r.Context(), w)
+		err := legalpages.Privacy().Render(r.Context(), w)
+		if err != nil {
+			log.Errorf("Render error (Privacy): %v", err)
+		}
 	})
 	mux.HandleFunc("/dash", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
@@ -72,20 +84,32 @@ func main() {
 			return
 		}
 		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			userpages.Dash().Render(r.Context(), w)
+			err := userpages.Dash().Render(r.Context(), w)
+			if err != nil {
+				log.Errorf("Render error (Dash): %v", err)
+			}
 		})).ServeHTTP(w, r)
 	})
 	mux.HandleFunc("/forbidden", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusForbidden)
-		errorpages.Forbidden().Render(r.Context(), w)
+		err := errorpages.Forbidden().Render(r.Context(), w)
+		if err != nil {
+			log.Errorf("Render error (Forbidden): %v", err)
+		}
 	})
 	mux.HandleFunc("/badrequest", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
-		errorpages.BadRequest().Render(r.Context(), w)
+		err := errorpages.BadRequest().Render(r.Context(), w)
+		if err != nil {
+			log.Errorf("Render error (BadRequest): %v", err)
+		}
 	})
 	mux.HandleFunc("/error", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
-		errorpages.InternalServerError().Render(r.Context(), w)
+		err := errorpages.InternalServerError().Render(r.Context(), w)
+		if err != nil {
+			log.Errorf("Render error (InternalServerError): %v", err)
+		}
 	})
 
 	// Register multi-board/tier endpoints
@@ -95,10 +119,10 @@ func main() {
 	tiers := []string{"foundation", "higher", "separated_foundation", "separated_higher"}
 	for _, board := range boards {
 		for _, tier := range tiers {
-			mux.HandleFunc("/api/"+board+"/"+tier+"/spec", aqa.SpecsAPI(db))
-			mux.HandleFunc("/api/"+board+"/"+tier+"/papers", aqa.PapersAPI(db))
-			mux.HandleFunc("/api/"+board+"/"+tier+"/questions", aqa.QuestionsAPI(db))
-			mux.HandleFunc("/api/"+board+"/"+tier+"/revision", aqa.RevisionAPI(db))
+			mux.HandleFunc("/api/"+board+"/"+tier+"/spec", science.SpecsAPI(db))
+			mux.HandleFunc("/api/"+board+"/"+tier+"/papers", science.PapersAPI(db))
+			mux.HandleFunc("/api/"+board+"/"+tier+"/questions", science.QuestionsAPI(db))
+			mux.HandleFunc("/api/"+board+"/"+tier+"/revision", science.RevisionAPI(db))
 		}
 	}
 
@@ -106,7 +130,7 @@ func main() {
 		log.Infof("[ScienceSpecPage] user=%v, path=%s", r.Context().Value("user"), r.URL.Path)
 		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			log.Debugf("Rendering ScienceSpecPage for user=%v", r.Context().Value("user"))
-			err := science.ScienceSpecPage().Render(r.Context(), w)
+			err := sciencepages.ScienceSpecPage().Render(r.Context(), w)
 			if err != nil {
 				log.Errorf("Render error (ScienceSpecPage): %v", err)
 				w.WriteHeader(http.StatusInternalServerError)
@@ -119,7 +143,7 @@ func main() {
 		log.Infof("[SciencePapersPage] user=%v, path=%s", r.Context().Value("user"), r.URL.Path)
 		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			log.Debugf("Rendering SciencePapersPage for user=%v", r.Context().Value("user"))
-			err := science.SciencePapersPage().Render(r.Context(), w)
+			err := sciencepages.SciencePapersPage().Render(r.Context(), w)
 			if err != nil {
 				log.Errorf("Render error (SciencePapersPage): %v", err)
 				w.WriteHeader(http.StatusInternalServerError)
@@ -132,7 +156,7 @@ func main() {
 		log.Infof("[ScienceQuestionsPage] user=%v, path=%s", r.Context().Value("user"), r.URL.Path)
 		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			log.Debugf("Rendering ScienceQuestionsPage for user=%v", r.Context().Value("user"))
-			err := science.ScienceQuestionsPage().Render(r.Context(), w)
+			err := sciencepages.ScienceQuestionsPage().Render(r.Context(), w)
 			if err != nil {
 				log.Errorf("Render error (ScienceQuestionsPage): %v", err)
 				w.WriteHeader(http.StatusInternalServerError)
@@ -145,7 +169,7 @@ func main() {
 		log.Infof("[ScienceRevisionPage] user=%v, path=%s", r.Context().Value("user"), r.URL.Path)
 		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			log.Debugf("Rendering ScienceRevisionPage for user=%v", r.Context().Value("user"))
-			err := science.ScienceRevisionPage().Render(r.Context(), w)
+			err := sciencepages.ScienceRevisionPage().Render(r.Context(), w)
 			if err != nil {
 				log.Errorf("Render error (ScienceRevisionPage): %v", err)
 				w.WriteHeader(http.StatusInternalServerError)

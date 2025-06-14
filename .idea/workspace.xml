@@ -4,7 +4,20 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f3f2d531-c0ce-4474-bb2c-bfb123b6a391" name="Changes" comment="" />
+    <list default="true" id="f3f2d531-c0ce-4474-bb2c-bfb123b6a391" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/server/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/server/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/aqa/api.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/aqa/collect.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/aqa/db.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/aqa/models.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/aqa/scraper.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui/pages/aqa/papers.templ" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui/pages/aqa/questions.templ" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui/pages/aqa/revision.templ" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui/pages/aqa/spec.templ" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui/pages/error/error.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/pages/error/error.templ" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

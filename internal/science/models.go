@@ -1,4 +1,4 @@
-package aqa
+package science
 
 // GCSE Spec
 // Subject: e.g. "Biology", "Chemistry", "Physics"
