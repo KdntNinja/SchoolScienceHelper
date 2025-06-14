@@ -14,8 +14,7 @@ func RequireAuth(next http.Handler) http.Handler {
 		userID, err := auth.GetUserIDFromRequest(r)
 		if err != nil || userID == "" {
 			log.Warnf("[RequireAuth] Unauthorized access: %v, remote=%s, path=%s, cookie=%v", err, r.RemoteAddr, r.URL.Path, r.Header.Get("Cookie"))
-			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte(`{"authenticated": false}`))
+			http.Redirect(w, r, "/", http.StatusFound)
 			return
 		}
 		log.Infof("[RequireAuth] Authenticated user: %s, remote=%s, path=%s", userID, r.RemoteAddr, r.URL.Path)

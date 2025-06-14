@@ -35,18 +35,40 @@ templ Landing(auth0Domain string, auth0ClientID string) {
 				</div>
 				<script>
 					document.addEventListener('DOMContentLoaded', function() {
+						// --- Auth0 callback handling ---
+						const hash = window.location.hash;
+						if (hash && (hash.includes('id_token') || hash.includes('access_token'))) {
+							const params = new URLSearchParams(hash.substring(1));
+							const idToken = params.get('id_token');
+							if (idToken) {
+								// Send token to backend to set cookie
+								fetch('/api/auth/callback', {
+									method: 'POST',
+									headers: { 'Content-Type': 'application/json' },
+									body: JSON.stringify({ token: idToken })
+								})
+								.then(res => {
+									if (res.ok) {
+										window.location.replace('/dash');
+									} else {
+										alert('Authentication failed.');
+									}
+								});
+								return;
+							}
+						}
+
 						const btn = document.getElementById('get-started-btn');
 						btn.onclick = function(e) {
 							e.preventDefault();
 							// Auth0 config injected from Go backend
 							const domain = "{{auth0Domain}}";
-							const clientId = "{{auth0ClientID}}"
-							;
+							const clientId = "{{auth0ClientID}}";
 							if (!domain || !clientId) {
 								alert('Auth0 configuration is missing.');
 								return;
 							}
-							const redirectUri = window.location.origin + '/';
+							const redirectUri = window.location.origin + '/'; // Use / as the callback
 							const nonce = Date.now();
 							window.location.href = `https://${domain}/authorize?response_type=id_token%20token&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=openid%20profile%20email&nonce=${nonce}`;
 						};
