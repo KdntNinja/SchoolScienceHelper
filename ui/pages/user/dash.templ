@@ -1,6 +1,7 @@
 package pages
 
 import (
+	"SchoolScienceHelper/ui/components/button"
 	"SchoolScienceHelper/ui/components/card"
 	"SchoolScienceHelper/ui/layouts"
 )
@@ -21,32 +22,66 @@ templ Dash() {
 					<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
 						@card.Card(card.Props{Class: "bg-muted/40 hover:shadow-lg transition-shadow duration-200"}) {
 							@card.Header(card.HeaderProps{}) {
-								@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) {GCSE Science}
+								@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) {
+									GCSE Science
+								}
 							}
 							@card.Content(card.ContentProps{}) {
 								<ul class="space-y-2">
-									<li><a href="/user/science/spec" class="text-primary underline hover:text-primary-foreground">Specifications</a></li>
-									<li><a href="/user/science/papers" class="text-primary underline hover:text-primary-foreground">Past Papers</a></li>
-									<li><a href="/user/science/questions" class="text-primary underline hover:text-primary-foreground">Practice Questions</a></li>
-									<li><a href="/user/science/revision" class="text-primary underline hover:text-primary-foreground">Revision Resources</a></li>
+									<li>
+										@button.Button(button.Props{Href: "/user/science/spec", Variant: button.VariantLink, Class: "px-0"}) {
+											Specifications 
+										}
+									</li>
+									<li>
+										@button.Button(button.Props{Href: "/user/science/papers", Variant: button.VariantLink, Class: "px-0"}) {
+											Past Papers 
+										}
+									</li>
+									<li>
+										@button.Button(button.Props{Href: "/user/science/questions", Variant: button.VariantLink, Class: "px-0"}) {
+											Practice Questions 
+										}
+									</li>
+									<li>
+										@button.Button(button.Props{Href: "/user/science/revision", Variant: button.VariantLink, Class: "px-0"}) {
+											Revision Resources 
+										}
+									</li>
 								</ul>
 							}
 						}
 						@card.Card(card.Props{Class: "bg-muted/40 hover:shadow-lg transition-shadow duration-200"}) {
 							@card.Header(card.HeaderProps{}) {
-								@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) {Quick Links}
+								@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) {
+									Quick Links
+								}
 							}
 							@card.Content(card.ContentProps{}) {
 								<ul class="space-y-2">
-									<li><a href="/terms" class="underline text-muted-foreground hover:text-primary">Terms & Conditions</a></li>
-									<li><a href="/privacy" class="underline text-muted-foreground hover:text-primary">Privacy Policy</a></li>
-									<li><a href="https://github.com/KdntNinja/SchoolScienceHelper" class="underline text-muted-foreground hover:text-primary" target="_blank">GitHub</a></li>
+									<li>
+										@button.Button(button.Props{Href: "/terms", Variant: button.VariantLink, Class: "px-0"}) {
+											Terms & Conditions 
+										}
+									</li>
+									<li>
+										@button.Button(button.Props{Href: "/privacy", Variant: button.VariantLink, Class: "px-0"}) {
+											Privacy Policy 
+										}
+									</li>
+									<li>
+										@button.Button(button.Props{Href: "https://github.com/KdntNinja/SchoolScienceHelper", Target: "_blank", Variant: button.VariantLink, Class: "px-0"}) {
+											GitHub 
+										}
+									</li>
 								</ul>
 							}
 						}
 						@card.Card(card.Props{Class: "bg-muted/40 hover:shadow-lg transition-shadow duration-200"}) {
 							@card.Header(card.HeaderProps{}) {
-								@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) {Coming Soon}
+								@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) {
+									Coming Soon
+								}
 							}
 							@card.Content(card.ContentProps{}) {
 								<ul class="space-y-2 text-muted-foreground">
