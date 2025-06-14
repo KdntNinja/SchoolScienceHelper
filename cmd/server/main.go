@@ -20,9 +20,58 @@ import (
 )
 
 func main() {
+	setupLogging()
+	checkEnvVars()
+	db := setupDatabase()
+	defer db.Close()
+
+	mux := http.NewServeMux()
+	registerStaticRoutes(mux)
+	registerLegalRoutes(mux)
+	registerAuthRoutes(mux)
+	registerUserRoutes(mux)
+	registerScienceAPIRoutes(mux, db)
+	registerScienceUserRoutes(mux)
+	registerScienceHubRoute(mux)
+	SetupAssetsRoutes(mux)
+
+	hstsMiddleware := func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if os.Getenv("GO_ENV") == "production" {
+				w.Header().Set("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload")
+			}
+			next.ServeHTTP(w, r)
+		})
+	}
+
+	handler := hstsMiddleware(mux)
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8090"
+	}
+	log.Infof("Server running on :%s", port)
+
+	if os.Getenv("GO_ENV") == "production" {
+		go func() {
+			http.ListenAndServe(":80", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				http.Redirect(w, r, "https://"+r.Host+r.URL.String(), http.StatusMovedPermanently)
+			}))
+		}()
+	}
+
+	err := http.ListenAndServe(":"+port, handler)
+	if err != nil {
+		return
+	}
+}
+
+func setupLogging() {
 	log.SetFormatter(&log.TextFormatter{FullTimestamp: true})
 	log.SetLevel(log.InfoLevel)
+}
 
+func checkEnvVars() {
 	domain := os.Getenv("AUTH0_DOMAIN")
 	clientID := os.Getenv("AUTH0_CLIENT_ID")
 	if domain == "" {
@@ -31,19 +80,22 @@ func main() {
 	if clientID == "" {
 		log.Fatal("AUTH0_CLIENT_ID environment variable is not set!")
 	}
-
 	dbURL := os.Getenv("NEON_DATABASE_URL")
 	if dbURL == "" {
 		log.Fatal("NEON_DATABASE_URL environment variable is not set!")
 	}
+}
+
+func setupDatabase() *sql.DB {
+	dbURL := os.Getenv("NEON_DATABASE_URL")
 	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
 		log.Fatalf("Failed to connect to NeonDB: %v", err)
 	}
-	defer db.Close()
+	return db
+}
 
-	mux := http.NewServeMux()
-
+func registerStaticRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			w.WriteHeader(http.StatusMethodNotAllowed)
@@ -64,8 +116,9 @@ func main() {
 			log.Errorf("Render error (Landing): %v", err)
 		}
 	})
-	mux.HandleFunc("/api/auth/check", handlers.AuthStatusHandler)
-	mux.HandleFunc("/api/auth/callback", handlers.HandleAuthCallback)
+}
+
+func registerLegalRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("/terms", func(w http.ResponseWriter, r *http.Request) {
 		err := legalpages.Terms().Render(r.Context(), w)
 		if err != nil {
@@ -78,6 +131,14 @@ func main() {
 			log.Errorf("Render error (Privacy): %v", err)
 		}
 	})
+}
+
+func registerAuthRoutes(mux *http.ServeMux) {
+	mux.HandleFunc("/api/auth/check", handlers.AuthStatusHandler)
+	mux.HandleFunc("/api/auth/callback", handlers.HandleAuthCallback)
+}
+
+func registerUserRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("/dash", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			w.WriteHeader(http.StatusMethodNotAllowed)
@@ -111,12 +172,11 @@ func main() {
 			log.Errorf("Render error (InternalServerError): %v", err)
 		}
 	})
+}
 
-	// Register multi-board/tier endpoints
-	// Supported boards: aqa, ocr, edexcel
-	// Supported tiers: foundation, higher, separated_foundation, separated_higher
+func registerScienceAPIRoutes(mux *http.ServeMux, db *sql.DB) {
 	boards := []string{"aqa", "ocr", "edexcel"}
-	tiers := []string{"foundation", "higher", "separated_foundation", "separated_higher"}
+	tiers := []string{"foundation", "higher", "separate_foundation", "separate_higher"}
 	for _, board := range boards {
 		for _, tier := range tiers {
 			mux.HandleFunc("/api/"+board+"/"+tier+"/spec", science.SpecsAPI(db))
@@ -125,7 +185,9 @@ func main() {
 			mux.HandleFunc("/api/"+board+"/"+tier+"/revision", science.RevisionAPI(db))
 		}
 	}
+}
 
+func registerScienceUserRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("/user/science/spec", func(w http.ResponseWriter, r *http.Request) {
 		log.Infof("[ScienceSpecPage] user=%v, path=%s", r.Context().Value("user"), r.URL.Path)
 		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -178,38 +240,32 @@ func main() {
 			}
 		})).ServeHTTP(w, r)
 	})
+}
 
-	SetupAssetsRoutes(mux)
-
-	hstsMiddleware := func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			if os.Getenv("GO_ENV") == "production" {
-				w.Header().Set("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload")
+func registerScienceHubRoute(mux *http.ServeMux) {
+	mux.HandleFunc("/user/science/", func(w http.ResponseWriter, r *http.Request) {
+		board := "aqa"
+		tier := "foundation"
+		if b, err := r.Cookie("science_board"); err == nil {
+			board = b.Value
+		} else if b := r.URL.Query().Get("board"); b != "" {
+			board = b
+		}
+		if t, err := r.Cookie("science_tier"); err == nil {
+			tier = t.Value
+		} else if t := r.URL.Query().Get("tier"); t != "" {
+			tier = t
+		}
+		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			err := sciencepages.ScienceHubPage(board, tier).Render(r.Context(), w)
+			if err != nil {
+				log.Errorf("Render error (ScienceHubPage): %v", err)
+				w.WriteHeader(http.StatusInternalServerError)
+				w.Write([]byte("Internal Server Error"))
+				return
 			}
-			next.ServeHTTP(w, r)
-		})
-	}
-
-	handler := hstsMiddleware(mux)
-
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8090"
-	}
-	log.Infof("Server running on :%s", port)
-
-	if os.Getenv("GO_ENV") == "production" {
-		go func() {
-			http.ListenAndServe(":80", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				http.Redirect(w, r, "https://"+r.Host+r.URL.String(), http.StatusMovedPermanently)
-			}))
-		}()
-	}
-
-	err = http.ListenAndServe(":"+port, handler)
-	if err != nil {
-		return
-	}
+		})).ServeHTTP(w, r)
+	})
 }
 
 func SetupAssetsRoutes(mux *http.ServeMux) {

@@ -1,0 +1,79 @@
+package science
+
+import "SchoolScienceHelper/ui/layouts"
+
+templ ScienceHubPage(selectedBoard string, selectedTier string) {
+	@layouts.BaseLayout() {
+		<main class="max-w-3xl mx-auto py-10 px-4">
+			<h1 class="text-4xl font-bold mb-6 text-primary">GCSE Science Hub</h1>
+			<div class="mb-6 flex flex-wrap gap-4">
+				<label>Board:
+					<select id="board-select" class="border rounded px-2 py-1">
+						<option value="aqa" selected={selectedBoard=="aqa"}>AQA</option>
+						<option value="ocr" selected={selectedBoard=="ocr"}>OCR</option>
+						<option value="edexcel" selected={selectedBoard=="edexcel"}>Edexcel</option>
+					</select>
+				</label>
+				<label>Tier:
+					<select id="tier-select" class="border rounded px-2 py-1">
+						<option value="foundation" selected={selectedTier=="foundation"}>Foundation</option>
+						<option value="higher" selected={selectedTier=="higher"}>Higher</option>
+						<option value="separate_foundation" selected={selectedTier=="separate_foundation"}>Separate Foundation</option>
+						<option value="separate_higher" selected={selectedTier=="separate_higher"}>Separate Higher</option>
+					</select>
+				</label>
+			</div>
+			<div class="flex flex-col gap-4">
+				<a id="spec-link" class="btn btn-primary" href="#">Go to Specification</a>
+				<a id="papers-link" class="btn btn-primary" href="#">Go to Past Papers</a>
+				<a id="questions-link" class="btn btn-primary" href="#">Go to Questions</a>
+				<a id="revision-link" class="btn btn-primary" href="#">Go to Revision</a>
+			</div>
+			<script>
+				function setCookie(name, value, days) {
+					let expires = "";
+					if (days) {
+						const date = new Date();
+						date.setTime(date.getTime() + (days*24*60*60*1000));
+						expires = "; expires=" + date.toUTCString();
+					}
+					document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+				}
+				function getSelected() {
+					return {
+						board: document.getElementById('board-select').value,
+						tier: document.getElementById('tier-select').value
+					};
+				}
+				function updateLinks() {
+					const {board, tier} = getSelected();
+					setCookie('science_board', board, 30);
+					setCookie('science_tier', tier, 30);
+					document.getElementById('spec-link').href = `/user/science/spec?board=${board}&tier=${tier}`;
+					document.getElementById('papers-link').href = `/user/science/papers?board=${board}&tier=${tier}`;
+					document.getElementById('questions-link').href = `/user/science/questions?board=${board}&tier=${tier}`;
+					document.getElementById('revision-link').href = `/user/science/revision?board=${board}&tier=${tier}`;
+				}
+				document.addEventListener('DOMContentLoaded', function() {
+					const board = getCookie('science_board') || 'aqa';
+					const tier = getCookie('science_tier') || 'foundation';
+					document.getElementById('board-select').value = board;
+					document.getElementById('tier-select').value = tier;
+					updateLinks();
+					document.getElementById('board-select').addEventListener('change', updateLinks);
+					document.getElementById('tier-select').addEventListener('change', updateLinks);
+				});
+				function getCookie(name) {
+					let nameEQ = name + "=";
+					let ca = document.cookie.split(';');
+					for(let i=0;i < ca.length;i++) {
+						let c = ca[i];
+						while (c.charAt(0)==' ') c = c.substring(1,c.length);
+						if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+					}
+					return null;
+				}
+			</script>
+		</main>
+	}
+}
