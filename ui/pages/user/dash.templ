@@ -7,43 +7,52 @@ import (
 
 templ Dash() {
 	@layouts.BaseLayout() {
-		<main class="flex flex-col items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12 relative">
-			@card.Card(card.Props{Class: "bg-card dark:bg-card rounded-lg shadow-xl w-full max-w-2xl p-10 border border-border flex flex-col gap-8"}) {
+		<main class="flex flex-col items-center min-h-[calc(100vh-72px)] bg-background px-4 py-12 relative">
+			@card.Card(card.Props{Class: "bg-card dark:bg-card rounded-2xl shadow-2xl w-full max-w-3xl p-12 border border-border flex flex-col gap-10"}) {
 				@card.Header(card.HeaderProps{}) {
-					@card.Title(card.TitleProps{Class: "text-4xl font-extrabold text-center mb-4 text-primary tracking-tight"}) {
-						Welcome to SchoolScienceHelper
+					@card.Title(card.TitleProps{Class: "text-5xl font-black text-center mb-4 text-primary tracking-tight"}) {
+						Your Science Dashboard
 					}
 					@card.Description(card.DescriptionProps{Class: "text-center text-lg text-muted-foreground mb-8"}) {
-						Your science learning dashboard. Access quizzes, revision resources, and track your progress!
+						Welcome back! Jump into revision, quizzes, or check your progress below.
 					}
 				}
 				@card.Content(card.ContentProps{}) {
-					<div class="flex flex-col md:flex-row gap-8">
-						@card.Card(card.Props{Class: "flex-1 bg-muted/40"}) {
+					<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+						@card.Card(card.Props{Class: "bg-muted/40 hover:shadow-lg transition-shadow duration-200"}) {
 							@card.Header(card.HeaderProps{}) {
-								@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) {
-									Science Quizzes
-								}
+								@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) {GCSE Science}
 							}
 							@card.Content(card.ContentProps{}) {
-								<ul class="space-y-3">
-									<li>Biology Quiz</li>
-									<li>Chemistry Quiz</li>
-									<li>Physics Quiz</li>
+								<ul class="space-y-2">
+									<li><a href="/user/science/spec" class="text-primary underline hover:text-primary-foreground">Specifications</a></li>
+									<li><a href="/user/science/papers" class="text-primary underline hover:text-primary-foreground">Past Papers</a></li>
+									<li><a href="/user/science/questions" class="text-primary underline hover:text-primary-foreground">Practice Questions</a></li>
+									<li><a href="/user/science/revision" class="text-primary underline hover:text-primary-foreground">Revision Resources</a></li>
 								</ul>
 							}
 						}
-						@card.Card(card.Props{Class: "flex-1 bg-muted/40"}) {
+						@card.Card(card.Props{Class: "bg-muted/40 hover:shadow-lg transition-shadow duration-200"}) {
 							@card.Header(card.HeaderProps{}) {
-								@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) {
-									Revision Resources
-								}
+								@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) {Quick Links}
 							}
 							@card.Content(card.ContentProps{}) {
-								<ul class="space-y-3">
-									<li>Notes & Diagrams</li>
-									<li>Flashcards</li>
-									<li>Progress Tracking</li>
+								<ul class="space-y-2">
+									<li><a href="/terms" class="underline text-muted-foreground hover:text-primary">Terms & Conditions</a></li>
+									<li><a href="/privacy" class="underline text-muted-foreground hover:text-primary">Privacy Policy</a></li>
+									<li><a href="https://github.com/KdntNinja/SchoolScienceHelper" class="underline text-muted-foreground hover:text-primary" target="_blank">GitHub</a></li>
+								</ul>
+							}
+						}
+						@card.Card(card.Props{Class: "bg-muted/40 hover:shadow-lg transition-shadow duration-200"}) {
+							@card.Header(card.HeaderProps{}) {
+								@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) {Coming Soon}
+							}
+							@card.Content(card.ContentProps{}) {
+								<ul class="space-y-2 text-muted-foreground">
+									<li>Personal Progress Tracking</li>
+									<li>Custom Flashcards</li>
+									<li>Leaderboard & Achievements</li>
 								</ul>
 							}
 						}
