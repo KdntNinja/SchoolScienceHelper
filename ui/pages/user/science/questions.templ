@@ -1,25 +1,27 @@
 package science
 
-import "SchoolScienceHelper/ui/layouts"
+import (
+	"SchoolScienceHelper/ui/layouts"
+)
 
 templ QuestionsPage() {
 	@layouts.BaseLayout() {
 		<main class="max-w-5xl mx-auto py-10 px-4">
 			<h1 class="text-4xl font-bold mb-6 text-primary">GCSE Science Practice Questions</h1>
 			<div class="mb-4 flex flex-wrap gap-4">
-				<label>Board:
-					<select id="board-select" class="border rounded px-2 py-1">
+				<label class="font-semibold">Board:
+					<select id="board-select" class="border rounded px-2 py-1 ml-2">
 						<option value="aqa">AQA</option>
 						<option value="ocr">OCR</option>
 						<option value="edexcel">Edexcel</option>
 					</select>
 				</label>
-				<label>Tier:
-					<select id="tier-select" class="border rounded px-2 py-1">
+				<label class="font-semibold">Tier:
+					<select id="tier-select" class="border rounded px-2 py-1 ml-2">
 						<option value="foundation">Foundation</option>
 						<option value="higher">Higher</option>
-						<option value="separated_foundation">Separated Foundation</option>
-						<option value="separated_higher">Separated Higher</option>
+						<option value="separate_foundation">Separate Foundation</option>
+						<option value="separate_higher">Separate Higher</option>
 					</select>
 				</label>
 			</div>
@@ -30,7 +32,7 @@ templ QuestionsPage() {
 					const tier = document.getElementById('tier-select').value;
 					fetch(`/api/${board}/${tier}/questions`).then(r => r.json()).then(questions => {
 						const list = document.getElementById('questions-list');
-						list.innerHTML = questions.map(q => `<div class='border rounded p-4 bg-card mb-2'><h2 class='text-xl font-semibold mb-2'>${q.subject} - ${q.topic}</h2><div class='mb-2'>Q: ${q.question}</div><details><summary class='cursor-pointer text-blue-600'>Show Answer</summary><div class='mt-2'>${q.answer}</div></details></div>`).join('');
+						list.innerHTML = questions.map(q => `@card.Card(card.Props{Class: 'mb-2'}) {<h2 class='text-xl font-semibold mb-2'>${q.subject} - ${q.topic}</h2><div class='mb-2'>Q: ${q.question}</div><details><summary class='cursor-pointer text-blue-600'>Show Answer</summary><div class='mt-2'>${q.answer}</div></details>}`).join('');
 					});
 				}
 				document.addEventListener('DOMContentLoaded', function() {

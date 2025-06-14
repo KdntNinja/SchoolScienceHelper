@@ -608,3 +608,15 @@ func ScrapeAndStoreEdexcelRevision(ctx context.Context, db *sql.DB) error {
 	// Edexcel does not provide official revision notes; this would require scraping from their revision resources or using a third-party source.
 	return nil
 }
+
+// --- OCR QUESTIONS SCRAPER ---
+func ScrapeAndStoreOcrQuestions(ctx context.Context, db *sql.DB) error {
+	// OCR does not publish a public question bank; this would require scraping from past papers or using a third-party source.
+	return nil
+}
+
+// --- OCR REVISION SCRAPER ---
+func ScrapeAndStoreOcrRevision(ctx context.Context, db *sql.DB) error {
+	// OCR does not provide official revision notes; this would require scraping from their revision resources or using a third-party source.
+	return nil
+}

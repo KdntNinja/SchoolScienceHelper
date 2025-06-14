@@ -32,7 +32,7 @@ func main() {
 	go func() {
 		for {
 			log.Info("[Background] Starting weekly exam board scrape...")
-			science.CollectAllBoardLinks(context.Background(), db)
+			science.CollectAllBoardData(context.Background(), db)
 			log.Info("[Background] Exam board scrape complete. Next run in 7 days.")
 			time.Sleep(7 * 24 * time.Hour)
 		}
