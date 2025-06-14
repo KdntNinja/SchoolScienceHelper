@@ -43,6 +43,7 @@ func main() {
 		clientID := os.Getenv("AUTH0_CLIENT_ID")
 		publicpages.Landing(domain, clientID).Render(r.Context(), w)
 	})
+	mux.HandleFunc("/api/auth/check", handlers.AuthStatusHandler)
 	mux.HandleFunc("/api/auth/callback", handlers.HandleAuthCallback)
 	mux.HandleFunc("/terms", func(w http.ResponseWriter, r *http.Request) {
 		legalpages.Terms().Render(r.Context(), w)
@@ -71,6 +72,8 @@ func main() {
 		w.WriteHeader(http.StatusInternalServerError)
 		errorpages.InternalServerError().Render(r.Context(), w)
 	})
+
+	SetupAssetsRoutes(mux)
 
 	hstsMiddleware := func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
