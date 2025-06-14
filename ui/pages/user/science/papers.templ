@@ -24,6 +24,15 @@ templ PapersPage() {
 						<option value="separate_higher">Separate Higher</option>
 					</select>
 				</label>
+				<label class="font-semibold">
+					Subject:
+					<select id="subject-select" class="border rounded px-2 py-1 ml-2 bg-background focus:ring-2 focus:ring-primary">
+						<option value="">All</option>
+						<option value="Physics">Physics</option>
+						<option value="Chemistry">Chemistry</option>
+						<option value="Biology">Biology</option>
+					</select>
+				</label>
 			</div>
 			<div id="papers-list" class="space-y-6"></div>
 			<script>
@@ -49,21 +58,34 @@ function getCookie(name) {
 function fetchPapers() {
   const board = document.getElementById('board-select').value;
   const tier = document.getElementById('tier-select').value;
+  const subject = document.getElementById('subject-select').value;
   setCookie('science_board', board, 30);
   setCookie('science_tier', tier, 30);
-  fetch(`/api/${board}/${tier}/papers`).then(r => r.json()).then(papers => {
+  setCookie('science_subject', subject, 30);
+  let url = `/api/${board}/${tier}/papers`;
+  if (subject) {
+    url += `?subject=${encodeURIComponent(subject)}`;
+  }
+  fetch(url).then(r => r.json()).then(papers => {
     const list = document.getElementById('papers-list');
-    list.innerHTML = papers.map(p => `<div class='mb-2'><h2 class='text-xl font-semibold mb-2'>${p.subject} ${p.year}</h2><a href='${p.url}' class='text-blue-600 underline' target='_blank'>View Paper</a></div>`).join('');
+    if (papers.length === 0) {
+      list.innerHTML = `<div class='text-gray-500 italic'>No papers found for the selected filters.</div>`;
+    } else {
+      list.innerHTML = papers.map(p => `<div class='mb-2'><h2 class='text-xl font-semibold mb-2'>${p.subject} ${p.year}</h2><a href='${p.url}' class='text-blue-600 underline' target='_blank'>View Paper</a></div>`).join('');
+    }
   });
 }
 document.addEventListener('DOMContentLoaded', function() {
   const board = getCookie('science_board') || 'aqa';
   const tier = getCookie('science_tier') || 'foundation';
+  const subject = getCookie('science_subject') || '';
   document.getElementById('board-select').value = board;
   document.getElementById('tier-select').value = tier;
-  fetchPapers();
+  document.getElementById('subject-select').value = subject;
   document.getElementById('board-select').addEventListener('change', fetchPapers);
   document.getElementById('tier-select').addEventListener('change', fetchPapers);
+  document.getElementById('subject-select').addEventListener('change', fetchPapers);
+  fetchPapers();
 });
 			</script>
 		</main>

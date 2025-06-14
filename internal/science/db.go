@@ -41,6 +41,24 @@ func GetPapersByBoardTier(ctx context.Context, db *sql.DB, board, tier string) (
 	return papers, nil
 }
 
+func GetPapersByBoardTierAndSubject(ctx context.Context, db *sql.DB, board, tier, subject string) ([]Paper, error) {
+	query := `SELECT id, board, tier, year, subject, url FROM papers WHERE board = $1 AND tier = $2 AND subject = $3`
+	rows, err := db.QueryContext(ctx, query, board, tier, subject)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var papers []Paper
+	for rows.Next() {
+		var p Paper
+		if err := rows.Scan(&p.ID, &p.Board, &p.Tier, &p.Year, &p.Subject, &p.URL); err != nil {
+			return nil, err
+		}
+		papers = append(papers, p)
+	}
+	return papers, nil
+}
+
 func GetQuestionsByBoardTier(ctx context.Context, db *sql.DB, board, tier string) ([]Question, error) {
 	rows, err := db.QueryContext(ctx, `SELECT id, board, tier, subject, topic, question, answer FROM questions WHERE board = $1 AND tier = $2`, board, tier)
 	if err != nil {

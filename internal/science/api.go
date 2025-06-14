@@ -44,8 +44,15 @@ func PapersAPI(db *sql.DB) http.HandlerFunc {
 		}
 		board := parts[1]
 		tier := parts[2]
-		papers, err := GetPapersByBoardTier(r.Context(), db, board, tier)
+		subject := r.URL.Query().Get("subject")
 		w.Header().Set("Content-Type", "application/json")
+		var papers []Paper
+		var err error
+		if subject != "" {
+			papers, err = GetPapersByBoardTierAndSubject(r.Context(), db, board, tier, subject)
+		} else {
+			papers, err = GetPapersByBoardTier(r.Context(), db, board, tier)
+		}
 		if err != nil {
 			w.WriteHeader(http.StatusOK)
 			json.NewEncoder(w).Encode([]interface{}{})
