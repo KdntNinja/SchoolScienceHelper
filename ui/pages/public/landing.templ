@@ -32,14 +32,14 @@ templ Landing(auth0Domain string, auth0ClientID string) {
 					}) {
 						Get Started
 					}
-					<span class="text-xs text-muted-foreground mt-2 block">
-						By continuing you agree to the
-						<a href="/terms" class="underline hover:text-primary" target="_blank">terms and conditions</a>
-						and
-						<a href="/privacy" class="underline hover:text-primary" target="_blank">privacy policy</a>
-						.
-					</span>
 				</div>
+				<span class="text-xs text-muted-foreground mt-2 block text-center w-full">
+					By continuing you agree to the
+					<a href="/terms" class="underline hover:text-primary" target="_blank">terms and conditions</a>
+					and
+					<a href="/privacy" class="underline hover:text-primary" target="_blank">privacy policy</a>
+					.
+				</span>
 				<script>
 					document.addEventListener('DOMContentLoaded', function() {
 						// --- Auth0 callback handling ---

@@ -1,15 +1,20 @@
 package main
 
 import (
+	"database/sql"
 	"net/http"
 	"os"
 
+	_ "github.com/lib/pq"
+
 	"SchoolScienceHelper/assets"
+	"SchoolScienceHelper/internal/aqa"
 	"SchoolScienceHelper/internal/handlers"
 	errorpages "SchoolScienceHelper/ui/pages/error"
 	legalpages "SchoolScienceHelper/ui/pages/legal"
 	publicpages "SchoolScienceHelper/ui/pages/public"
 	userpages "SchoolScienceHelper/ui/pages/user"
+	science "SchoolScienceHelper/ui/pages/user/science"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -26,6 +31,16 @@ func main() {
 	if clientID == "" {
 		log.Warn("AUTH0_CLIENT_ID environment variable is not set!")
 	}
+
+	dbURL := os.Getenv("NEON_DATABASE_URL")
+	if dbURL == "" {
+		log.Fatal("NEON_DATABASE_URL environment variable is not set!")
+	}
+	db, err := sql.Open("postgres", dbURL)
+	if err != nil {
+		log.Fatalf("Failed to connect to NeonDB: %v", err)
+	}
+	defer db.Close()
 
 	mux := http.NewServeMux()
 
@@ -73,6 +88,41 @@ func main() {
 		errorpages.InternalServerError().Render(r.Context(), w)
 	})
 
+	// Register multi-board/tier endpoints
+	// Supported boards: aqa, ocr, edexcel
+	// Supported tiers: foundation, higher, separated_foundation, separated_higher
+	boards := []string{"aqa", "ocr", "edexcel"}
+	tiers := []string{"foundation", "higher", "separated_foundation", "separated_higher"}
+	for _, board := range boards {
+		for _, tier := range tiers {
+			mux.HandleFunc("/api/"+board+"/"+tier+"/spec", aqa.SpecsAPI(db))
+			mux.HandleFunc("/api/"+board+"/"+tier+"/papers", aqa.PapersAPI(db))
+			mux.HandleFunc("/api/"+board+"/"+tier+"/questions", aqa.QuestionsAPI(db))
+			mux.HandleFunc("/api/"+board+"/"+tier+"/revision", aqa.RevisionAPI(db))
+		}
+	}
+
+	mux.HandleFunc("/user/science/spec", func(w http.ResponseWriter, r *http.Request) {
+		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			science.ScienceSpecPage().Render(r.Context(), w)
+		})).ServeHTTP(w, r)
+	})
+	mux.HandleFunc("/user/science/papers", func(w http.ResponseWriter, r *http.Request) {
+		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			science.SciencePapersPage().Render(r.Context(), w)
+		})).ServeHTTP(w, r)
+	})
+	mux.HandleFunc("/user/science/questions", func(w http.ResponseWriter, r *http.Request) {
+		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			science.ScienceQuestionsPage().Render(r.Context(), w)
+		})).ServeHTTP(w, r)
+	})
+	mux.HandleFunc("/user/science/revision", func(w http.ResponseWriter, r *http.Request) {
+		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			science.ScienceRevisionPage().Render(r.Context(), w)
+		})).ServeHTTP(w, r)
+	})
+
 	SetupAssetsRoutes(mux)
 
 	hstsMiddleware := func(next http.Handler) http.Handler {
@@ -100,7 +150,7 @@ func main() {
 		}()
 	}
 
-	err := http.ListenAndServe(":"+port, handler)
+	err = http.ListenAndServe(":"+port, handler)
 	if err != nil {
 		return
 	}
