@@ -165,10 +165,13 @@ func ScrapeAndStoreAqaSpecs(ctx context.Context, db *sql.DB) error {
 }
 
 func fetchAqaSpecContent(url string) (string, error) {
+	log.Printf("[Collect] HTTP GET %s", url)
 	resp, err := http.Get(url)
 	if err != nil {
+		log.Printf("[Collect] HTTP GET %s failed: %v", url, err)
 		return "", err
 	}
+	log.Printf("[Collect] HTTP GET %s status: %d", url, resp.StatusCode)
 	defer resp.Body.Close()
 	if resp.StatusCode != 200 {
 		return "", fmt.Errorf("bad status: %d", resp.StatusCode)
@@ -202,10 +205,13 @@ func fetchAqaSpecContent(url string) (string, error) {
 // --- AQA PAPERS SCRAPER ---
 func ScrapeAndStoreAqaPapers(ctx context.Context, db *sql.DB) error {
 	url := "https://www.aqa.org.uk/find-past-papers-and-mark-schemes"
+	log.Printf("[Collect] HTTP GET %s", url)
 	resp, err := http.Get(url)
 	if err != nil {
+		log.Printf("[Collect] HTTP GET %s failed: %v", url, err)
 		return err
 	}
+	log.Printf("[Collect] HTTP GET %s status: %d", url, resp.StatusCode)
 	defer resp.Body.Close()
 	if resp.StatusCode != 200 {
 		return fmt.Errorf("bad status: %d", resp.StatusCode)
@@ -253,6 +259,8 @@ func ScrapeAndStoreAqaPapers(ctx context.Context, db *sql.DB) error {
 				log.Printf("[Collect] Upserting paper: board=%s, year=%d, subject=%s, url=%s", p.Board, p.Year, p.Subject, p.URL)
 				if err := UpsertPaper(ctx, db, p); err != nil {
 					log.Printf("[Collect] Error upserting paper: %v", err)
+				} else {
+					log.Printf("[Collect] Upserted paper successfully: %+v", p)
 				}
 			}
 			inRow = false
