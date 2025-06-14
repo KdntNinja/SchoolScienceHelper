@@ -7,19 +7,21 @@ templ ScienceHubPage(selectedBoard string, selectedTier string) {
 		<main class="max-w-3xl mx-auto py-10 px-4">
 			<h1 class="text-4xl font-bold mb-6 text-primary">GCSE Science Hub</h1>
 			<div class="mb-6 flex flex-wrap gap-4">
-				<label>Board:
+				<label>
+					Board:
 					<select id="board-select" class="border rounded px-2 py-1">
-						<option value="aqa" selected={selectedBoard=="aqa"}>AQA</option>
-						<option value="ocr" selected={selectedBoard=="ocr"}>OCR</option>
-						<option value="edexcel" selected={selectedBoard=="edexcel"}>Edexcel</option>
+						<option value="aqa" selected={ selectedBoard == "aqa" }>AQA</option>
+						<option value="ocr" selected={ selectedBoard == "ocr" }>OCR</option>
+						<option value="edexcel" selected={ selectedBoard == "edexcel" }>Edexcel</option>
 					</select>
 				</label>
-				<label>Tier:
+				<label>
+					Tier:
 					<select id="tier-select" class="border rounded px-2 py-1">
-						<option value="foundation" selected={selectedTier=="foundation"}>Foundation</option>
-						<option value="higher" selected={selectedTier=="higher"}>Higher</option>
-						<option value="separate_foundation" selected={selectedTier=="separate_foundation"}>Separate Foundation</option>
-						<option value="separate_higher" selected={selectedTier=="separate_higher"}>Separate Higher</option>
+						<option value="foundation" selected={ selectedTier == "foundation" }>Foundation</option>
+						<option value="higher" selected={ selectedTier == "higher" }>Higher</option>
+						<option value="separate_foundation" selected={ selectedTier == "separate_foundation" }>Separate Foundation</option>
+						<option value="separate_higher" selected={ selectedTier == "separate_higher" }>Separate Higher</option>
 					</select>
 				</label>
 			</div>

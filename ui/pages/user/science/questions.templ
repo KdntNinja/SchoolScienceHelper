@@ -1,23 +1,23 @@
 package science
 
-import (
-	"SchoolScienceHelper/ui/layouts"
-)
+import "SchoolScienceHelper/ui/layouts"
 
 templ QuestionsPage() {
 	@layouts.BaseLayout() {
 		<main class="max-w-5xl mx-auto py-10 px-4">
 			<h1 class="text-4xl font-bold mb-6 text-primary">GCSE Science Practice Questions</h1>
-			<div class="mb-4 flex flex-wrap gap-4">
-				<label class="font-semibold">Board:
-					<select id="board-select" class="border rounded px-2 py-1 ml-2">
+			<div class="mb-4 flex flex-wrap gap-4 items-center bg-muted/40 rounded-lg p-4 shadow-sm">
+				<label class="font-semibold">
+					Board:
+					<select id="board-select" class="border rounded px-2 py-1 ml-2 bg-background focus:ring-2 focus:ring-primary">
 						<option value="aqa">AQA</option>
 						<option value="ocr">OCR</option>
 						<option value="edexcel">Edexcel</option>
 					</select>
 				</label>
-				<label class="font-semibold">Tier:
-					<select id="tier-select" class="border rounded px-2 py-1 ml-2">
+				<label class="font-semibold">
+					Tier:
+					<select id="tier-select" class="border rounded px-2 py-1 ml-2 bg-background focus:ring-2 focus:ring-primary">
 						<option value="foundation">Foundation</option>
 						<option value="higher">Higher</option>
 						<option value="separate_foundation">Separate Foundation</option>
@@ -27,19 +27,44 @@ templ QuestionsPage() {
 			</div>
 			<div id="questions-list" class="space-y-6"></div>
 			<script>
-				function fetchQuestions() {
-					const board = document.getElementById('board-select').value;
-					const tier = document.getElementById('tier-select').value;
-					fetch(`/api/${board}/${tier}/questions`).then(r => r.json()).then(questions => {
-						const list = document.getElementById('questions-list');
-						list.innerHTML = questions.map(q => `@card.Card(card.Props{Class: 'mb-2'}) {<h2 class='text-xl font-semibold mb-2'>${q.subject} - ${q.topic}</h2><div class='mb-2'>Q: ${q.question}</div><details><summary class='cursor-pointer text-blue-600'>Show Answer</summary><div class='mt-2'>${q.answer}</div></details>}`).join('');
-					});
-				}
-				document.addEventListener('DOMContentLoaded', function() {
-					fetchQuestions();
-					document.getElementById('board-select').addEventListener('change', fetchQuestions);
-					document.getElementById('tier-select').addEventListener('change', fetchQuestions);
-				});
+function setCookie(name, value, days) {
+  let expires = "";
+  if (days) {
+    const date = new Date();
+    date.setTime(date.getTime() + (days*24*60*60*1000));
+    expires = "; expires=" + date.toUTCString();
+  }
+  document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+}
+function getCookie(name) {
+  let nameEQ = name + "=";
+  let ca = document.cookie.split(';');
+  for(let i=0;i < ca.length;i++) {
+    let c = ca[i];
+    while (c.charAt(0)==' ') c = c.substring(1,c.length);
+    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+  }
+  return null;
+}
+function fetchQuestions() {
+  const board = document.getElementById('board-select').value;
+  const tier = document.getElementById('tier-select').value;
+  setCookie('science_board', board, 30);
+  setCookie('science_tier', tier, 30);
+  fetch(`/api/${board}/${tier}/questions`).then(r => r.json()).then(questions => {
+    const list = document.getElementById('questions-list');
+    list.innerHTML = questions.map(q => `<div class='mb-2'><h2 class='text-xl font-semibold mb-2'>${q.subject} - ${q.topic}</h2><div class='mb-2'>Q: ${q.question}</div><details><summary class='cursor-pointer text-blue-600'>Show Answer</summary><div class='mt-2'>${q.answer}</div></details></div>`).join('');
+  });
+}
+document.addEventListener('DOMContentLoaded', function() {
+  const board = getCookie('science_board') || 'aqa';
+  const tier = getCookie('science_tier') || 'foundation';
+  document.getElementById('board-select').value = board;
+  document.getElementById('tier-select').value = tier;
+  fetchQuestions();
+  document.getElementById('board-select').addEventListener('change', fetchQuestions);
+  document.getElementById('tier-select').addEventListener('change', fetchQuestions);
+});
 			</script>
 		</main>
 	}

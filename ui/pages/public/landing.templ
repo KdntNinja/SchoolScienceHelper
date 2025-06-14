@@ -35,9 +35,9 @@ templ Landing(auth0Domain string, auth0ClientID string) {
 				</div>
 				<span class="text-xs text-muted-foreground mt-2 block text-center w-full">
 					By continuing you agree to the
-					<a href="/terms" class="underline hover:text-primary" target="_blank">terms and conditions</a>
+					<a href="/terms" class="underline hover:text-primary">terms and conditions</a>
 					and
-					<a href="/privacy" class="underline hover:text-primary" target="_blank">privacy policy</a>
+					<a href="/privacy" class="underline hover:text-primary">privacy policy</a>
 					.
 				</span>
 				<script>
@@ -69,8 +69,8 @@ templ Landing(auth0Domain string, auth0ClientID string) {
 						btn.onclick = function(e) {
 							e.preventDefault();
 							// Auth0 config injected from Go backend
-							const domain = "{{auth0Domain}}";
-							const clientId = "{{auth0ClientID}}";
+							const domain = "{{ auth0Domain }}";
+							const clientId = "{{ auth0ClientID }}";
 							if (!domain || !clientId) {
 								alert('Auth0 configuration is missing.');
 								return;
