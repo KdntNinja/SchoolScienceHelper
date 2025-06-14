@@ -51,10 +51,24 @@ function fetchSpecs() {
   const tier = document.getElementById('tier-select').value;
   setCookie('science_board', board, 30);
   setCookie('science_tier', tier, 30);
-  fetch(`/api/${board}/${tier}/spec`).then(r => r.json()).then(specs => {
-    const list = document.getElementById('spec-list');
-    list.innerHTML = specs.map(s => `<div class='mb-2'><h2 class='text-2xl font-semibold mb-2'>${s.subject}: ${s.title}</h2><div>${s.content}</div></div>`).join('');
-  });
+  fetch(`/api/${board}/${tier}/spec`)
+    .then(r => {
+      if (!r.ok) throw new Error(`API error: ${r.status}`);
+      return r.json();
+    })
+    .then(specs => {
+      const list = document.getElementById('spec-list');
+      if (!Array.isArray(specs) || specs.length === 0) {
+        list.innerHTML = `<div class='text-gray-500 italic'>No specifications found for the selected filters.</div>`;
+      } else {
+        list.innerHTML = specs.map(s => `<div class='mb-2'><h2 class='text-2xl font-semibold mb-2'>${s.subject}: ${s.title}</h2><div>${s.content}</div></div>`).join('');
+      }
+    })
+    .catch(err => {
+      const list = document.getElementById('spec-list');
+      list.innerHTML = `<div class='text-red-600 font-semibold'>Error loading specifications: ${err.message}</div>`;
+      console.error('Error fetching specifications:', err);
+    });
 }
 document.addEventListener('DOMContentLoaded', function() {
   const board = getCookie('science_board') || 'aqa';

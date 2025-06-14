@@ -66,14 +66,24 @@ function fetchPapers() {
   if (subject) {
     url += `?subject=${encodeURIComponent(subject)}`;
   }
-  fetch(url).then(r => r.json()).then(papers => {
-    const list = document.getElementById('papers-list');
-    if (papers.length === 0) {
-      list.innerHTML = `<div class='text-gray-500 italic'>No papers found for the selected filters.</div>`;
-    } else {
-      list.innerHTML = papers.map(p => `<div class='mb-2'><h2 class='text-xl font-semibold mb-2'>${p.subject} ${p.year}</h2><a href='${p.url}' class='text-blue-600 underline' target='_blank'>View Paper</a></div>`).join('');
-    }
-  });
+  fetch(url)
+    .then(r => {
+      if (!r.ok) throw new Error(`API error: ${r.status}`);
+      return r.json();
+    })
+    .then(papers => {
+      const list = document.getElementById('papers-list');
+      if (!Array.isArray(papers) || papers.length === 0) {
+        list.innerHTML = `<div class='text-gray-500 italic'>No papers found for the selected filters.</div>`;
+      } else {
+        list.innerHTML = papers.map(p => `<div class='mb-2'><h2 class='text-xl font-semibold mb-2'>${p.subject} ${p.year}</h2><a href='${p.url}' class='text-blue-600 underline' target='_blank'>View Paper</a></div>`).join('');
+      }
+    })
+    .catch(err => {
+      const list = document.getElementById('papers-list');
+      list.innerHTML = `<div class='text-red-600 font-semibold'>Error loading papers: ${err.message}</div>`;
+      console.error('Error fetching papers:', err);
+    });
 }
 document.addEventListener('DOMContentLoaded', function() {
   const board = getCookie('science_board') || 'aqa';

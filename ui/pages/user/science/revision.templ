@@ -51,10 +51,24 @@ function fetchRevision() {
   const tier = document.getElementById('tier-select').value;
   setCookie('science_board', board, 30);
   setCookie('science_tier', tier, 30);
-  fetch(`/api/${board}/${tier}/revision`).then(r => r.json()).then(revs => {
-    const list = document.getElementById('revision-list');
-    list.innerHTML = revs.map(r => `<div class='mb-2'><h2 class='text-xl font-semibold mb-2'>${r.subject} - ${r.topic}</h2><div>${r.content}</div></div>`).join('');
-  });
+  fetch(`/api/${board}/${tier}/revision`)
+    .then(r => {
+      if (!r.ok) throw new Error(`API error: ${r.status}`);
+      return r.json();
+    })
+    .then(revs => {
+      const list = document.getElementById('revision-list');
+      if (!Array.isArray(revs) || revs.length === 0) {
+        list.innerHTML = `<div class='text-gray-500 italic'>No revision resources found for the selected filters.</div>`;
+      } else {
+        list.innerHTML = revs.map(r => `<div class='mb-2'><h2 class='text-xl font-semibold mb-2'>${r.subject} - ${r.topic}</h2><div>${r.content}</div></div>`).join('');
+      }
+    })
+    .catch(err => {
+      const list = document.getElementById('revision-list');
+      list.innerHTML = `<div class='text-red-600 font-semibold'>Error loading revision resources: ${err.message}</div>`;
+      console.error('Error fetching revision resources:', err);
+    });
 }
 document.addEventListener('DOMContentLoaded', function() {
   const board = getCookie('science_board') || 'aqa';

@@ -51,10 +51,24 @@ function fetchQuestions() {
   const tier = document.getElementById('tier-select').value;
   setCookie('science_board', board, 30);
   setCookie('science_tier', tier, 30);
-  fetch(`/api/${board}/${tier}/questions`).then(r => r.json()).then(questions => {
-    const list = document.getElementById('questions-list');
-    list.innerHTML = questions.map(q => `<div class='mb-2'><h2 class='text-xl font-semibold mb-2'>${q.subject} - ${q.topic}</h2><div class='mb-2'>Q: ${q.question}</div><details><summary class='cursor-pointer text-blue-600'>Show Answer</summary><div class='mt-2'>${q.answer}</div></details></div>`).join('');
-  });
+  fetch(`/api/${board}/${tier}/questions`)
+    .then(r => {
+      if (!r.ok) throw new Error(`API error: ${r.status}`);
+      return r.json();
+    })
+    .then(questions => {
+      const list = document.getElementById('questions-list');
+      if (!Array.isArray(questions) || questions.length === 0) {
+        list.innerHTML = `<div class='text-gray-500 italic'>No questions found for the selected filters.</div>`;
+      } else {
+        list.innerHTML = questions.map(q => `<div class='mb-2'><h2 class='text-xl font-semibold mb-2'>${q.subject} - ${q.topic}</h2><div class='mb-2'>Q: ${q.question}</div><details><summary class='cursor-pointer text-blue-600'>Show Answer</summary><div class='mt-2'>${q.answer}</div></details></div>`).join('');
+      }
+    })
+    .catch(err => {
+      const list = document.getElementById('questions-list');
+      list.innerHTML = `<div class='text-red-600 font-semibold'>Error loading questions: ${err.message}</div>`;
+      console.error('Error fetching questions:', err);
+    });
 }
 document.addEventListener('DOMContentLoaded', function() {
   const board = getCookie('science_board') || 'aqa';
