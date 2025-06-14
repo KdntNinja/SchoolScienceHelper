@@ -103,23 +103,55 @@ func main() {
 	}
 
 	mux.HandleFunc("/user/science/spec", func(w http.ResponseWriter, r *http.Request) {
+		log.Infof("[ScienceSpecPage] user=%v, path=%s", r.Context().Value("user"), r.URL.Path)
 		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			science.ScienceSpecPage().Render(r.Context(), w)
+			log.Debugf("Rendering ScienceSpecPage for user=%v", r.Context().Value("user"))
+			err := science.ScienceSpecPage().Render(r.Context(), w)
+			if err != nil {
+				log.Errorf("Render error (ScienceSpecPage): %v", err)
+				w.WriteHeader(http.StatusInternalServerError)
+				w.Write([]byte("Internal Server Error"))
+				return
+			}
 		})).ServeHTTP(w, r)
 	})
 	mux.HandleFunc("/user/science/papers", func(w http.ResponseWriter, r *http.Request) {
+		log.Infof("[SciencePapersPage] user=%v, path=%s", r.Context().Value("user"), r.URL.Path)
 		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			science.SciencePapersPage().Render(r.Context(), w)
+			log.Debugf("Rendering SciencePapersPage for user=%v", r.Context().Value("user"))
+			err := science.SciencePapersPage().Render(r.Context(), w)
+			if err != nil {
+				log.Errorf("Render error (SciencePapersPage): %v", err)
+				w.WriteHeader(http.StatusInternalServerError)
+				w.Write([]byte("Internal Server Error"))
+				return
+			}
 		})).ServeHTTP(w, r)
 	})
 	mux.HandleFunc("/user/science/questions", func(w http.ResponseWriter, r *http.Request) {
+		log.Infof("[ScienceQuestionsPage] user=%v, path=%s", r.Context().Value("user"), r.URL.Path)
 		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			science.ScienceQuestionsPage().Render(r.Context(), w)
+			log.Debugf("Rendering ScienceQuestionsPage for user=%v", r.Context().Value("user"))
+			err := science.ScienceQuestionsPage().Render(r.Context(), w)
+			if err != nil {
+				log.Errorf("Render error (ScienceQuestionsPage): %v", err)
+				w.WriteHeader(http.StatusInternalServerError)
+				w.Write([]byte("Internal Server Error"))
+				return
+			}
 		})).ServeHTTP(w, r)
 	})
 	mux.HandleFunc("/user/science/revision", func(w http.ResponseWriter, r *http.Request) {
+		log.Infof("[ScienceRevisionPage] user=%v, path=%s", r.Context().Value("user"), r.URL.Path)
 		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			science.ScienceRevisionPage().Render(r.Context(), w)
+			log.Debugf("Rendering ScienceRevisionPage for user=%v", r.Context().Value("user"))
+			err := science.ScienceRevisionPage().Render(r.Context(), w)
+			if err != nil {
+				log.Errorf("Render error (ScienceRevisionPage): %v", err)
+				w.WriteHeader(http.StatusInternalServerError)
+				w.Write([]byte("Internal Server Error"))
+				return
+			}
 		})).ServeHTTP(w, r)
 	})
 
