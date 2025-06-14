@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"net/http"
 	"os"
+	"time"
 
 	_ "github.com/lib/pq"
 
@@ -16,6 +17,8 @@ import (
 	userpages "SchoolScienceHelper/ui/pages/user"
 	sciencepages "SchoolScienceHelper/ui/pages/user/science"
 
+	"context"
+
 	log "github.com/sirupsen/logrus"
 )
 
@@ -24,6 +27,16 @@ func main() {
 	checkEnvVars()
 	db := setupDatabase()
 	defer db.Close()
+
+	// Start background weekly board data sync
+	go func() {
+		for {
+			log.Info("[Background] Starting weekly exam board scrape...")
+			science.CollectAllBoardLinks(context.Background(), db)
+			log.Info("[Background] Exam board scrape complete. Next run in 7 days.")
+			time.Sleep(7 * 24 * time.Hour)
+		}
+	}()
 
 	mux := http.NewServeMux()
 	registerStaticRoutes(mux)

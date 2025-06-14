@@ -74,3 +74,35 @@ func GetRevisionByBoardTier(ctx context.Context, db *sql.DB, board, tier string)
 	}
 	return revs, nil
 }
+
+// UpsertSpec inserts or updates a spec
+func UpsertSpec(ctx context.Context, db *sql.DB, s Spec) error {
+	_, err := db.ExecContext(ctx, `INSERT INTO specs (board, tier, subject, title, content) VALUES ($1, $2, $3, $4, $5)
+		ON CONFLICT (board, tier, subject, title) DO UPDATE SET content = EXCLUDED.content`,
+		s.Board, s.Tier, s.Subject, s.Title, s.Content)
+	return err
+}
+
+// UpsertPaper inserts or updates a paper
+func UpsertPaper(ctx context.Context, db *sql.DB, p Paper) error {
+	_, err := db.ExecContext(ctx, `INSERT INTO papers (board, tier, year, subject, url) VALUES ($1, $2, $3, $4, $5)
+		ON CONFLICT (board, tier, year, subject, url) DO NOTHING`,
+		p.Board, p.Tier, p.Year, p.Subject, p.URL)
+	return err
+}
+
+// UpsertQuestion inserts or updates a question
+func UpsertQuestion(ctx context.Context, db *sql.DB, q Question) error {
+	_, err := db.ExecContext(ctx, `INSERT INTO questions (board, tier, subject, topic, question, answer) VALUES ($1, $2, $3, $4, $5, $6)
+		ON CONFLICT (board, tier, subject, topic, question) DO UPDATE SET answer = EXCLUDED.answer`,
+		q.Board, q.Tier, q.Subject, q.Topic, q.Question, q.Answer)
+	return err
+}
+
+// UpsertRevision inserts or updates a revision note
+func UpsertRevision(ctx context.Context, db *sql.DB, r Revision) error {
+	_, err := db.ExecContext(ctx, `INSERT INTO revision (board, tier, subject, topic, content) VALUES ($1, $2, $3, $4, $5)
+		ON CONFLICT (board, tier, subject, topic) DO UPDATE SET content = EXCLUDED.content`,
+		r.Board, r.Tier, r.Subject, r.Topic, r.Content)
+	return err
+}
