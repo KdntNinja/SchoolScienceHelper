@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS quizzes (
     updated_at BIGINT NOT NULL
 );
 
--- Questions (now supports all subjects, including science)
+-- Questions (now supports all subjects)
 CREATE TABLE IF NOT EXISTS questions (
     id TEXT PRIMARY KEY,
     quiz_id TEXT REFERENCES quizzes(id),
@@ -81,32 +81,23 @@ CREATE TABLE IF NOT EXISTS leaderboard (
     PRIMARY KEY(user_id)
 );
 
--- Achievements
-CREATE TABLE IF NOT EXISTS achievements (
+-- Anki Decks (for imported Anki .apkg files)
+CREATE TABLE IF NOT EXISTS anki_decks (
     id TEXT PRIMARY KEY,
-    user_id TEXT REFERENCES users(id),
+    owner_id TEXT REFERENCES users(id),
     name TEXT NOT NULL,
-    description TEXT,
-    earned_at BIGINT NOT NULL
+    created_at BIGINT NOT NULL,
+    updated_at BIGINT NOT NULL
 );
 
--- Science Questions (AQA Biology, Physics, Chemistry)
-CREATE TABLE IF NOT EXISTS science_questions (
+-- Anki Cards (linked to imported decks)
+CREATE TABLE IF NOT EXISTS anki_cards (
     id TEXT PRIMARY KEY,
-    subject TEXT NOT NULL, -- 'Biology', 'Physics', 'Chemistry'
-    topic TEXT NOT NULL,
-    question TEXT NOT NULL,
-    choices TEXT[] NOT NULL,
-    answer INT NOT NULL, -- index of correct choice
-    explanation TEXT
-);
-
--- User Progress on Science Questions
-CREATE TABLE IF NOT EXISTS user_science_progress (
-    user_id TEXT REFERENCES users(id),
-    question_id TEXT REFERENCES science_questions(id),
-    attempts INT DEFAULT 0,
-    correct INT DEFAULT 0,
-    last_attempted BIGINT,
-    PRIMARY KEY(user_id, question_id)
+    deck_id TEXT REFERENCES anki_decks(id),
+    owner_id TEXT REFERENCES users(id),
+    front TEXT NOT NULL,
+    back TEXT NOT NULL,
+    media JSONB,
+    created_at BIGINT NOT NULL,
+    updated_at BIGINT NOT NULL
 );

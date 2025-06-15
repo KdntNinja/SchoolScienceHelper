@@ -46,24 +46,43 @@ templ Settings() {
 									Update Username
 								}
 							</form>
-							<form id="change-password-form" class="space-y-4 mt-6">
-								<div>
-									@label.Label(label.Props{For: "password-input", Class: "mb-2 font-semibold"}) {
-										New Password 
-									}
-									@input.Input(input.Props{
-										ID:          "password-input",
-										Name:        "password",
-										Type:        input.TypePassword,
-										Class:       "w-full",
-										Required:    true,
-										Placeholder: "Enter new password",
-									})
-								</div>
-								@button.Button(button.Props{Type: "submit", Variant: button.VariantDefault, Class: "w-full"}) {
-									Change Password
-								}
-							</form>
+                            <form id="change-password-form" class="space-y-4 mt-6">
+                                <div>
+                                    @label.Label(label.Props{For: "password-input", Class: "mb-2 font-semibold"}) {
+                                        New Password 
+                                    }
+                                    <div class="relative">
+                                        @input.Input(input.Props{
+                                            ID:          "password-input",
+                                            Name:        "password",
+                                            Type:        input.TypePassword,
+                                            Class:       "w-full pr-10",
+                                            Required:    true,
+                                            Placeholder: "Enter new password",
+                                        })
+                                        <button type="button" id="show-password-btn" tabindex="-1" class="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">Show</button>
+                                    </div>
+                                </div>
+                                <div>
+                                    @label.Label(label.Props{For: "confirm-password-input", Class: "mb-2 font-semibold"}) {
+                                        Confirm Password 
+                                    }
+                                    <div class="relative">
+                                        @input.Input(input.Props{
+                                            ID:          "confirm-password-input",
+                                            Name:        "confirm_password",
+                                            Type:        input.TypePassword,
+                                            Class:       "w-full pr-10",
+                                            Required:    true,
+                                            Placeholder: "Re-enter new password",
+                                        })
+                                        <button type="button" id="show-confirm-password-btn" tabindex="-1" class="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">Show</button>
+                                    </div>
+                                </div>
+                                @button.Button(button.Props{Type: "submit", Variant: button.VariantDefault, Class: "w-full"}) {
+                                    Change Password
+                                }
+                            </form>
 							@button.Button(button.Props{ID: "logout-btn", Variant: button.VariantDefault, Class: "w-full mt-6 text-red-600 border-red-600 hover:bg-red-50"}) {
 								Log Out 
 							}

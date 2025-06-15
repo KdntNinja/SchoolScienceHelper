@@ -15,6 +15,22 @@ templ Revision() {
 					}
 				}
 				@card.Content(card.ContentProps{}) {
+					<!-- Anki Import Section -->
+					<div class="mb-8">
+						<h2 class="text-xl font-semibold mb-2">Import Anki Deck</h2>
+						<form id="anki-import-form" class="flex flex-col md:flex-row gap-2 items-end">
+							<input id="anki-file-input" type="file" accept=".apkg" class="border rounded px-3 py-2" required />
+							<button type="submit" class="btn bg-primary text-white font-bold px-4 py-2 rounded">Import</button>
+						</form>
+						<div id="anki-import-status" class="text-sm mt-2"></div>
+					</div>
+					<!-- Anki Decks Section -->
+					<div class="mb-10">
+						<h2 class="text-xl font-semibold mb-2">Your Anki Decks</h2>
+						<select id="anki-deck-select" class="border rounded px-3 py-2 mb-4"></select>
+						<ul id="anki-cards-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></ul>
+					</div>
+					<!-- Existing Revision Resource Add/List UI -->
 					<div class="mb-6 flex flex-col md:flex-row gap-4 items-center">
 						<form id="add-revision-form" class="flex flex-col md:flex-row gap-2 w-full md:items-end">
 							<div class="flex flex-col flex-1">
@@ -38,6 +54,66 @@ templ Revision() {
 					</div>
 					<ul id="revision-list" class="grid grid-cols-1 md:grid-cols-2 gap-6"></ul>
 					<script>
+					// Anki Import
+					document.getElementById('anki-import-form').onsubmit = async function(e) {
+						e.preventDefault();
+						const fileInput = document.getElementById('anki-file-input');
+						const status = document.getElementById('anki-import-status');
+						if (!fileInput.files.length) return;
+						const formData = new FormData();
+						formData.append('file', fileInput.files[0]);
+						status.textContent = 'Importing...';
+						const res = await fetch('/api/anki/import', {
+							method: 'POST',
+							credentials: 'include',
+							body: formData
+						});
+						if (res.ok) {
+							status.textContent = 'Import successful!';
+							loadAnkiDecks();
+						} else {
+							status.textContent = 'Import failed.';
+						}
+					};
+					// Load Anki Decks
+					async function loadAnkiDecks() {
+						const res = await fetch('/api/anki/decks', { credentials: 'include' });
+						const decks = await res.json();
+						const select = document.getElementById('anki-deck-select');
+						select.innerHTML = '';
+						if (!decks.length) {
+							select.innerHTML = '<option>No decks imported</option>';
+							return;
+						}
+						for (const d of decks) {
+							const opt = document.createElement('option');
+							opt.value = d.id;
+							opt.textContent = d.name;
+							select.appendChild(opt);
+						}
+						loadAnkiCards(select.value);
+						select.onchange = () => loadAnkiCards(select.value);
+					}
+					// Load Anki Cards for selected deck
+					async function loadAnkiCards(deckId) {
+						const res = await fetch(`/api/anki/cards?deck_id=${encodeURIComponent(deckId)}`, { credentials: 'include' });
+						const cards = await res.json();
+						const list = document.getElementById('anki-cards-list');
+						if (!cards.length) {
+							list.innerHTML = '<li class="col-span-2 text-center text-muted-foreground">No cards in this deck.</li>';
+							return;
+						}
+						let html = '';
+						for (const c of cards) {
+							html += `<li class='bg-muted/40 rounded-xl p-4 flex flex-col gap-2'>`;
+							html += `<span class='font-semibold'>Front:</span><span>${c.front}</span>`;
+							html += `<span class='font-semibold'>Back:</span><span>${c.back}</span>`;
+							html += `</li>`;
+						}
+						list.innerHTML = html;
+					}
+					loadAnkiDecks();
+					// Existing Revision Resource JS
 					async function loadRevisionResources() {
 						const res = await fetch('/api/revision', { credentials: 'include' });
 						const resources = await res.json();
@@ -58,22 +134,21 @@ templ Revision() {
 						list.innerHTML = html;
 					}
 					loadRevisionResources();
-
-document.getElementById('add-revision-form').onsubmit = async function(e) {
-	e.preventDefault();
-	const type = document.getElementById('type-input').value;
-	const topic = document.getElementById('topic-input').value;
-	const content = document.getElementById('content-input').value;
-	if (!type || !content) return;
-	await fetch('/api/revision', {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		credentials: 'include',
-		body: JSON.stringify({ type, topic, content })
-	});
-	document.getElementById('content-input').value = '';
-	loadRevisionResources();
-};
+					document.getElementById('add-revision-form').onsubmit = async function(e) {
+						e.preventDefault();
+						const type = document.getElementById('type-input').value;
+						const topic = document.getElementById('topic-input').value;
+						const content = document.getElementById('content-input').value;
+						if (!type || !content) return;
+						await fetch('/api/revision', {
+							method: 'POST',
+							headers: { 'Content-Type': 'application/json' },
+							credentials: 'include',
+							body: JSON.stringify({ type, topic, content })
+						});
+						document.getElementById('content-input').value = '';
+						loadRevisionResources();
+					};
 					</script>
 				}
 			}
