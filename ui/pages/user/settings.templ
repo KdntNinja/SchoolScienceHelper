@@ -21,51 +21,30 @@ templ Settings() {
 				}
 				@card.Content(card.ContentProps{}) {
 					<section class="space-y-8">
-						<div>
-							<h2 class="text-xl font-semibold text-primary mb-2">Profile</h2>
+						@card.Card(card.Props{Class: "mb-8 p-6 bg-muted/30 border border-border"}) {
+							@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) { Profile }
 							<div id="profile-info" class="text-muted-foreground mb-4">Loading profile...</div>
 							<form id="update-profile-form" class="space-y-4">
 								<div>
 									<label class="block mb-2 font-semibold">Username</label>
 									<input name="username" id="username-input" class="input input-bordered w-full" required/>
 								</div>
-								@button.Button(button.Props{
-									Type: "submit", Variant: button.VariantDefault, Class: "w-full",
-								}) {
-									Update Username
-								}
+								@button.Button(button.Props{Type: "submit", Variant: button.VariantDefault, Class: "w-full"}) { Update Username }
 							</form>
 							<form id="change-password-form" class="space-y-4 mt-6">
 								<div>
 									<label class="block mb-2 font-semibold">New Password</label>
 									<input name="password" type="password" class="input input-bordered w-full" required/>
 								</div>
-								@button.Button(button.Props{
-									Type: "submit", Variant: button.VariantDefault, Class: "w-full",
-								}) {
-									Change Password
-								}
+								@button.Button(button.Props{Type: "submit", Variant: button.VariantDefault, Class: "w-full"}) { Change Password }
 							</form>
-							@button.Button(button.Props{
-								ID: "logout-btn", Variant: button.VariantDefault,
-								Class: "w-full mt-6 text-red-600 border-red-600 hover:bg-red-50",
-							}) {
-								Log Out
-							}
-						</div>
-						<hr class="border-muted-foreground/30"/>
-						<div>
-							<h2 class="text-xl font-semibold text-primary mb-2">Delete Account</h2>
-							<p class="text-muted-foreground mb-4">
-								This will permanently delete your account and all data. This action cannot be undone.
-							</p>
-							@button.Button(button.Props{
-								ID: "delete-btn", Variant: button.VariantDefault,
-								Class: "w-full text-red-600 border-red-600 hover:bg-red-50",
-							}) {
-								Delete Account
-							}
-						</div>
+							@button.Button(button.Props{ID: "logout-btn", Variant: button.VariantDefault, Class: "w-full mt-6 text-red-600 border-red-600 hover:bg-red-50"}) { Log Out }
+						}
+						@card.Card(card.Props{Class: "p-6 bg-muted/30 border border-border"}) {
+							@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) { Delete Account }
+							<p class="text-muted-foreground mb-4">This will permanently delete your account and all data. This action cannot be undone.</p>
+							@button.Button(button.Props{ID: "delete-btn", Variant: button.VariantDefault, Class: "w-full text-red-600 border-red-600 hover:bg-red-50"}) { Delete Account }
+						}
 					</section>
 					<script>
 					fetch('/api/auth/check', { credentials: 'include' })
