@@ -242,16 +242,68 @@ func SetupAssetsRoutes(mux *http.ServeMux) {
 }
 
 func registerAPIRoutes(mux *http.ServeMux, db *sql.DB) {
-	mux.Handle("/api/projects", projects.ListProjects(db))
-	mux.Handle("/api/projects", projects.CreateProject(db))
-	mux.Handle("/api/quizzes", quizzes.ListQuizzes(db))
-	mux.Handle("/api/quizzes", quizzes.CreateQuiz(db))
-	mux.Handle("/api/revision", revision.ListRevisionResources(db))
-	mux.Handle("/api/revision", revision.CreateRevisionResource(db))
-	mux.Handle("/api/leaderboard", leaderboard.ListLeaderboard(db))
-	mux.Handle("/api/achievements", achievements.ListAchievements(db))
-	mux.Handle("/api/user/profile", user.GetProfile(db))
-	mux.Handle("/api/user/profile", user.UpdateProfile(db))
-	mux.Handle("/api/resources", resources.ListResources(db))
-	mux.Handle("/api/resources", resources.CreateResource(db))
+	mux.Handle("/api/projects", handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			projects.ListProjects(db)(w, r)
+		case http.MethodPost:
+			projects.CreateProject(db)(w, r)
+		default:
+			w.WriteHeader(http.StatusMethodNotAllowed)
+		}
+	})))
+	mux.Handle("/api/quizzes", handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			quizzes.ListQuizzes(db)(w, r)
+		case http.MethodPost:
+			quizzes.CreateQuiz(db)(w, r)
+		default:
+			w.WriteHeader(http.StatusMethodNotAllowed)
+		}
+	})))
+	mux.Handle("/api/revision", handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			revision.ListRevisionResources(db)(w, r)
+		case http.MethodPost:
+			revision.CreateRevisionResource(db)(w, r)
+		default:
+			w.WriteHeader(http.StatusMethodNotAllowed)
+		}
+	})))
+	mux.Handle("/api/leaderboard", handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet {
+			leaderboard.ListLeaderboard(db)(w, r)
+		} else {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+		}
+	})))
+	mux.Handle("/api/achievements", handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet {
+			achievements.ListAchievements(db)(w, r)
+		} else {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+		}
+	})))
+	mux.Handle("/api/user/profile", handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			user.GetProfile(db)(w, r)
+		case http.MethodPost:
+			user.UpdateProfile(db)(w, r)
+		default:
+			w.WriteHeader(http.StatusMethodNotAllowed)
+		}
+	})))
+	mux.Handle("/api/resources", handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			resources.ListResources(db)(w, r)
+		case http.MethodPost:
+			resources.CreateResource(db)(w, r)
+		default:
+			w.WriteHeader(http.StatusMethodNotAllowed)
+		}
+	})))
 }
