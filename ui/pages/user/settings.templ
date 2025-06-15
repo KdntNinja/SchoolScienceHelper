@@ -1,55 +1,113 @@
 package pages
 
-import "KdnSite/ui/layouts"
+import (
+	"KdnSite/ui/components/button"
+	"KdnSite/ui/components/card"
+	"KdnSite/ui/layouts"
+)
 
 templ Settings() {
 	@layouts.BaseLayout() {
 		<main class="container mx-auto py-12 max-w-xl">
-			<h1 class="text-3xl font-bold mb-6 text-primary">Account Settings</h1>
-			<div class="space-y-8">
-				<section>
-					<h2 class="text-xl font-semibold mb-2">Profile</h2>
-					<div id="profile-info" class="mb-4 text-muted-foreground">Loading profile...</div>
-					<button id="logout-btn" class="btn btn-danger">Log Out</button>
-				</section>
-				<section>
-					<h2 class="text-xl font-semibold mb-2">Delete Account</h2>
-					<p class="mb-2 text-muted-foreground">This will permanently delete your account and all data. This action cannot be undone.</p>
-					<button id="delete-btn" class="btn btn-danger">Delete Account</button>
-				</section>
-			</div>
-			<script>
-			// Fetch user profile from Auth0 (via backend API)
-			fetch('/api/auth/check', { credentials: 'include' })
-				.then(r => r.json())
-				.then(data => {
-					if (data && data.user) {
-						document.getElementById('profile-info').innerHTML =
-							`<div><b>Email:</b> ${data.user.email || 'N/A'}</div>` +
-							(data.user.name ? `<div><b>Name:</b> ${data.user.name}</div>` : '');
-					} else {
-						document.getElementById('profile-info').innerHTML = 'Not signed in.';
-					}
-				});
-
-			document.getElementById('logout-btn').onclick = function() {
-				window.location.href = '/api/auth/logout';
-			};
-
-			document.getElementById('delete-btn').onclick = function() {
-				if (confirm('Are you sure you want to permanently delete your account?')) {
-					fetch('/api/auth/delete', { method: 'POST', credentials: 'include' })
-						.then(r => {
-							if (r.ok) {
-								alert('Account deleted.');
-								window.location.href = '/';
+			@card.Card(card.Props{Class: "w-full p-8"}) {
+				@card.Header(card.HeaderProps{}) {
+					@card.Title(card.TitleProps{Class: "text-3xl font-bold mb-6 text-primary"}) { Account Settings }
+				}
+				@card.Content(card.ContentProps{}) {
+					<div class="space-y-8">
+						<section>
+							<h2 class="text-xl font-semibold mb-2">Profile</h2>
+							<div id="profile-info" class="mb-4 text-muted-foreground">Loading profile...</div>
+							<form id="update-profile-form" class="space-y-4">
+								<div>
+									<label class="block mb-2 font-semibold">Username</label>
+									<input name="username" id="username-input" class="input input-bordered w-full" required />
+								</div>
+								@button.Button(button.Props{Type: "submit", Variant: button.VariantDefault}) { Update Username }
+							</form>
+							<form id="change-password-form" class="space-y-4 mt-6">
+								<div>
+									<label class="block mb-2 font-semibold">New Password</label>
+									<input name="password" type="password" class="input input-bordered w-full" required />
+								</div>
+								@button.Button(button.Props{Type: "submit", Variant: button.VariantDefault}) { Change Password }
+							</form>
+							@button.Button(button.Props{ID: "logout-btn", Variant: button.VariantDefault, Class: "mt-6 text-red-600 border-red-600 hover:bg-red-50"}) { Log Out }
+						</section>
+						<section>
+							<h2 class="text-xl font-semibold mb-2">Delete Account</h2>
+							<p class="mb-2 text-muted-foreground">This will permanently delete your account and all data. This action cannot be undone.</p>
+							@button.Button(button.Props{ID: "delete-btn", Variant: button.VariantDefault, Class: "text-red-600 border-red-600 hover:bg-red-50"}) { Delete Account }
+						</section>
+					</div>
+					<script>
+					// Fetch user profile from Auth0 (via backend API)
+					fetch('/api/auth/check', { credentials: 'include' })
+						.then(r => r.json())
+						.then(data => {
+							if (data && data.user) {
+								document.getElementById('profile-info').innerHTML =
+									`<div><b>Email:</b> ${data.user.email || 'N/A'}</div>` +
+									(data.user.name ? `<div><b>Name:</b> ${data.user.name}</div>` : '');
+								document.getElementById('username-input').value = data.user.nickname || data.user.name || '';
 							} else {
-								alert('Failed to delete account.');
+								document.getElementById('profile-info').innerHTML = 'Not signed in.';
 							}
 						});
+
+					document.getElementById('logout-btn').onclick = function() {
+						window.location.href = '/api/auth/logout';
+					};
+
+					document.getElementById('delete-btn').onclick = function() {
+						if (confirm('Are you sure you want to permanently delete your account?')) {
+							fetch('/api/auth/delete', { method: 'POST', credentials: 'include' })
+								.then(r => {
+									if (r.ok) {
+										alert('Account deleted.');
+										window.location.href = '/';
+									} else {
+										alert('Failed to delete account.');
+									}
+								});
+						}
+					};
+
+					document.getElementById('update-profile-form').onsubmit = async function(e) {
+						e.preventDefault();
+						const username = document.getElementById('username-input').value;
+						const res = await fetch('/api/auth/update-profile', {
+							method: 'POST',
+							headers: { 'Content-Type': 'application/json' },
+							credentials: 'include',
+							body: JSON.stringify({ username })
+						});
+						if (res.ok) {
+							alert('Username updated!');
+							window.location.reload();
+						} else {
+							alert('Failed to update username.');
+						}
+					};
+
+					document.getElementById('change-password-form').onsubmit = async function(e) {
+						e.preventDefault();
+						const password = e.target.password.value;
+						const res = await fetch('/api/auth/change-password', {
+							method: 'POST',
+							headers: { 'Content-Type': 'application/json' },
+							credentials: 'include',
+							body: JSON.stringify({ password })
+						});
+						if (res.ok) {
+							alert('Password changed!');
+						} else {
+							alert('Failed to change password.');
+						}
+					};
+					</script>
 				}
-			};
-			</script>
+			}
 		</main>
 	}
 }

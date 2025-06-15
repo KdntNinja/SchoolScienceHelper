@@ -1,14 +1,22 @@
 package quizzes
 
 import (
+	"KdnSite/ui/components/button"
+	"KdnSite/ui/components/card"
 	"KdnSite/ui/layouts"
 )
 
 templ QuizList() {
 	@layouts.BaseLayout() {
 		<main class="container mx-auto py-12">
-			<h1 class="text-3xl font-bold mb-6 text-primary">Your Quizzes</h1>
-			@QuizzesTable()
+			@card.Card(card.Props{Class: "max-w-3xl w-full mx-auto p-8"}) {
+				@card.Header(card.HeaderProps{}) {
+					@card.Title(card.TitleProps{Class: "text-3xl font-bold mb-6 text-primary"}) { Your Quizzes }
+				}
+				@card.Content(card.ContentProps{}) {
+					@QuizzesTable()
+				}
+			}
 		</main>
 	}
 }
@@ -25,19 +33,24 @@ templ QuizzesTable() {
 				return;
 			}
 			for (const q of data) {
-				tbody.innerHTML += `<tr><td>${q.Title}</td><td>${new Date(q.CreatedAt*1000).toLocaleString()}</td><td>${q.ID}</td></tr>`;
+				tbody.innerHTML += `<tr><td class='px-4 py-2'>${q.Title}</td><td class='px-4 py-2'>${new Date(q.CreatedAt*1000).toLocaleString()}</td><td class='px-4 py-2'>${q.ID}</td></tr>`;
 			}
 		}
 		document.addEventListener('DOMContentLoaded', loadQuizzes);
 	</script>
-	<table class="w-full table-auto border mt-6">
-		<thead>
-			<tr class="bg-muted">
-				<th class="px-4 py-2 text-left">Title</th>
-				<th class="px-4 py-2 text-left">Created</th>
-				<th class="px-4 py-2 text-left">ID</th>
-			</tr>
-		</thead>
-		<tbody id="quizzes-tbody"></tbody>
-	</table>
+	<div class="flex justify-end mb-4">
+		@button.Button(button.Props{Href: "/user/quizzes/editor", Variant: button.VariantDefault}) { New Quiz }
+	</div>
+	<div class="overflow-x-auto">
+		<table class="w-full table-auto border rounded-xl">
+			<thead>
+				<tr class="bg-muted">
+					<th class="px-4 py-2 text-left">Title</th>
+					<th class="px-4 py-2 text-left">Created</th>
+					<th class="px-4 py-2 text-left">ID</th>
+				</tr>
+			</thead>
+			<tbody id="quizzes-tbody"></tbody>
+		</table>
+	</div>
 }
