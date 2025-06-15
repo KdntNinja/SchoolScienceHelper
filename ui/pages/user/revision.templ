@@ -16,7 +16,25 @@ templ Revision() {
 				}
 				@card.Content(card.ContentProps{}) {
 					<div class="mb-6 flex flex-col md:flex-row gap-4 items-center">
-						<button id="add-revision-btn" class="btn bg-primary text-white font-bold px-4 py-2 rounded">Add Resource</button>
+						<form id="add-revision-form" class="flex flex-col md:flex-row gap-2 w-full md:items-end">
+							<div class="flex flex-col flex-1">
+								<label for="type-input" class="font-semibold mb-1">Type</label>
+								<select id="type-input" class="border rounded px-3 py-2 bg-background text-foreground">
+									<option value="flashcard">Flashcard</option>
+									<option value="note">Note</option>
+									<option value="summary">Summary</option>
+								</select>
+							</div>
+							<div class="flex flex-col flex-1">
+								<label for="topic-input" class="font-semibold mb-1">Topic</label>
+								<input id="topic-input" type="text" class="border rounded px-3 py-2 bg-background text-foreground" placeholder="e.g. Cell Biology" />
+							</div>
+							<div class="flex flex-col flex-1">
+								<label for="content-input" class="font-semibold mb-1">Content</label>
+								<textarea id="content-input" class="border rounded px-3 py-2 bg-background text-foreground" placeholder="Enter content here..."></textarea>
+							</div>
+							<button type="submit" class="btn bg-primary text-white font-bold px-4 py-2 rounded">Add</button>
+						</form>
 					</div>
 					<ul id="revision-list" class="grid grid-cols-1 md:grid-cols-2 gap-6"></ul>
 					<script>
@@ -40,19 +58,22 @@ templ Revision() {
 						list.innerHTML = html;
 					}
 					loadRevisionResources();
-					document.getElementById('add-revision-btn').onclick = async function() {
-						const type = prompt('Type (flashcard, note, summary):');
-						const topic = prompt('Topic:');
-						const content = prompt('Content:');
-						if (!type || !content) return;
-						await fetch('/api/revision', {
-							method: 'POST',
-							headers: { 'Content-Type': 'application/json' },
-							credentials: 'include',
-							body: JSON.stringify({ type, topic, content })
-						});
-						loadRevisionResources();
-					};
+
+document.getElementById('add-revision-form').onsubmit = async function(e) {
+	e.preventDefault();
+	const type = document.getElementById('type-input').value;
+	const topic = document.getElementById('topic-input').value;
+	const content = document.getElementById('content-input').value;
+	if (!type || !content) return;
+	await fetch('/api/revision', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		credentials: 'include',
+		body: JSON.stringify({ type, topic, content })
+	});
+	document.getElementById('content-input').value = '';
+	loadRevisionResources();
+};
 					</script>
 				}
 			}

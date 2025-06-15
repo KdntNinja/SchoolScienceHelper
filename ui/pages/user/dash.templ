@@ -20,10 +20,6 @@ templ Dash(displayName string) {
 				@card.Content(card.ContentProps{}) {
 					<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
 						@card.Card(card.Props{Class: "bg-muted/40 hover:shadow-lg transition-shadow duration-200 flex flex-col items-center p-6"}) {
-							@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) { Continue Quiz }
-							@button.Button(button.Props{Href: "/user/quizzes/quizflow", Variant: button.VariantDefault, Class: "mt-2 w-full"}) { Resume }
-						}
-						@card.Card(card.Props{Class: "bg-muted/40 hover:shadow-lg transition-shadow duration-200 flex flex-col items-center p-6"}) {
 							@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) { Revision }
 							@button.Button(button.Props{Href: "/user/revision", Variant: button.VariantDefault, Class: "mt-2 w-full"}) { Go to Revision }
 						}
