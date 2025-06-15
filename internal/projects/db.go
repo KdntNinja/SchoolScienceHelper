@@ -5,12 +5,6 @@ import (
 	"database/sql"
 )
 
-func CreateProject(ctx context.Context, db *sql.DB, p *Project) error {
-	_, err := db.ExecContext(ctx, `INSERT INTO projects (id, owner_id, title, created_at, updated_at, data) VALUES ($1, $2, $3, $4, $5, $6)`,
-		p.ID, p.OwnerID, p.Title, p.CreatedAt, p.UpdatedAt, p.Data)
-	return err
-}
-
 func GetProject(ctx context.Context, db *sql.DB, id string) (*Project, error) {
 	row := db.QueryRowContext(ctx, `SELECT id, owner_id, title, created_at, updated_at, data FROM projects WHERE id=$1`, id)
 	var p Project

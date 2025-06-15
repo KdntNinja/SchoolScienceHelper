@@ -5,12 +5,6 @@ import (
 	"database/sql"
 )
 
-func CreateQuiz(ctx context.Context, db *sql.DB, q *Quiz) error {
-	_, err := db.ExecContext(ctx, `INSERT INTO quizzes (id, owner_id, title, created_at, updated_at) VALUES ($1, $2, $3, $4, $5)`,
-		q.ID, q.OwnerID, q.Title, q.CreatedAt, q.UpdatedAt)
-	return err
-}
-
 func GetQuiz(ctx context.Context, db *sql.DB, id string) (*Quiz, error) {
 	row := db.QueryRowContext(ctx, `SELECT id, owner_id, title, created_at, updated_at FROM quizzes WHERE id=$1`, id)
 	var q Quiz
