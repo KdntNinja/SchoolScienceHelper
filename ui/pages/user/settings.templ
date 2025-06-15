@@ -117,7 +117,7 @@ function clearError(id) {
 }
 
 fetch('/api/auth/check', { credentials: 'include' })
-  .then(r => r.json())
+  .then(r => r.ok ? r.json() : Promise.reject('Failed to check auth'))
   .then(data => {
     if (data && data.user) {
       document.getElementById('profile-info').innerHTML =
@@ -135,6 +135,28 @@ fetch('/api/auth/check', { credentials: 'include' })
 
 document.getElementById('logout-btn').onclick = () => {
   window.location.href = '/api/auth/logout';
+};
+
+document.getElementById('update-profile-form').onsubmit = async (e) => {
+  e.preventDefault();
+  clearError('username-input');
+  const username = document.getElementById('username-input').value;
+  try {
+    const res = await fetch('/api/user/profile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ username })
+    });
+    if (res.ok) {
+      document.getElementById('profile-info').innerHTML = 'Username updated!';
+    } else {
+      const err = await res.text();
+      showError('username-input', err || 'Failed to update username.');
+    }
+  } catch {
+    showError('username-input', 'Network error.');
+  }
 };
 
 document.getElementById('delete-btn').onclick = async () => {
@@ -161,20 +183,29 @@ document.getElementById('delete-btn').onclick = async () => {
     finalBtn.onclick = async () => {
       finalBtn.disabled = true;
       finalBtn.textContent = 'Deleting...';
-      const res = await fetch('/api/auth/delete', {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: input.value })
-      });
-      if (res.ok) {
-        window.location.href = '/';
-      } else {
+      try {
+        const res = await fetch('/api/auth/delete', {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: input.value })
+        });
+        if (res.ok) {
+          window.location.href = '/';
+        } else {
+          const err = await res.text();
+          finalBtn.disabled = false;
+          finalBtn.textContent = 'Confirm Delete';
+          const errDiv = section.querySelector('.form-error');
+          errDiv.textContent = err || 'Failed to delete account. Password may be incorrect.';
+          errDiv.style.display = '';
+        }
+      } catch {
         finalBtn.disabled = false;
         finalBtn.textContent = 'Confirm Delete';
-        const err = section.querySelector('.form-error');
-        err.textContent = 'Failed to delete account. Password may be incorrect.';
-        err.style.display = '';
+        const errDiv = section.querySelector('.form-error');
+        errDiv.textContent = 'Network error.';
+        errDiv.style.display = '';
       }
     };
     cancelBtn.onclick = () => {
@@ -200,16 +231,21 @@ document.getElementById('change-password-form').onsubmit = async (e) => {
     showError('confirm-password-input', 'Passwords do not match.');
     return;
   }
-  const res = await fetch('/api/auth/change-password', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    body: JSON.stringify({ password })
-  });
-  if (res.ok) {
-    document.getElementById('profile-info').innerHTML = 'Password changed!';
-  } else {
-    showError('password-input', 'Failed to change password.');
+  try {
+    const res = await fetch('/api/auth/change-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ password })
+    });
+    if (res.ok) {
+      document.getElementById('profile-info').innerHTML = 'Password changed!';
+    } else {
+      const err = await res.text();
+      showError('password-input', err || 'Failed to change password.');
+    }
+  } catch {
+    showError('password-input', 'Network error.');
   }
 };
 					</script>
