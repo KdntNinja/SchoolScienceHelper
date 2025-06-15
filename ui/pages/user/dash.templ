@@ -13,7 +13,7 @@ templ Dash(displayName string) {
 				<div class="flex flex-col md:flex-row items-center md:items-start gap-8 p-10 bg-primary/10 border-b border-border">
 					<div class="flex-1 flex flex-col items-center md:items-start">
 						@card.Title(card.TitleProps{Class: "text-4xl font-black text-center md:text-left mb-2 text-primary tracking-tight"}) {
-							Welcome back, {displayName}!
+							Welcome back, { displayName }!
 						}
 						<div class="flex flex-col md:flex-row gap-4 w-full mt-4">
 							<div class="flex-1 bg-muted/30 rounded-xl p-4 flex flex-col items-center">
@@ -30,16 +30,28 @@ templ Dash(displayName string) {
 				@card.Content(card.ContentProps{Class: "p-10 pt-8"}) {
 					<div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
 						@card.Card(card.Props{Class: "bg-muted/40 hover:shadow-lg transition-shadow duration-200 flex flex-col items-center p-6"}) {
-							@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) { Revision }
-							@button.Button(button.Props{Href: "/user/revision", Variant: button.VariantDefault, Class: "mt-2 w-full"}) { Go to Revision }
+							@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) {
+								Revision 
+							}
+							@button.Button(button.Props{Href: "/user/revision", Variant: button.VariantDefault, Class: "mt-2 w-full"}) {
+								Go to Revision 
+							}
 						}
 						@card.Card(card.Props{Class: "bg-muted/40 hover:shadow-lg transition-shadow duration-200 flex flex-col items-center p-6"}) {
-							@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) { Leaderboard }
-							@button.Button(button.Props{Href: "/user/community/leaderboard", Variant: button.VariantDefault, Class: "mt-2 w-full"}) { View Leaderboard }
+							@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) {
+								Leaderboard 
+							}
+							@button.Button(button.Props{Href: "/user/community/leaderboard", Variant: button.VariantDefault, Class: "mt-2 w-full"}) {
+								View Leaderboard 
+							}
 						}
 						@card.Card(card.Props{Class: "bg-muted/40 hover:shadow-lg transition-shadow duration-200 flex flex-col items-center p-6"}) {
-							@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) { Projects }
-							@button.Button(button.Props{Href: "/user/projects/list", Variant: button.VariantDefault, Class: "mt-2 w-full"}) { My Projects }
+							@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) {
+								Projects 
+							}
+							@button.Button(button.Props{Href: "/user/projects/list", Variant: button.VariantDefault, Class: "mt-2 w-full"}) {
+								My Projects 
+							}
 						}
 					</div>
 				}

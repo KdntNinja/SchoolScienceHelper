@@ -30,13 +30,15 @@ templ Settings() {
 							<div id="profile-info" class="text-muted-foreground mb-4">Loading profile...</div>
 							<form id="update-profile-form" class="space-y-4">
 								<div>
-									@label.Label(label.Props{For: "username-input", Class: "mb-2 font-semibold"}) { Username }
+									@label.Label(label.Props{For: "username-input", Class: "mb-2 font-semibold"}) {
+										Username 
+									}
 									@input.Input(input.Props{
-										ID: "username-input",
-										Name: "username",
-										Type: input.TypeText,
-										Class: "w-full",
-										Required: true,
+										ID:          "username-input",
+										Name:        "username",
+										Type:        input.TypeText,
+										Class:       "w-full",
+										Required:    true,
 										Placeholder: "Enter your username",
 									})
 								</div>
@@ -46,13 +48,15 @@ templ Settings() {
 							</form>
 							<form id="change-password-form" class="space-y-4 mt-6">
 								<div>
-									@label.Label(label.Props{For: "password-input", Class: "mb-2 font-semibold"}) { New Password }
+									@label.Label(label.Props{For: "password-input", Class: "mb-2 font-semibold"}) {
+										New Password 
+									}
 									@input.Input(input.Props{
-										ID: "password-input",
-										Name: "password",
-										Type: input.TypePassword,
-										Class: "w-full",
-										Required: true,
+										ID:          "password-input",
+										Name:        "password",
+										Type:        input.TypePassword,
+										Class:       "w-full",
+										Required:    true,
 										Placeholder: "Enter new password",
 									})
 								</div>
