@@ -15,6 +15,9 @@ import (
 	legalpages "KdnSite/ui/pages/legal"
 	publicpages "KdnSite/ui/pages/public"
 	userpages "KdnSite/ui/pages/user"
+	userpages_community "KdnSite/ui/pages/user/community"
+	userpages_projects "KdnSite/ui/pages/user/projects"
+	userpages_quizzes "KdnSite/ui/pages/user/quizzes"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -146,6 +149,55 @@ func registerUserRoutes(mux *http.ServeMux) {
 			err := userpages.Dash().Render(r.Context(), w)
 			if err != nil {
 				log.Errorf("Render error (Dash): %v", err)
+			}
+		})).ServeHTTP(w, r)
+	})
+
+	mux.HandleFunc("/user/projects/list", func(w http.ResponseWriter, r *http.Request) {
+		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			err := userpages_projects.ProjectList().Render(r.Context(), w)
+			if err != nil {
+				log.Errorf("Render error (ProjectList): %v", err)
+			}
+		})).ServeHTTP(w, r)
+	})
+	mux.HandleFunc("/user/projects/editor", func(w http.ResponseWriter, r *http.Request) {
+		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			err := userpages_projects.ProjectEditor().Render(r.Context(), w)
+			if err != nil {
+				log.Errorf("Render error (ProjectEditor): %v", err)
+			}
+		})).ServeHTTP(w, r)
+	})
+	mux.HandleFunc("/user/quizzes/list", func(w http.ResponseWriter, r *http.Request) {
+		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			err := userpages_quizzes.QuizList().Render(r.Context(), w)
+			if err != nil {
+				log.Errorf("Render error (QuizList): %v", err)
+			}
+		})).ServeHTTP(w, r)
+	})
+	mux.HandleFunc("/user/quizzes/editor", func(w http.ResponseWriter, r *http.Request) {
+		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			err := userpages_quizzes.QuizEditor().Render(r.Context(), w)
+			if err != nil {
+				log.Errorf("Render error (QuizEditor): %v", err)
+			}
+		})).ServeHTTP(w, r)
+	})
+	mux.HandleFunc("/user/community/leaderboard", func(w http.ResponseWriter, r *http.Request) {
+		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			err := userpages_community.Leaderboard().Render(r.Context(), w)
+			if err != nil {
+				log.Errorf("Render error (Leaderboard): %v", err)
+			}
+		})).ServeHTTP(w, r)
+	})
+	mux.HandleFunc("/user/settings", func(w http.ResponseWriter, r *http.Request) {
+		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			err := userpages.Settings().Render(r.Context(), w)
+			if err != nil {
+				log.Errorf("Render error (Settings): %v", err)
 			}
 		})).ServeHTTP(w, r)
 	})
