@@ -142,8 +142,10 @@ templ Revision() {
 		// Load Anki Decks
 		async function loadAnkiDecks() {
 			const res = await fetch('/api/decks', { credentials: 'include' });
-			let decks = [];
-			try { decks = await res.json(); } catch { decks = []; }
+			let data = {};
+			try { data = await res.json(); } catch { data = {}; }
+			const decks = data.decks || [];
+			const userId = data.user_id || '';
 			const select = document.getElementById('anki-deck-select');
 			select.innerHTML = '';
 			if (!decks.length) {
@@ -156,12 +158,15 @@ templ Revision() {
 				opt.textContent = d.name;
 				select.appendChild(opt);
 			}
+			// Store userId for later use
+			window._ankiUserId = userId;
 			loadAnkiCards(select.value);
 			select.onchange = () => loadAnkiCards(select.value);
 		}
 		// Load Anki Cards for selected deck
 		async function loadAnkiCards(deckId) {
-			const res = await fetch(`/api/cards?deck_id=${encodeURIComponent(deckId)}`, { credentials: 'include' });
+			const userId = window._ankiUserId || '';
+			const res = await fetch(`/api/cards?deck_id=${encodeURIComponent(deckId)}&user_id=${encodeURIComponent(userId)}`, { credentials: 'include' });
 			let cards = [];
 			try { cards = await res.json(); } catch { cards = []; }
 			const list = document.getElementById('anki-cards-list');
