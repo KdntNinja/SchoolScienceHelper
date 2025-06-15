@@ -75,69 +75,89 @@ templ Settings() {
 						}
 					</section>
 					<script>
-					fetch('/api/auth/check', { credentials: 'include' })
-						.then(r => r.json())
-						.then(data => {
-							if (data && data.user) {
-								document.getElementById('profile-info').innerHTML =
-									`<div><b>Email:</b> ${data.user.email || 'N/A'}</div>` +
-									(data.user.name ? `<div><b>Name:</b> ${data.user.name}</div>` : '');
-								document.getElementById('username-input').value = data.user.nickname || data.user.name || '';
-							} else {
-								document.getElementById('profile-info').innerHTML = 'Not signed in.';
-							}
-						});
+function showError(id, msg) {
+  let el = document.getElementById(id);
+  if (!el) return;
+  let err = el.parentElement.querySelector('.form-error');
+  if (!err) {
+    err = document.createElement('div');
+    err.className = 'form-error text-destructive text-sm mt-1';
+    el.parentElement.appendChild(err);
+  }
+  err.textContent = msg;
+}
+function clearError(id) {
+  let el = document.getElementById(id);
+  if (!el) return;
+  let err = el.parentElement.querySelector('.form-error');
+  if (err) err.textContent = '';
+}
 
-					document.getElementById('logout-btn').onclick = () => {
-						window.location.href = '/api/auth/logout';
-					};
+fetch('/api/auth/check', { credentials: 'include' })
+  .then(r => r.json())
+  .then(data => {
+    if (data && data.user) {
+      document.getElementById('profile-info').innerHTML =
+        `<div><b>Email:</b> ${data.user.email || 'N/A'}</div>` +
+        (data.user.name ? `<div><b>Name:</b> ${data.user.name}</div>` : '');
+      document.getElementById('username-input').value = data.user.nickname || data.user.name || '';
+    } else {
+      document.getElementById('profile-info').innerHTML = 'Not signed in.';
+    }
+  })
+  .catch(() => {
+    document.getElementById('profile-info').innerHTML = 'Failed to load profile.';
+  });
 
-					document.getElementById('delete-btn').onclick = () => {
-						if (confirm('Are you sure you want to permanently delete your account?')) {
-							fetch('/api/auth/delete', { method: 'POST', credentials: 'include' })
-								.then(r => {
-									if (r.ok) {
-										alert('Account deleted.');
-										window.location.href = '/';
-									} else {
-										alert('Failed to delete account.');
-									}
-								});
-						}
-					};
+document.getElementById('logout-btn').onclick = () => {
+  window.location.href = '/api/auth/logout';
+};
 
-					document.getElementById('update-profile-form').onsubmit = async (e) => {
-						e.preventDefault();
-						const username = document.getElementById('username-input').value;
-						const res = await fetch('/api/auth/update-profile', {
-							method: 'POST',
-							headers: { 'Content-Type': 'application/json' },
-							credentials: 'include',
-							body: JSON.stringify({ username })
-						});
-						if (res.ok) {
-							alert('Username updated!');
-							window.location.reload();
-						} else {
-							alert('Failed to update username.');
-						}
-					};
+document.getElementById('delete-btn').onclick = async () => {
+  // No popup, just show error below button if failed
+  const btn = document.getElementById('delete-btn');
+  clearError('delete-btn');
+  const res = await fetch('/api/auth/delete', { method: 'POST', credentials: 'include' });
+  if (res.ok) {
+    window.location.href = '/';
+  } else {
+    showError('delete-btn', 'Failed to delete account.');
+  }
+};
 
-					document.getElementById('change-password-form').onsubmit = async (e) => {
-						e.preventDefault();
-						const password = e.target.password.value;
-						const res = await fetch('/api/auth/change-password', {
-							method: 'POST',
-							headers: { 'Content-Type': 'application/json' },
-							credentials: 'include',
-							body: JSON.stringify({ password })
-						});
-						if (res.ok) {
-							alert('Password changed!');
-						} else {
-							alert('Failed to change password.');
-						}
-					};
+document.getElementById('update-profile-form').onsubmit = async (e) => {
+  e.preventDefault();
+  clearError('username-input');
+  const username = document.getElementById('username-input').value;
+  const res = await fetch('/api/auth/update-profile', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ username })
+  });
+  if (res.ok) {
+    document.getElementById('profile-info').innerHTML = 'Username updated!';
+  } else {
+    showError('username-input', 'Failed to update username.');
+  }
+};
+
+document.getElementById('change-password-form').onsubmit = async (e) => {
+  e.preventDefault();
+  clearError('password-input');
+  const password = e.target.password.value;
+  const res = await fetch('/api/auth/change-password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ password })
+  });
+  if (res.ok) {
+    document.getElementById('profile-info').innerHTML = 'Password changed!';
+  } else {
+    showError('password-input', 'Failed to change password.');
+  }
+};
 					</script>
 				}
 			}
