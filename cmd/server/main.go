@@ -8,9 +8,14 @@ import (
 	_ "github.com/lib/pq"
 
 	"KdnSite/assets"
+	"KdnSite/internal/achievements"
 	"KdnSite/internal/handlers"
+	"KdnSite/internal/leaderboard"
 	"KdnSite/internal/projects"
 	"KdnSite/internal/quizzes"
+	"KdnSite/internal/resources"
+	"KdnSite/internal/revision"
+	"KdnSite/internal/user"
 	errorpages "KdnSite/ui/pages/error"
 	legalpages "KdnSite/ui/pages/legal"
 	publicpages "KdnSite/ui/pages/public"
@@ -34,7 +39,7 @@ func main() {
 	registerAuthRoutes(mux)
 	registerUserRoutes(mux)
 	SetupAssetsRoutes(mux)
-	registerAPIRoutes(mux)
+	registerAPIRoutes(mux, db)
 
 	hstsMiddleware := func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -145,12 +150,7 @@ func registerUserRoutes(mux *http.ServeMux) {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 			return
 		}
-		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			err := userpages.Dash().Render(r.Context(), w)
-			if err != nil {
-				log.Errorf("Render error (Dash): %v", err)
-			}
-		})).ServeHTTP(w, r)
+		handlers.RequireAuth(http.HandlerFunc(handlers.DashPageHandler)).ServeHTTP(w, r)
 	})
 
 	mux.HandleFunc("/user/projects/list", func(w http.ResponseWriter, r *http.Request) {
@@ -241,25 +241,17 @@ func SetupAssetsRoutes(mux *http.ServeMux) {
 	mux.Handle("GET /assets/", http.StripPrefix("/assets/", assetHandler))
 }
 
-func registerAPIRoutes(mux *http.ServeMux) {
-	mux.HandleFunc("/api/projects", func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case http.MethodGet:
-			projects.ListProjects(w, r)
-		case http.MethodPost:
-			projects.CreateProject(w, r)
-		default:
-			w.WriteHeader(http.StatusMethodNotAllowed)
-		}
-	})
-	mux.HandleFunc("/api/quizzes", func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case http.MethodGet:
-			quizzes.ListQuizzes(w, r)
-		case http.MethodPost:
-			quizzes.CreateQuiz(w, r)
-		default:
-			w.WriteHeader(http.StatusMethodNotAllowed)
-		}
-	})
+func registerAPIRoutes(mux *http.ServeMux, db *sql.DB) {
+	mux.Handle("/api/projects", projects.ListProjects(db))
+	mux.Handle("/api/projects", projects.CreateProject(db))
+	mux.Handle("/api/quizzes", quizzes.ListQuizzes(db))
+	mux.Handle("/api/quizzes", quizzes.CreateQuiz(db))
+	mux.Handle("/api/revision", revision.ListRevisionResources(db))
+	mux.Handle("/api/revision", revision.CreateRevisionResource(db))
+	mux.Handle("/api/leaderboard", leaderboard.ListLeaderboard(db))
+	mux.Handle("/api/achievements", achievements.ListAchievements(db))
+	mux.Handle("/api/user/profile", user.GetProfile(db))
+	mux.Handle("/api/user/profile", user.UpdateProfile(db))
+	mux.Handle("/api/resources", resources.ListResources(db))
+	mux.Handle("/api/resources", resources.CreateResource(db))
 }

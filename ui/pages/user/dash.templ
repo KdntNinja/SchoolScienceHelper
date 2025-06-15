@@ -12,7 +12,6 @@ templ Dash(displayName string) {
 			@card.Card(card.Props{Class: "bg-card rounded-2xl shadow-2xl w-full max-w-4xl p-12 border border-border flex flex-col gap-10"}) {
 				@card.Header(card.HeaderProps{}) {
 					<div class="flex flex-col items-center gap-2">
-						<img src="/assets/avatar-default.png" alt="Avatar" class="w-20 h-20 rounded-full border-4 border-primary shadow mb-2" />
 						@card.Title(card.TitleProps{Class: "text-4xl font-black text-center mb-2 text-primary tracking-tight"}) {
 							Welcome back, {displayName}!
 						}
