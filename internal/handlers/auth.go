@@ -125,8 +125,8 @@ func ChangePasswordHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	payload := map[string]string{
-		"client_id": clientID,
-		"email":     req.Email,
+		"client_id":  clientID,
+		"email":      req.Email,
 		"connection": "Username-Password-Authentication",
 	}
 	body, _ := json.Marshal(payload)

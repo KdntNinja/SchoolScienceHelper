@@ -79,6 +79,7 @@ templ Settings() {
 						}
 					</section>
 					<script>
+let deleteConfirm = false;
 function showError(id, msg) {
   let el = document.getElementById(id);
   if (!el) return;
@@ -118,9 +119,19 @@ document.getElementById('logout-btn').onclick = () => {
 };
 
 document.getElementById('delete-btn').onclick = async () => {
-  // No popup, just show error below button if failed
-  const btn = document.getElementById('delete-btn');
   clearError('delete-btn');
+  const btn = document.getElementById('delete-btn');
+  if (!deleteConfirm) {
+    btn.textContent = 'Confirm Delete';
+    deleteConfirm = true;
+    showError('delete-btn', 'Click again to permanently delete your account.');
+    setTimeout(() => {
+      btn.textContent = 'Delete Account';
+      clearError('delete-btn');
+      deleteConfirm = false;
+    }, 5000);
+    return;
+  }
   const res = await fetch('/api/auth/delete', { method: 'POST', credentials: 'include' });
   if (res.ok) {
     window.location.href = '/';
