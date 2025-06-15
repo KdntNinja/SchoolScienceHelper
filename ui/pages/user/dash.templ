@@ -17,12 +17,20 @@ templ Dash(displayName string) {
 						}
 						<div class="flex flex-col md:flex-row gap-4 w-full mt-4">
 							<div class="flex-1 bg-muted/30 rounded-xl p-4 flex flex-col items-center">
-								<span class="text-2xl font-bold text-primary">0</span>
+								<span id="quizzes-taken" class="text-2xl font-bold text-primary">0</span>
 								<span class="text-sm text-muted-foreground">Quizzes Taken</span>
 							</div>
 							<div class="flex-1 bg-muted/30 rounded-xl p-4 flex flex-col items-center">
-								<span class="text-2xl font-bold text-primary">0.0</span>
+								<span id="avg-score" class="text-2xl font-bold text-primary">0.0</span>
 								<span class="text-sm text-muted-foreground">Average Score</span>
+							</div>
+							<div class="flex-1 bg-muted/30 rounded-xl p-4 flex flex-col items-center">
+								<span id="anki-decks-count" class="text-2xl font-bold text-primary">0</span>
+								<span class="text-sm text-muted-foreground">Anki Decks</span>
+							</div>
+							<div class="flex-1 bg-muted/30 rounded-xl p-4 flex flex-col items-center">
+								<span id="anki-cards-count" class="text-2xl font-bold text-primary">0</span>
+								<span class="text-sm text-muted-foreground">Anki Cards</span>
 							</div>
 						</div>
 					</div>
@@ -36,6 +44,7 @@ templ Dash(displayName string) {
 							@button.Button(button.Props{Href: "/user/revision", Variant: button.VariantDefault, Class: "mt-2 w-full"}) {
 								Go to Revision 
 							}
+							<a href="/user/revision" class="text-xs text-primary underline mt-2">Import Anki Deck</a>
 						}
 						@card.Card(card.Props{Class: "bg-muted/40 hover:shadow-lg transition-shadow duration-200 flex flex-col items-center p-6"}) {
 							@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) {
@@ -54,6 +63,26 @@ templ Dash(displayName string) {
 							}
 						}
 					</div>
+					<script>
+					// Fetch dashboard stats
+					async function loadDashStats() {
+						const quizRes = await fetch('/api/user/quizstats', { credentials: 'include' });
+						if (quizRes.ok) {
+							const stats = await quizRes.json();
+							document.getElementById('quizzes-taken').textContent = stats.taken || 0;
+							document.getElementById('avg-score').textContent = stats.avg || '0.0';
+						}
+						const decksRes = await fetch('/api/anki/decks', { credentials: 'include' });
+						if (decksRes.ok) {
+							const decks = await decksRes.json();
+							document.getElementById('anki-decks-count').textContent = decks.length;
+							let cardCount = 0;
+							for (const d of decks) cardCount += d.card_count || 0;
+							document.getElementById('anki-cards-count').textContent = cardCount;
+						}
+					}
+					loadDashStats();
+					</script>
 				}
 			}
 		</main>

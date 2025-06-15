@@ -9,6 +9,7 @@ import (
 
 	"KdnSite/assets"
 	"KdnSite/internal/achievements"
+	"KdnSite/internal/anki"
 	"KdnSite/internal/handlers"
 	"KdnSite/internal/leaderboard"
 	"KdnSite/internal/projects"
@@ -212,14 +213,6 @@ func registerUserRoutes(mux *http.ServeMux) {
 			}
 		})).ServeHTTP(w, r)
 	})
-	mux.HandleFunc("/user/quizzes/quizflow", func(w http.ResponseWriter, r *http.Request) {
-		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			err := userpages_quizzes.QuizFlow().Render(r.Context(), w)
-			if err != nil {
-				log.Errorf("Render error (QuizFlow): %v", err)
-			}
-		})).ServeHTTP(w, r)
-	})
 	mux.HandleFunc("/forbidden", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusForbidden)
 		err := errorpages.Forbidden().Render(r.Context(), w)
@@ -325,4 +318,7 @@ func registerAPIRoutes(mux *http.ServeMux, db *sql.DB) {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 		}
 	})))
+	mux.Handle("/api/anki/decks", handlers.RequireAuth(http.HandlerFunc(anki.ListDecks(db))))
+	mux.Handle("/api/anki/cards", handlers.RequireAuth(http.HandlerFunc(anki.ListCards(db))))
+	mux.Handle("/api/anki/import", handlers.RequireAuth(http.HandlerFunc(anki.ImportDeck(db))))
 }

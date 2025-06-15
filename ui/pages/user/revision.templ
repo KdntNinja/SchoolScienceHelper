@@ -2,6 +2,11 @@ package pages
 
 import (
 	"KdnSite/ui/components/card"
+	"KdnSite/ui/components/input"
+	"KdnSite/ui/components/button"
+	"KdnSite/ui/components/label"
+	"KdnSite/ui/components/selectbox"
+	"KdnSite/ui/components/textarea"
 	"KdnSite/ui/layouts"
 )
 
@@ -19,37 +24,63 @@ templ Revision() {
 					<div class="mb-8">
 						<h2 class="text-xl font-semibold mb-2">Import Anki Deck</h2>
 						<form id="anki-import-form" class="flex flex-col md:flex-row gap-2 items-end">
-							<input id="anki-file-input" type="file" accept=".apkg" class="border rounded px-3 py-2" required />
-							<button type="submit" class="btn bg-primary text-white font-bold px-4 py-2 rounded">Import</button>
+							@input.Input(input.Props{
+								ID: "anki-file-input",
+								Type: input.TypeFile,
+								Class: "border rounded px-3 py-2",
+								Required: true,
+								FileAccept: ".apkg",
+							})
+							@button.Button(button.Props{Type: "submit", Variant: button.VariantDefault, Class: "px-4 py-2"}) {
+								Import
+							}
 						</form>
 						<div id="anki-import-status" class="text-sm mt-2"></div>
 					</div>
 					<!-- Anki Decks Section -->
 					<div class="mb-10">
 						<h2 class="text-xl font-semibold mb-2">Your Anki Decks</h2>
-						<select id="anki-deck-select" class="border rounded px-3 py-2 mb-4"></select>
+						@label.Label(label.Props{For: "anki-deck-select", Class: "mb-2 font-semibold"}) { Deck }
+						@selectbox.SelectBox(selectbox.Props{
+							ID: "anki-deck-select",
+							Class: "border rounded px-3 py-2 mb-4",
+						})
 						<ul id="anki-cards-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></ul>
 					</div>
-					<!-- Existing Revision Resource Add/List UI -->
+					<!-- Revision Resource Add/List UI -->
 					<div class="mb-6 flex flex-col md:flex-row gap-4 items-center">
 						<form id="add-revision-form" class="flex flex-col md:flex-row gap-2 w-full md:items-end">
 							<div class="flex flex-col flex-1">
-								<label for="type-input" class="font-semibold mb-1">Type</label>
-								<select id="type-input" class="border rounded px-3 py-2 bg-background text-foreground">
-									<option value="flashcard">Flashcard</option>
-									<option value="note">Note</option>
-									<option value="summary">Summary</option>
-								</select>
+								@label.Label(label.Props{For: "type-input", Class: "font-semibold mb-1"}) { Type }
+								@selectbox.SelectBox(selectbox.Props{
+									ID: "type-input",
+									Class: "border rounded px-3 py-2 bg-background text-foreground",
+								}) {
+									@selectbox.Item(selectbox.ItemProps{Value: "flashcard"}) { Flashcard }
+									@selectbox.Item(selectbox.ItemProps{Value: "note"}) { Note }
+									@selectbox.Item(selectbox.ItemProps{Value: "summary"}) { Summary }
+								}
 							</div>
 							<div class="flex flex-col flex-1">
-								<label for="topic-input" class="font-semibold mb-1">Topic</label>
-								<input id="topic-input" type="text" class="border rounded px-3 py-2 bg-background text-foreground" placeholder="e.g. Cell Biology"/>
+								@label.Label(label.Props{For: "topic-input", Class: "font-semibold mb-1"}) { Topic }
+								@input.Input(input.Props{
+									ID: "topic-input",
+									Type: input.TypeText,
+									Class: "border rounded px-3 py-2 bg-background text-foreground",
+									Placeholder: "e.g. Cell Biology",
+								})
 							</div>
 							<div class="flex flex-col flex-1">
-								<label for="content-input" class="font-semibold mb-1">Content</label>
-								<textarea id="content-input" class="border rounded px-3 py-2 bg-background text-foreground" placeholder="Enter content here..."></textarea>
+								@label.Label(label.Props{For: "content-input", Class: "font-semibold mb-1"}) { Content }
+								@textarea.Textarea(textarea.Props{
+									ID: "content-input",
+									Class: "border rounded px-3 py-2 bg-background text-foreground",
+									Placeholder: "Enter content here...",
+								})
 							</div>
-							<button type="submit" class="btn bg-primary text-white font-bold px-4 py-2 rounded">Add</button>
+							@button.Button(button.Props{Type: "submit", Variant: button.VariantDefault, Class: "px-4 py-2"}) {
+								Add
+							}
 						</form>
 					</div>
 					<ul id="revision-list" class="grid grid-cols-1 md:grid-cols-2 gap-6"></ul>

@@ -3,6 +3,8 @@ package quizzes
 import (
 	"KdnSite/ui/components/button"
 	"KdnSite/ui/components/card"
+	"KdnSite/ui/components/input"
+	"KdnSite/ui/components/label"
 	"KdnSite/ui/layouts"
 )
 
@@ -18,8 +20,15 @@ templ QuizEditor() {
 				@card.Content(card.ContentProps{}) {
 					<form id="quiz-form" class="space-y-6">
 						<div>
-							<label class="block mb-2 font-semibold">Title</label>
-							<input name="title" class="input input-bordered w-full" required/>
+							@label.Label(label.Props{For: "quiz-title", Class: "block mb-2 font-semibold"}) { Title }
+							@input.Input(input.Props{
+								ID: "quiz-title",
+								Name: "title",
+								Type: input.TypeText,
+								Class: "w-full",
+								Required: true,
+								Placeholder: "Quiz Title",
+							})
 						</div>
 						@button.Button(button.Props{Type: "submit", Variant: button.VariantDefault}) {
 							Create Quiz 

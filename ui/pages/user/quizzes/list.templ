@@ -3,6 +3,7 @@ package quizzes
 import (
 	"KdnSite/ui/components/button"
 	"KdnSite/ui/components/card"
+	"KdnSite/ui/components/table"
 	"KdnSite/ui/layouts"
 )
 
@@ -24,6 +25,23 @@ templ QuizList() {
 }
 
 templ QuizzesTable() {
+	<div class="flex justify-end mb-4">
+		@button.Button(button.Props{Href: "/user/quizzes/editor", Variant: button.VariantDefault}) {
+			New Quiz 
+		}
+	</div>
+	@table.Table(table.Props{Class: "w-full table-auto border rounded-xl"}) {
+		@table.Header() {
+			@table.Row() {
+				@table.Head() { Title }
+				@table.Head() { Created }
+				@table.Head() { ID }
+			}
+		}
+		@table.Body() {
+			<tbody id="quizzes-tbody"></tbody>
+		}
+	}
 	<script>
 		async function loadQuizzes() {
 			const res = await fetch('/api/quizzes');
@@ -40,21 +58,4 @@ templ QuizzesTable() {
 		}
 		document.addEventListener('DOMContentLoaded', loadQuizzes);
 	</script>
-	<div class="flex justify-end mb-4">
-		@button.Button(button.Props{Href: "/user/quizzes/editor", Variant: button.VariantDefault}) {
-			New Quiz 
-		}
-	</div>
-	<div class="overflow-x-auto">
-		<table class="w-full table-auto border rounded-xl">
-			<thead>
-				<tr class="bg-muted">
-					<th class="px-4 py-2 text-left">Title</th>
-					<th class="px-4 py-2 text-left">Created</th>
-					<th class="px-4 py-2 text-left">ID</th>
-				</tr>
-			</thead>
-			<tbody id="quizzes-tbody"></tbody>
-		</table>
-	</div>
 }

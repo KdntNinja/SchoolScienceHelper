@@ -3,6 +3,9 @@ package projects
 import (
 	"KdnSite/ui/components/button"
 	"KdnSite/ui/components/card"
+	"KdnSite/ui/components/input"
+	"KdnSite/ui/components/label"
+	"KdnSite/ui/components/textarea"
 	"KdnSite/ui/layouts"
 )
 
@@ -18,12 +21,25 @@ templ ProjectEditor() {
 				@card.Content(card.ContentProps{}) {
 					<form id="project-form" class="space-y-6">
 						<div>
-							<label class="block mb-2 font-semibold">Title</label>
-							<input name="title" class="input input-bordered w-full" required/>
+							@label.Label(label.Props{For: "project-title", Class: "block mb-2 font-semibold"}) { Title }
+							@input.Input(input.Props{
+								ID: "project-title",
+								Name: "title",
+								Type: input.TypeText,
+								Class: "w-full",
+								Required: true,
+								Placeholder: "Project Title",
+							})
 						</div>
 						<div>
-							<label class="block mb-2 font-semibold">Data (JSON)</label>
-							<textarea name="data" class="input input-bordered w-full h-32" required></textarea>
+							@label.Label(label.Props{For: "project-data", Class: "block mb-2 font-semibold"}) { Data (JSON) }
+							@textarea.Textarea(textarea.Props{
+								ID: "project-data",
+								Name: "data",
+								Class: "w-full h-32",
+								Required: true,
+								Placeholder: "{\n  \"key\": \"value\"\n}",
+							})
 						</div>
 						@button.Button(button.Props{Type: "submit", Variant: button.VariantDefault}) {
 							Create Project 
