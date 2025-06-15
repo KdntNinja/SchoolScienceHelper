@@ -73,13 +73,18 @@ templ Settings() {
 								Delete Account 
 							}
 							<p class="text-muted-foreground mb-4">This will permanently delete your account and all data. This action cannot be undone.</p>
-							@button.Button(button.Props{ID: "delete-btn", Variant: button.VariantDefault, Class: "w-full text-red-600 border-red-600 hover:bg-red-50"}) {
-								Delete Account 
-							}
+							<div id="delete-confirm-section">
+								@button.Button(button.Props{ID: "delete-btn", Variant: button.VariantDefault, Class: "w-full text-red-600 border-red-600 hover:bg-red-50"}) {
+									Delete Account 
+								}
+							</div>
 						}
 					</section>
 					<script>
 let deleteConfirm = false;
+let deleteUsername = '';
+let actualUsername = '';
+
 function showError(id, msg) {
   let el = document.getElementById(id);
   if (!el) return;
@@ -107,6 +112,7 @@ fetch('/api/auth/check', { credentials: 'include' })
         (data.user.name ? `<div><b>Name:</b> ${data.user.name}</div>` : '');
       document.getElementById('username-input').value = data.user.nickname || data.user.name || '';
       document.getElementById('username-input').setAttribute('placeholder', data.user.nickname || data.user.name || '');
+      actualUsername = data.user.nickname || data.user.name || '';
     } else {
       document.getElementById('profile-info').innerHTML = 'Not signed in.';
     }
@@ -121,23 +127,51 @@ document.getElementById('logout-btn').onclick = () => {
 
 document.getElementById('delete-btn').onclick = async () => {
   clearError('delete-btn');
-  const btn = document.getElementById('delete-btn');
+  const section = document.getElementById('delete-confirm-section');
   if (!deleteConfirm) {
-    btn.textContent = 'Confirm Delete';
+    // Show confirmation input
+    section.innerHTML = `
+      <div class="mb-4">
+        <label for="delete-username-input" class="block text-sm font-semibold mb-2">Type your username to confirm:</label>
+        <input id="delete-username-input" type="text" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Enter your username to confirm" autocomplete="off" />
+      </div>
+      <button id="final-delete-btn" class="w-full bg-red-600 text-white font-bold py-2 px-4 rounded disabled:opacity-50" disabled>Delete Account</button>
+      <div class="form-error text-destructive text-sm mt-1" style="display:none"></div>
+      <button id="cancel-delete-btn" class="w-full mt-2 border border-border rounded py-2">Cancel</button>
+    `;
     deleteConfirm = true;
-    showError('delete-btn', 'Click again to permanently delete your account.');
-    setTimeout(() => {
-      btn.textContent = 'Delete Account';
-      clearError('delete-btn');
+    // Add listeners
+    const input = document.getElementById('delete-username-input');
+    const finalBtn = document.getElementById('final-delete-btn');
+    const cancelBtn = document.getElementById('cancel-delete-btn');
+    input.addEventListener('input', () => {
+      if (input.value.trim() === actualUsername) {
+        finalBtn.disabled = false;
+      } else {
+        finalBtn.disabled = true;
+      }
+    });
+    finalBtn.onclick = async () => {
+      finalBtn.disabled = true;
+      finalBtn.textContent = 'Deleting...';
+      const res = await fetch('/api/auth/delete', { method: 'POST', credentials: 'include' });
+      if (res.ok) {
+        window.location.href = '/';
+      } else {
+        finalBtn.disabled = false;
+        finalBtn.textContent = 'Delete Account';
+        const err = section.querySelector('.form-error');
+        err.textContent = 'Failed to delete account.';
+        err.style.display = '';
+      }
+    };
+    cancelBtn.onclick = () => {
+      // Restore original button
+      section.innerHTML = `<button id=\"delete-btn\" class=\"w-full text-red-600 border-red-600 hover:bg-red-50\">Delete Account </button>`;
+      document.getElementById('delete-btn').onclick = arguments.callee;
       deleteConfirm = false;
-    }, 5000);
+    };
     return;
-  }
-  const res = await fetch('/api/auth/delete', { method: 'POST', credentials: 'include' });
-  if (res.ok) {
-    window.location.href = '/';
-  } else {
-    showError('delete-btn', 'Failed to delete account.');
   }
 };
 
