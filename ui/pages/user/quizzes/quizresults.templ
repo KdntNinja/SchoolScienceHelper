@@ -1,0 +1,27 @@
+package quizzes
+
+import (
+	"KdnSite/ui/components/card"
+	"KdnSite/ui/layouts"
+)
+
+templ QuizResults() {
+	@layouts.BaseLayout() {
+		<main class="container mx-auto py-12 max-w-xl">
+			@card.Card(card.Props{Class: "w-full p-8"}) {
+				@card.Header(card.HeaderProps{}) {
+					@card.Title(card.TitleProps{Class: "text-2xl font-bold mb-4 text-primary"}) { Quiz Results }
+				}
+				@card.Content(card.ContentProps{}) {
+					<div class="mb-4 text-lg">Your Score: <span class="font-bold">8 / 10</span></div>
+					<ul class="mb-6">
+						<li class="text-green-600">Q1: Correct</li>
+						<li class="text-red-600">Q2: Incorrect</li>
+						<!-- ... -->
+					</ul>
+					<a href="/user/quizzes/list" class="btn">Back to Quizzes</a>
+				}
+			}
+		</main>
+	}
+}

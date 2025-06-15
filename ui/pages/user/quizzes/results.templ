@@ -1,0 +1,34 @@
+package quizzes
+
+import (
+	"KdnSite/ui/components/card"
+	"KdnSite/ui/layouts"
+)
+
+templ MyResults() {
+	@layouts.BaseLayout() {
+		<main class="container mx-auto py-12 max-w-2xl">
+			@card.Card(card.Props{Class: "w-full p-8"}) {
+				@card.Header(card.HeaderProps{}) {
+					@card.Title(card.TitleProps{Class: "text-2xl font-bold mb-4 text-primary"}) { My Quiz Results }
+				}
+				@card.Content(card.ContentProps{}) {
+					<table class="w-full table-auto border rounded-xl mb-6">
+						<thead>
+							<tr class="bg-muted">
+								<th class="px-4 py-2 text-left">Quiz</th>
+								<th class="px-4 py-2 text-left">Score</th>
+								<th class="px-4 py-2 text-left">Date</th>
+							</tr>
+						</thead>
+						<tbody id="results-tbody">
+							<tr><td>Example Quiz</td><td>8/10</td><td>2025-06-15</td></tr>
+							<tr><td>Biology Basics</td><td>7/10</td><td>2025-06-14</td></tr>
+						</tbody>
+					</table>
+					<a href="/user/quizzes/list" class="btn">Back to Quizzes</a>
+				}
+			}
+		</main>
+	}
+}

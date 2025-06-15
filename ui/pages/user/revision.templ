@@ -1,0 +1,38 @@
+package pages
+
+import (
+	"KdnSite/ui/components/card"
+	"KdnSite/ui/layouts"
+)
+
+templ Revision() {
+	@layouts.BaseLayout() {
+		<main class="container mx-auto py-12 max-w-3xl">
+			@card.Card(card.Props{Class: "w-full p-8"}) {
+				@card.Header(card.HeaderProps{}) {
+					@card.Title(card.TitleProps{Class: "text-3xl font-bold mb-6 text-primary"}) { Revision Resources }
+				}
+				@card.Content(card.ContentProps{}) {
+					<ul class="grid grid-cols-1 md:grid-cols-2 gap-6">
+						<li class="bg-muted/40 rounded-xl p-6 flex flex-col gap-2">
+							<span class="font-semibold text-lg">Flashcards</span>
+							<span class="text-muted-foreground">Review key terms and concepts with interactive flashcards.</span>
+						</li>
+						<li class="bg-muted/40 rounded-xl p-6 flex flex-col gap-2">
+							<span class="font-semibold text-lg">Downloadable Notes</span>
+							<span class="text-muted-foreground">Download concise revision notes for each topic.</span>
+						</li>
+						<li class="bg-muted/40 rounded-xl p-6 flex flex-col gap-2">
+							<span class="font-semibold text-lg">Practice Questions</span>
+							<span class="text-muted-foreground">Test yourself with exam-style questions and instant feedback.</span>
+						</li>
+						<li class="bg-muted/40 rounded-xl p-6 flex flex-col gap-2">
+							<span class="font-semibold text-lg">Topic Summaries</span>
+							<span class="text-muted-foreground">Quickly review the most important points for each topic.</span>
+						</li>
+					</ul>
+				}
+			}
+		</main>
+	}
+}
