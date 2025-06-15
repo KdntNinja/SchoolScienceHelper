@@ -8,36 +8,40 @@ import (
 
 templ Settings() {
 	@layouts.BaseLayout() {
-		<main class="container mx-auto py-12 max-w-xl">
-			@card.Card(card.Props{Class: "w-full p-8"}) {
+		<main class="flex flex-col items-center min-h-[calc(100vh-72px)] bg-gradient-to-b from-primary/5 to-background px-4 py-12 relative">
+			@card.Card(card.Props{Class: "bg-card rounded-2xl shadow-2xl w-full max-w-2xl p-10 border border-border flex flex-col gap-8"}) {
 				@card.Header(card.HeaderProps{}) {
-					@card.Title(card.TitleProps{Class: "text-3xl font-bold mb-6 text-primary"}) { Account Settings }
+					<div class="flex flex-col items-center gap-2 mb-4">
+						<img src="/assets/avatar-default.png" alt="Avatar" class="w-20 h-20 rounded-full border-4 border-primary shadow mb-2" />
+						@card.Title(card.TitleProps{Class: "text-3xl font-black text-center mb-2 text-primary tracking-tight"}) { Account Settings }
+					</div>
 				}
 				@card.Content(card.ContentProps{}) {
-					<div class="space-y-8">
+					<div class="space-y-10">
 						<section>
-							<h2 class="text-xl font-semibold mb-2">Profile</h2>
+							<h2 class="text-xl font-semibold mb-2 text-primary">Profile</h2>
 							<div id="profile-info" class="mb-4 text-muted-foreground">Loading profile...</div>
 							<form id="update-profile-form" class="space-y-4">
 								<div>
 									<label class="block mb-2 font-semibold">Username</label>
 									<input name="username" id="username-input" class="input input-bordered w-full" required />
 								</div>
-								@button.Button(button.Props{Type: "submit", Variant: button.VariantDefault}) { Update Username }
+								@button.Button(button.Props{Type: "submit", Variant: button.VariantDefault, Class: "w-full"}) { Update Username }
 							</form>
 							<form id="change-password-form" class="space-y-4 mt-6">
 								<div>
 									<label class="block mb-2 font-semibold">New Password</label>
 									<input name="password" type="password" class="input input-bordered w-full" required />
 								</div>
-								@button.Button(button.Props{Type: "submit", Variant: button.VariantDefault}) { Change Password }
+								@button.Button(button.Props{Type: "submit", Variant: button.VariantDefault, Class: "w-full"}) { Change Password }
 							</form>
-							@button.Button(button.Props{ID: "logout-btn", Variant: button.VariantDefault, Class: "mt-6 text-red-600 border-red-600 hover:bg-red-50"}) { Log Out }
+							@button.Button(button.Props{ID: "logout-btn", Variant: button.VariantDefault, Class: "mt-6 w-full text-red-600 border-red-600 hover:bg-red-50"}) { Log Out }
 						</section>
+						<hr class="my-4 border-muted-foreground/30" />
 						<section>
-							<h2 class="text-xl font-semibold mb-2">Delete Account</h2>
+							<h2 class="text-xl font-semibold mb-2 text-primary">Delete Account</h2>
 							<p class="mb-2 text-muted-foreground">This will permanently delete your account and all data. This action cannot be undone.</p>
-							@button.Button(button.Props{ID: "delete-btn", Variant: button.VariantDefault, Class: "text-red-600 border-red-600 hover:bg-red-50"}) { Delete Account }
+							@button.Button(button.Props{ID: "delete-btn", Variant: button.VariantDefault, Class: "w-full text-red-600 border-red-600 hover:bg-red-50"}) { Delete Account }
 						</section>
 					</div>
 					<script>
