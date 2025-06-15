@@ -106,6 +106,7 @@ fetch('/api/auth/check', { credentials: 'include' })
         `<div><b>Email:</b> ${data.user.email || 'N/A'}</div>` +
         (data.user.name ? `<div><b>Name:</b> ${data.user.name}</div>` : '');
       document.getElementById('username-input').value = data.user.nickname || data.user.name || '';
+      document.getElementById('username-input').setAttribute('placeholder', data.user.nickname || data.user.name || '');
     } else {
       document.getElementById('profile-info').innerHTML = 'Not signed in.';
     }
