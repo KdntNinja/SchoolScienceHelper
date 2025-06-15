@@ -1,46 +1,27 @@
 package pages
 
 import (
+	"KdnSite/ui/components/button"
 	"KdnSite/ui/components/card"
 	"KdnSite/ui/layouts"
-	"fmt"
-	"time"
 )
 
-type Achievement struct {
-	ID       string
-	Name     string
-	Desc     string
-	EarnedAt int64
-}
-
-type QuizStats struct {
-	TotalTaken int
-	AvgScore   float64
-}
-
-type UserProfile struct {
-	DisplayName string
-	AvatarURL   string
-}
-
-templ Dash(profile UserProfile, achievements []Achievement, quizStats QuizStats) {
+templ Dash(displayName string) {
 	@layouts.BaseLayout() {
 		<main class="flex flex-col items-center min-h-[calc(100vh-72px)] bg-gradient-to-b from-primary/5 to-background px-4 py-12 relative">
 			@card.Card(card.Props{Class: "bg-card rounded-2xl shadow-2xl w-full max-w-4xl p-0 border border-border flex flex-col gap-0 overflow-hidden"}) {
 				<div class="flex flex-col md:flex-row items-center md:items-start gap-8 p-10 bg-primary/10 border-b border-border">
 					<div class="flex-1 flex flex-col items-center md:items-start">
 						@card.Title(card.TitleProps{Class: "text-4xl font-black text-center md:text-left mb-2 text-primary tracking-tight"}) {
-							Welcome back, { profile.DisplayName }!
+							Welcome back, {displayName}!
 						}
-						<p class="text-lg text-muted-foreground mb-2 text-center md:text-left">Ready to keep learning and earning achievements?</p>
 						<div class="flex flex-col md:flex-row gap-4 w-full mt-4">
 							<div class="flex-1 bg-muted/30 rounded-xl p-4 flex flex-col items-center">
-								<span class="text-2xl font-bold text-primary">{ quizStats.TotalTaken }</span>
+								<span class="text-2xl font-bold text-primary">0</span>
 								<span class="text-sm text-muted-foreground">Quizzes Taken</span>
 							</div>
 							<div class="flex-1 bg-muted/30 rounded-xl p-4 flex flex-col items-center">
-								<span class="text-2xl font-bold text-primary">{ formatFloat1(quizStats.AvgScore) }</span>
+								<span class="text-2xl font-bold text-primary">0.0</span>
 								<span class="text-sm text-muted-foreground">Average Score</span>
 							</div>
 						</div>
@@ -49,36 +30,20 @@ templ Dash(profile UserProfile, achievements []Achievement, quizStats QuizStats)
 				@card.Content(card.ContentProps{Class: "p-10 pt-8"}) {
 					<div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
 						@card.Card(card.Props{Class: "bg-muted/40 hover:shadow-lg transition-shadow duration-200 flex flex-col items-center p-6"}) {
-							@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) {
-								Revision 
-							}
-							<a href="/user/revision" class="mt-2 w-full inline-block text-center bg-primary text-white rounded-lg py-2 font-semibold hover:bg-primary/90 transition">Go to Revision</a>
+							@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) { Revision }
+							@button.Button(button.Props{Href: "/user/revision", Variant: button.VariantDefault, Class: "mt-2 w-full"}) { Go to Revision }
 						}
 						@card.Card(card.Props{Class: "bg-muted/40 hover:shadow-lg transition-shadow duration-200 flex flex-col items-center p-6"}) {
-							@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) {
-								Leaderboard 
-							}
-							<a href="/user/community/leaderboard" class="mt-2 w-full inline-block text-center bg-primary text-white rounded-lg py-2 font-semibold hover:bg-primary/90 transition">View Leaderboard</a>
+							@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) { Leaderboard }
+							@button.Button(button.Props{Href: "/user/community/leaderboard", Variant: button.VariantDefault, Class: "mt-2 w-full"}) { View Leaderboard }
 						}
 						@card.Card(card.Props{Class: "bg-muted/40 hover:shadow-lg transition-shadow duration-200 flex flex-col items-center p-6"}) {
-							@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) {
-								Projects 
-							}
-							<a href="/user/projects/list" class="mt-2 w-full inline-block text-center bg-primary text-white rounded-lg py-2 font-semibold hover:bg-primary/90 transition">My Projects</a>
+							@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) { Projects }
+							@button.Button(button.Props{Href: "/user/projects/list", Variant: button.VariantDefault, Class: "mt-2 w-full"}) { My Projects }
 						}
 					</div>
 				}
 			}
 		</main>
 	}
-}
-
-// Helper to format unix time to date string
-func timeFmt(ts int64) string {
-	return time.Unix(ts, 0).Format("Jan 2, 2006")
-}
-
-// Helper to format float to 1 decimal place
-func formatFloat1(f float64) string {
-	return fmt.Sprintf("%.1f", f)
 }
