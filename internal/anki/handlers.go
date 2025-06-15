@@ -9,7 +9,13 @@ import (
 // List all decks for the authenticated user
 func ListDecks(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		userID := r.Context().Value("user_id").(string)
+		userIDRaw := r.Context().Value("user_id")
+		userID, ok := userIDRaw.(string)
+		if !ok || userID == "" {
+			w.WriteHeader(http.StatusUnauthorized)
+			w.Write([]byte(`{"error":"unauthorized or missing user_id"}`))
+			return
+		}
 		rows, err := db.Query(`SELECT id, name FROM anki_decks WHERE owner_id = $1`, userID)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -27,7 +33,10 @@ func ListDecks(db *sql.DB) http.HandlerFunc {
 			}
 		}
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(decks)
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"user_id": userID,
+			"decks":   decks,
+		})
 	}
 }
 
