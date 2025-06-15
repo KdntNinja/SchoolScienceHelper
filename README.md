@@ -1,14 +1,16 @@
 # KdnSite
 
-A modern, open-source visual programming and quiz platform inspired by KayScience and Educake, built with Go, Templ, Tailwind CSS, and Neon (PostgreSQL).
+A modern, open-source platform for visual programming, interactive quizzes, and creative projects. Built with Go, Templ, Tailwind CSS, and Neon (PostgreSQL).
 
 ## Features
 
-- Visual drag-and-drop programming
+- Visual drag-and-drop programming and project creation
+- Interactive quizzes and instant feedback
 - User authentication and account management (Auth0)
 - Theme switching (light/dark)
-- Quiz and user data stored in Neon (PostgreSQL)
+- User and quiz data stored in Neon (PostgreSQL)
 - Fully containerized with Docker
+- Community features and progress tracking
 
 ## Getting Started
 
@@ -60,8 +62,8 @@ A modern, open-source visual programming and quiz platform inspired by KayScienc
    ```sh
    go run cmd/server/main.go
    # or with Docker
-   docker build -t KdnSite .
-   docker run --env-file .env -p 8090:8090 KdnSite
+   docker build -t kdnsite .
+   docker run --env-file .env -p 8090:8090 kdnsite
    ```
 
 5. **Visit** [http://localhost:8090](http://localhost:8090) in your browser.
