@@ -3,6 +3,8 @@ package pages
 import (
 	"KdnSite/ui/components/button"
 	"KdnSite/ui/components/card"
+	"KdnSite/ui/components/input"
+	"KdnSite/ui/components/label"
 	"KdnSite/ui/layouts"
 )
 
@@ -28,20 +30,34 @@ templ Settings() {
 							<div id="profile-info" class="text-muted-foreground mb-4">Loading profile...</div>
 							<form id="update-profile-form" class="space-y-4">
 								<div>
-									<label class="block mb-2 font-semibold">Username</label>
-									<input name="username" id="username-input" class="input input-bordered w-full" required/>
+									@label.Label(label.Props{For: "username-input", Class: "mb-2 font-semibold"}) { Username }
+									@input.Input(input.Props{
+										ID: "username-input",
+										Name: "username",
+										Type: input.TypeText,
+										Class: "w-full",
+										Required: true,
+										Placeholder: "Enter your username",
+									})
 								</div>
 								@button.Button(button.Props{Type: "submit", Variant: button.VariantDefault, Class: "w-full"}) {
-									Update Username 
+									Update Username
 								}
 							</form>
 							<form id="change-password-form" class="space-y-4 mt-6">
 								<div>
-									<label class="block mb-2 font-semibold">New Password</label>
-									<input name="password" type="password" class="input input-bordered w-full" required/>
+									@label.Label(label.Props{For: "password-input", Class: "mb-2 font-semibold"}) { New Password }
+									@input.Input(input.Props{
+										ID: "password-input",
+										Name: "password",
+										Type: input.TypePassword,
+										Class: "w-full",
+										Required: true,
+										Placeholder: "Enter new password",
+									})
 								</div>
 								@button.Button(button.Props{Type: "submit", Variant: button.VariantDefault, Class: "w-full"}) {
-									Change Password 
+									Change Password
 								}
 							</form>
 							@button.Button(button.Props{ID: "logout-btn", Variant: button.VariantDefault, Class: "w-full mt-6 text-red-600 border-red-600 hover:bg-red-50"}) {
