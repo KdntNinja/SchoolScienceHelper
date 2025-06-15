@@ -1,11 +1,12 @@
 package pages
 
 import (
+	"KdnSite/ui/components/button"
 	"KdnSite/ui/components/card"
 	"KdnSite/ui/components/input"
-	"KdnSite/ui/components/button"
 	"KdnSite/ui/components/label"
 	"KdnSite/ui/components/selectbox"
+	"KdnSite/ui/components/tabs"
 	"KdnSite/ui/components/textarea"
 	"KdnSite/ui/layouts"
 )
@@ -16,173 +17,205 @@ templ Revision() {
 			@card.Card(card.Props{Class: "w-full p-8"}) {
 				@card.Header(card.HeaderProps{}) {
 					@card.Title(card.TitleProps{Class: "text-3xl font-bold mb-6 text-primary"}) {
-						Revision Resources 
+						Revision Resources
 					}
 				}
 				@card.Content(card.ContentProps{}) {
-					<!-- Anki Import Section -->
-					<div class="mb-8">
-						<h2 class="text-xl font-semibold mb-2">Import Anki Deck</h2>
-						<form id="anki-import-form" class="flex flex-col md:flex-row gap-2 items-end">
-							@input.Input(input.Props{
-								ID: "anki-file-input",
-								Type: input.TypeFile,
-								Class: "border rounded px-3 py-2",
-								Required: true,
-								FileAccept: ".apkg",
-							})
-							@button.Button(button.Props{Type: "submit", Variant: button.VariantDefault, Class: "px-4 py-2"}) {
-								Import
+					@tabs.Tabs(tabs.Props{ID: "revision-tabs", Class: "w-full"}) {
+						@tabs.List() {
+							@tabs.Trigger(tabs.TriggerProps{Value: "anki", TabsID: "revision-tabs", IsActive: true}) {
+								Anki Decks 
 							}
-						</form>
-						<div id="anki-import-status" class="text-sm mt-2"></div>
-					</div>
-					<!-- Anki Decks Section -->
-					<div class="mb-10">
-						<h2 class="text-xl font-semibold mb-2">Your Anki Decks</h2>
-						@label.Label(label.Props{For: "anki-deck-select", Class: "mb-2 font-semibold"}) { Deck }
-						@selectbox.SelectBox(selectbox.Props{
-							ID: "anki-deck-select",
-							Class: "border rounded px-3 py-2 mb-4",
-						})
-						<ul id="anki-cards-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></ul>
-					</div>
-					<!-- Revision Resource Add/List UI -->
-					<div class="mb-6 flex flex-col md:flex-row gap-4 items-center">
-						<form id="add-revision-form" class="flex flex-col md:flex-row gap-2 w-full md:items-end">
-							<div class="flex flex-col flex-1">
-								@label.Label(label.Props{For: "type-input", Class: "font-semibold mb-1"}) { Type }
-								@selectbox.SelectBox(selectbox.Props{
-									ID: "type-input",
-									Class: "border rounded px-3 py-2 bg-background text-foreground",
-								}) {
-									@selectbox.Item(selectbox.ItemProps{Value: "flashcard"}) { Flashcard }
-									@selectbox.Item(selectbox.ItemProps{Value: "note"}) { Note }
-									@selectbox.Item(selectbox.ItemProps{Value: "summary"}) { Summary }
+							@tabs.Trigger(tabs.TriggerProps{Value: "resources", TabsID: "revision-tabs"}) {
+								Revision Resources 
+							}
+						}
+						@tabs.Content(tabs.ContentProps{Value: "anki", TabsID: "revision-tabs", IsActive: true}) {
+							<!-- Anki Import Section -->
+							<div class="mb-8">
+								<h2 class="text-xl font-semibold mb-2">Import Anki Deck</h2>
+								<form id="anki-import-form" class="flex flex-col md:flex-row gap-2 items-end">
+									@input.Input(input.Props{
+										ID:         "anki-file-input",
+										Type:       input.TypeFile,
+										Class:      "border rounded px-3 py-2",
+										Required:   true,
+										FileAccept: ".apkg",
+									})
+									@button.Button(button.Props{Type: "submit", Variant: button.VariantDefault, Class: "px-4 py-2"}) {
+										Import
+									}
+								</form>
+								<div id="anki-import-status" class="text-sm mt-2"></div>
+							</div>
+							<!-- Anki Decks Section -->
+							<div class="mb-10">
+								<h2 class="text-xl font-semibold mb-2">Your Anki Decks</h2>
+								@label.Label(label.Props{For: "anki-deck-select", Class: "mb-2 font-semibold"}) {
+									Deck 
 								}
-							</div>
-							<div class="flex flex-col flex-1">
-								@label.Label(label.Props{For: "topic-input", Class: "font-semibold mb-1"}) { Topic }
-								@input.Input(input.Props{
-									ID: "topic-input",
-									Type: input.TypeText,
-									Class: "border rounded px-3 py-2 bg-background text-foreground",
-									Placeholder: "e.g. Cell Biology",
+								@selectbox.SelectBox(selectbox.Props{
+									ID:    "anki-deck-select",
+									Class: "border rounded px-3 py-2 mb-4",
 								})
+								<ul id="anki-cards-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></ul>
 							</div>
-							<div class="flex flex-col flex-1">
-								@label.Label(label.Props{For: "content-input", Class: "font-semibold mb-1"}) { Content }
-								@textarea.Textarea(textarea.Props{
-									ID: "content-input",
-									Class: "border rounded px-3 py-2 bg-background text-foreground",
-									Placeholder: "Enter content here...",
-								})
+						}
+						@tabs.Content(tabs.ContentProps{Value: "resources", TabsID: "revision-tabs"}) {
+							<!-- Revision Resource Add/List UI -->
+							<div class="mb-6 flex flex-col md:flex-row gap-4 items-center">
+								<form id="add-revision-form" class="flex flex-col md:flex-row gap-2 w-full md:items-end">
+									<div class="flex flex-col flex-1">
+										@label.Label(label.Props{For: "type-input", Class: "font-semibold mb-1"}) {
+											Type 
+										}
+										@selectbox.SelectBox(selectbox.Props{
+											ID:    "type-input",
+											Class: "border rounded px-3 py-2 bg-background text-foreground",
+										}) {
+											@selectbox.Item(selectbox.ItemProps{Value: "flashcard"}) {
+												Flashcard 
+											}
+											@selectbox.Item(selectbox.ItemProps{Value: "note"}) {
+												Note 
+											}
+											@selectbox.Item(selectbox.ItemProps{Value: "summary"}) {
+												Summary 
+											}
+										}
+									</div>
+									<div class="flex flex-col flex-1">
+										@label.Label(label.Props{For: "topic-input", Class: "font-semibold mb-1"}) {
+											Topic 
+										}
+										@input.Input(input.Props{
+											ID:          "topic-input",
+											Type:        input.TypeText,
+											Class:       "border rounded px-3 py-2 bg-background text-foreground",
+											Placeholder: "e.g. Cell Biology",
+										})
+									</div>
+									<div class="flex flex-col flex-1">
+										@label.Label(label.Props{For: "content-input", Class: "font-semibold mb-1"}) {
+											Content 
+										}
+										@textarea.Textarea(textarea.Props{
+											ID:          "content-input",
+											Class:       "border rounded px-3 py-2 bg-background text-foreground",
+											Placeholder: "Enter content here...",
+										})
+									</div>
+									@button.Button(button.Props{Type: "submit", Variant: button.VariantDefault, Class: "px-4 py-2"}) {
+										Add
+									}
+								</form>
 							</div>
-							@button.Button(button.Props{Type: "submit", Variant: button.VariantDefault, Class: "px-4 py-2"}) {
-								Add
-							}
-						</form>
-					</div>
-					<ul id="revision-list" class="grid grid-cols-1 md:grid-cols-2 gap-6"></ul>
-					<script>
-					// Anki Import
-					document.getElementById('anki-import-form').onsubmit = async function(e) {
-						e.preventDefault();
-						const fileInput = document.getElementById('anki-file-input');
-						const status = document.getElementById('anki-import-status');
-						if (!fileInput.files.length) return;
-						const formData = new FormData();
-						formData.append('file', fileInput.files[0]);
-						status.textContent = 'Importing...';
-						const res = await fetch('/api/anki/import', {
-							method: 'POST',
-							credentials: 'include',
-							body: formData
-						});
-						if (res.ok) {
-							status.textContent = 'Import successful!';
-							loadAnkiDecks();
-						} else {
-							status.textContent = 'Import failed.';
+							<ul id="revision-list" class="grid grid-cols-1 md:grid-cols-2 gap-6"></ul>
 						}
-					};
-					// Load Anki Decks
-					async function loadAnkiDecks() {
-						const res = await fetch('/api/anki/decks', { credentials: 'include' });
-						const decks = await res.json();
-						const select = document.getElementById('anki-deck-select');
-						select.innerHTML = '';
-						if (!decks.length) {
-							select.innerHTML = '<option>No decks imported</option>';
-							return;
-						}
-						for (const d of decks) {
-							const opt = document.createElement('option');
-							opt.value = d.id;
-							opt.textContent = d.name;
-							select.appendChild(opt);
-						}
-						loadAnkiCards(select.value);
-						select.onchange = () => loadAnkiCards(select.value);
 					}
-					// Load Anki Cards for selected deck
-					async function loadAnkiCards(deckId) {
-						const res = await fetch(`/api/anki/cards?deck_id=${encodeURIComponent(deckId)}`, { credentials: 'include' });
-						const cards = await res.json();
-						const list = document.getElementById('anki-cards-list');
-						if (!cards.length) {
-							list.innerHTML = '<li class="col-span-2 text-center text-muted-foreground">No cards in this deck.</li>';
-							return;
-						}
-						let html = '';
-						for (const c of cards) {
-							html += `<li class='bg-muted/40 rounded-xl p-4 flex flex-col gap-2'>`;
-							html += `<span class='font-semibold'>Front:</span><span>${c.front}</span>`;
-							html += `<span class='font-semibold'>Back:</span><span>${c.back}</span>`;
-							html += `</li>`;
-						}
-						list.innerHTML = html;
-					}
-					loadAnkiDecks();
-					// Existing Revision Resource JS
-					async function loadRevisionResources() {
-						const res = await fetch('/api/revision', { credentials: 'include' });
-						const resources = await res.json();
-						const list = document.getElementById('revision-list');
-						if (!resources.length) {
-							list.innerHTML = '<li class="col-span-2 text-center text-muted-foreground">No revision resources yet.</li>';
-							return;
-						}
-						let html = '';
-						for (const r of resources) {
-							html += `<li class='bg-muted/40 rounded-xl p-6 flex flex-col gap-2'>`;
-							html += `<span class='font-semibold text-lg'>${r.type.charAt(0).toUpperCase() + r.type.slice(1)}</span>`;
-							html += `<span class='text-muted-foreground'>`;
-							if (r.topic) html += `<b>Topic:</b> ${r.topic}<br>`;
-							html += `${r.content}</span>`;
-							html += `</li>`;
-						}
-						list.innerHTML = html;
-					}
-					loadRevisionResources();
-					document.getElementById('add-revision-form').onsubmit = async function(e) {
-						e.preventDefault();
-						const type = document.getElementById('type-input').value;
-						const topic = document.getElementById('topic-input').value;
-						const content = document.getElementById('content-input').value;
-						if (!type || !content) return;
-						await fetch('/api/revision', {
-							method: 'POST',
-							headers: { 'Content-Type': 'application/json' },
-							credentials: 'include',
-							body: JSON.stringify({ type, topic, content })
-						});
-						document.getElementById('content-input').value = '';
-						loadRevisionResources();
-					};
-					</script>
+					@tabs.Script()
 				}
 			}
 		</main>
+		<script>
+		// Anki Import
+		document.getElementById('anki-import-form').onsubmit = async function(e) {
+			e.preventDefault();
+			const fileInput = document.getElementById('anki-file-input');
+			const status = document.getElementById('anki-import-status');
+			if (!fileInput.files.length) return;
+			const formData = new FormData();
+			formData.append('file', fileInput.files[0]);
+			status.textContent = 'Importing...';
+			const res = await fetch('/api/deckimport', {
+				method: 'POST',
+				credentials: 'include',
+				body: formData
+			});
+			if (res.ok) {
+				status.textContent = 'Import successful!';
+				loadAnkiDecks();
+			} else {
+				status.textContent = 'Import failed.';
+			}
+		};
+		// Load Anki Decks
+		async function loadAnkiDecks() {
+			const res = await fetch('/api/decks', { credentials: 'include' });
+			let decks = [];
+			try { decks = await res.json(); } catch { decks = []; }
+			const select = document.getElementById('anki-deck-select');
+			select.innerHTML = '';
+			if (!decks.length) {
+				select.innerHTML = '<option>No decks imported</option>';
+				return;
+			}
+			for (const d of decks) {
+				const opt = document.createElement('option');
+				opt.value = d.id;
+				opt.textContent = d.name;
+				select.appendChild(opt);
+			}
+			loadAnkiCards(select.value);
+			select.onchange = () => loadAnkiCards(select.value);
+		}
+		// Load Anki Cards for selected deck
+		async function loadAnkiCards(deckId) {
+			const res = await fetch(`/api/cards?deck_id=${encodeURIComponent(deckId)}`, { credentials: 'include' });
+			let cards = [];
+			try { cards = await res.json(); } catch { cards = []; }
+			const list = document.getElementById('anki-cards-list');
+			if (!cards.length) {
+				list.innerHTML = '<li class="col-span-2 text-center text-muted-foreground">No cards in this deck.</li>';
+				return;
+			}
+			let html = '';
+			for (const c of cards) {
+				html += `<li class='bg-muted/40 rounded-xl p-4 flex flex-col gap-2'>`;
+				html += `<span class='font-semibold'>Front:</span><span>${c.front}</span>`;
+				html += `<span class='font-semibold'>Back:</span><span>${c.back}</span>`;
+				html += `</li>`;
+			}
+			list.innerHTML = html;
+		}
+		loadAnkiDecks();
+		// Existing Revision Resource JS
+		async function loadRevisionResources() {
+			const res = await fetch('/api/revision', { credentials: 'include' });
+			let resources = [];
+			try { resources = await res.json(); } catch { resources = []; }
+			const list = document.getElementById('revision-list');
+			if (!resources.length) {
+				list.innerHTML = '<li class="col-span-2 text-center text-muted-foreground">No revision resources yet.</li>';
+				return;
+			}
+			let html = '';
+			for (const r of resources) {
+				html += `<li class='bg-muted/40 rounded-xl p-6 flex flex-col gap-2'>`;
+				html += `<span class='font-semibold text-lg'>${r.type.charAt(0).toUpperCase() + r.type.slice(1)}</span>`;
+				html += `<span class='text-muted-foreground'>`;
+				if (r.topic) html += `<b>Topic:</b> ${r.topic}<br>`;
+				html += `${r.content}</span>`;
+				html += `</li>`;
+			}
+			list.innerHTML = html;
+		}
+		loadRevisionResources();
+		document.getElementById('add-revision-form').onsubmit = async function(e) {
+			e.preventDefault();
+			const type = document.getElementById('type-input').value;
+			const topic = document.getElementById('topic-input').value;
+			const content = document.getElementById('content-input').value;
+			if (!type || !content) return;
+			await fetch('/api/revision', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				credentials: 'include',
+				body: JSON.stringify({ type, topic, content })
+			});
+			document.getElementById('content-input').value = '';
+			loadRevisionResources();
+		};
+		</script>
 	}
 }

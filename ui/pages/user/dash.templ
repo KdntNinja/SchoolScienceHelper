@@ -58,7 +58,7 @@ templ Dash(displayName string) {
 					<script>
 					// Fetch dashboard stats
 					async function loadDashStats() {
-						const decksRes = await fetch('/api/anki/decks', { credentials: 'include' });
+						const decksRes = await fetch('/api/decks', { credentials: 'include' });
 						if (decksRes.ok) {
 							const decks = await decksRes.json();
 							document.getElementById('anki-decks-count').textContent = decks.length;

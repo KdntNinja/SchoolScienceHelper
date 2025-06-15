@@ -290,7 +290,7 @@ func registerAPIRoutes(mux *http.ServeMux, db *sql.DB) {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 		}
 	})))
-	mux.Handle("/api/anki/decks", handlers.RequireAuth(http.HandlerFunc(anki.ListDecks(db))))
-	mux.Handle("/api/anki/cards", handlers.RequireAuth(http.HandlerFunc(anki.ListCards(db))))
-	mux.Handle("/api/anki/import", handlers.RequireAuth(http.HandlerFunc(anki.ImportDeck(db))))
+	mux.Handle("/api/decks", handlers.RequireAuth(http.HandlerFunc(anki.ListDecks(db))))
+	mux.Handle("/api/cards", handlers.RequireAuth(http.HandlerFunc(anki.ListCards(db))))
+	mux.Handle("/api/deckimport", handlers.RequireAuth(http.HandlerFunc(anki.ImportDeck(db))))
 }

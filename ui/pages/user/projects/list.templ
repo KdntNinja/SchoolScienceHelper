@@ -33,9 +33,15 @@ templ ProjectsTable() {
 	@table.Table(table.Props{Class: "w-full table-auto border rounded-xl"}) {
 		@table.Header() {
 			@table.Row() {
-				@table.Head() { Title }
-				@table.Head() { Created }
-				@table.Head() { ID }
+				@table.Head() {
+					Title 
+				}
+				@table.Head() {
+					Created 
+				}
+				@table.Head() {
+					ID 
+				}
 			}
 		}
 		@table.Body() {

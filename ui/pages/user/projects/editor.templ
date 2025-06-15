@@ -21,23 +21,27 @@ templ ProjectEditor() {
 				@card.Content(card.ContentProps{}) {
 					<form id="project-form" class="space-y-6">
 						<div>
-							@label.Label(label.Props{For: "project-title", Class: "block mb-2 font-semibold"}) { Title }
+							@label.Label(label.Props{For: "project-title", Class: "block mb-2 font-semibold"}) {
+								Title 
+							}
 							@input.Input(input.Props{
-								ID: "project-title",
-								Name: "title",
-								Type: input.TypeText,
-								Class: "w-full",
-								Required: true,
+								ID:          "project-title",
+								Name:        "title",
+								Type:        input.TypeText,
+								Class:       "w-full",
+								Required:    true,
 								Placeholder: "Project Title",
 							})
 						</div>
 						<div>
-							@label.Label(label.Props{For: "project-data", Class: "block mb-2 font-semibold"}) { Data (JSON) }
+							@label.Label(label.Props{For: "project-data", Class: "block mb-2 font-semibold"}) {
+								Data (JSON) 
+							}
 							@textarea.Textarea(textarea.Props{
-								ID: "project-data",
-								Name: "data",
-								Class: "w-full h-32",
-								Required: true,
+								ID:          "project-data",
+								Name:        "data",
+								Class:       "w-full h-32",
+								Required:    true,
 								Placeholder: "{\n  \"key\": \"value\"\n}",
 							})
 						</div>
