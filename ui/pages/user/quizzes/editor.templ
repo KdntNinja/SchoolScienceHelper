@@ -11,15 +11,19 @@ templ QuizEditor() {
 		<main class="container mx-auto py-12 max-w-xl">
 			@card.Card(card.Props{Class: "w-full p-8"}) {
 				@card.Header(card.HeaderProps{}) {
-					@card.Title(card.TitleProps{Class: "text-3xl font-bold mb-6 text-primary"}) { New Quiz }
+					@card.Title(card.TitleProps{Class: "text-3xl font-bold mb-6 text-primary"}) {
+						New Quiz 
+					}
 				}
 				@card.Content(card.ContentProps{}) {
 					<form id="quiz-form" class="space-y-6">
 						<div>
 							<label class="block mb-2 font-semibold">Title</label>
-							<input name="title" class="input input-bordered w-full" required />
+							<input name="title" class="input input-bordered w-full" required/>
 						</div>
-						@button.Button(button.Props{Type: "submit", Variant: button.VariantDefault}) { Create Quiz }
+						@button.Button(button.Props{Type: "submit", Variant: button.VariantDefault}) {
+							Create Quiz 
+						}
 					</form>
 					<script>
 						document.getElementById('quiz-form').onsubmit = async function(e) {

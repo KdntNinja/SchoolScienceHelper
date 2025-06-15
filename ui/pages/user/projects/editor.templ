@@ -11,19 +11,23 @@ templ ProjectEditor() {
 		<main class="container mx-auto py-12 max-w-xl">
 			@card.Card(card.Props{Class: "w-full p-8"}) {
 				@card.Header(card.HeaderProps{}) {
-					@card.Title(card.TitleProps{Class: "text-3xl font-bold mb-6 text-primary"}) { New Project }
+					@card.Title(card.TitleProps{Class: "text-3xl font-bold mb-6 text-primary"}) {
+						New Project 
+					}
 				}
 				@card.Content(card.ContentProps{}) {
 					<form id="project-form" class="space-y-6">
 						<div>
 							<label class="block mb-2 font-semibold">Title</label>
-							<input name="title" class="input input-bordered w-full" required />
+							<input name="title" class="input input-bordered w-full" required/>
 						</div>
 						<div>
 							<label class="block mb-2 font-semibold">Data (JSON)</label>
 							<textarea name="data" class="input input-bordered w-full h-32" required></textarea>
 						</div>
-						@button.Button(button.Props{Type: "submit", Variant: button.VariantDefault}) { Create Project }
+						@button.Button(button.Props{Type: "submit", Variant: button.VariantDefault}) {
+							Create Project 
+						}
 					</form>
 					<script>
 						document.getElementById('project-form').onsubmit = async function(e) {

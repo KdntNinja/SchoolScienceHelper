@@ -10,7 +10,9 @@ templ QuizResults() {
 		<main class="container mx-auto py-12 max-w-xl">
 			@card.Card(card.Props{Class: "w-full p-8"}) {
 				@card.Header(card.HeaderProps{}) {
-					@card.Title(card.TitleProps{Class: "text-2xl font-bold mb-4 text-primary"}) { Quiz Results }
+					@card.Title(card.TitleProps{Class: "text-2xl font-bold mb-4 text-primary"}) {
+						Quiz Results 
+					}
 				}
 				@card.Content(card.ContentProps{}) {
 					<div class="mb-4 text-lg">Your Score: <span class="font-bold">8 / 10</span></div>

@@ -11,7 +11,9 @@ templ ProjectList() {
 		<main class="container mx-auto py-12">
 			@card.Card(card.Props{Class: "max-w-3xl w-full mx-auto p-8"}) {
 				@card.Header(card.HeaderProps{}) {
-					@card.Title(card.TitleProps{Class: "text-3xl font-bold mb-6 text-primary"}) { Your Projects }
+					@card.Title(card.TitleProps{Class: "text-3xl font-bold mb-6 text-primary"}) {
+						Your Projects 
+					}
 				}
 				@card.Content(card.ContentProps{}) {
 					@ProjectsTable()
@@ -39,7 +41,9 @@ templ ProjectsTable() {
 		document.addEventListener('DOMContentLoaded', loadProjects);
 	</script>
 	<div class="flex justify-end mb-4">
-		@button.Button(button.Props{Href: "/user/projects/editor", Variant: button.VariantDefault}) { New Project }
+		@button.Button(button.Props{Href: "/user/projects/editor", Variant: button.VariantDefault}) {
+			New Project 
+		}
 	</div>
 	<div class="overflow-x-auto">
 		<table class="w-full table-auto border rounded-xl">

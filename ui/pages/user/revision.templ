@@ -10,7 +10,9 @@ templ Revision() {
 		<main class="container mx-auto py-12 max-w-3xl">
 			@card.Card(card.Props{Class: "w-full p-8"}) {
 				@card.Header(card.HeaderProps{}) {
-					@card.Title(card.TitleProps{Class: "text-3xl font-bold mb-6 text-primary"}) { Revision Resources }
+					@card.Title(card.TitleProps{Class: "text-3xl font-bold mb-6 text-primary"}) {
+						Revision Resources 
+					}
 				}
 				@card.Content(card.ContentProps{}) {
 					<ul class="grid grid-cols-1 md:grid-cols-2 gap-6">

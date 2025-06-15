@@ -10,7 +10,9 @@ templ MyResults() {
 		<main class="container mx-auto py-12 max-w-2xl">
 			@card.Card(card.Props{Class: "w-full p-8"}) {
 				@card.Header(card.HeaderProps{}) {
-					@card.Title(card.TitleProps{Class: "text-2xl font-bold mb-4 text-primary"}) { My Quiz Results }
+					@card.Title(card.TitleProps{Class: "text-2xl font-bold mb-4 text-primary"}) {
+						My Quiz Results 
+					}
 				}
 				@card.Content(card.ContentProps{}) {
 					<table class="w-full table-auto border rounded-xl mb-6">

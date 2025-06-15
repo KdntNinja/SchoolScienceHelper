@@ -10,7 +10,9 @@ templ QuizFlow() {
 		<main class="container mx-auto py-12 max-w-2xl">
 			@card.Card(card.Props{Class: "w-full p-8"}) {
 				@card.Header(card.HeaderProps{}) {
-					@card.Title(card.TitleProps{Class: "text-2xl font-bold mb-4 text-primary"}) { Quiz: Example Quiz }
+					@card.Title(card.TitleProps{Class: "text-2xl font-bold mb-4 text-primary"}) {
+						Quiz: Example Quiz 
+					}
 				}
 				@card.Content(card.ContentProps{}) {
 					<div id="quiz-flow">

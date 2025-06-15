@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f3f2d531-c0ce-4474-bb2c-bfb123b6a391" name="Changes" comment="" />
+    <list default="true" id="f3f2d531-c0ce-4474-bb2c-bfb123b6a391" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/ui/pages/user/settings.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/pages/user/settings.templ" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
