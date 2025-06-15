@@ -12,10 +12,10 @@ templ Dash() {
 			@card.Card(card.Props{Class: "bg-card dark:bg-card rounded-2xl shadow-2xl w-full max-w-3xl p-12 border border-border flex flex-col gap-10"}) {
 				@card.Header(card.HeaderProps{}) {
 					@card.Title(card.TitleProps{Class: "text-5xl font-black text-center mb-4 text-primary tracking-tight"}) {
-						Your Science Dashboard
+						Your Dashboard
 					}
 					@card.Description(card.DescriptionProps{Class: "text-center text-lg text-muted-foreground mb-8"}) {
-						Welcome back! Jump into revision, quizzes, or check your progress below.
+						Welcome back! Jump into your projects, quizzes, or check your progress below.
 					}
 				}
 				@card.Content(card.ContentProps{}) {
@@ -23,24 +23,19 @@ templ Dash() {
 						@card.Card(card.Props{Class: "bg-muted/40 hover:shadow-lg transition-shadow duration-200"}) {
 							@card.Header(card.HeaderProps{}) {
 								@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) {
-									Quick Links
+									Projects
 								}
 							}
 							@card.Content(card.ContentProps{}) {
 								<ul class="space-y-2">
 									<li>
-										@button.Button(button.Props{Href: "/terms", Variant: button.VariantLink, Class: "px-0"}) {
-											Terms & Conditions 
+										@button.Button(button.Props{Href: "/user/projects/list", Variant: button.VariantLink, Class: "px-0"}) {
+											Your Projects
 										}
 									</li>
 									<li>
-										@button.Button(button.Props{Href: "/privacy", Variant: button.VariantLink, Class: "px-0"}) {
-											Privacy Policy 
-										}
-									</li>
-									<li>
-										@button.Button(button.Props{Href: "https://github.com/KdntNinja/SchoolScienceHelper", Target: "_blank", Variant: button.VariantLink, Class: "px-0"}) {
-											GitHub 
+										@button.Button(button.Props{Href: "/user/projects/editor", Variant: button.VariantLink, Class: "px-0"}) {
+											New Project
 										}
 									</li>
 								</ul>
@@ -49,14 +44,42 @@ templ Dash() {
 						@card.Card(card.Props{Class: "bg-muted/40 hover:shadow-lg transition-shadow duration-200"}) {
 							@card.Header(card.HeaderProps{}) {
 								@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) {
-									Coming Soon
+									Quizzes
 								}
 							}
 							@card.Content(card.ContentProps{}) {
-								<ul class="space-y-2 text-muted-foreground">
-									<li>Personal Progress Tracking</li>
-									<li>Custom Flashcards</li>
-									<li>Leaderboard & Achievements</li>
+								<ul class="space-y-2">
+									<li>
+										@button.Button(button.Props{Href: "/user/quizzes/list", Variant: button.VariantLink, Class: "px-0"}) {
+											Your Quizzes
+										}
+									</li>
+									<li>
+										@button.Button(button.Props{Href: "/user/quizzes/editor", Variant: button.VariantLink, Class: "px-0"}) {
+											New Quiz
+										}
+									</li>
+								</ul>
+							}
+						}
+						@card.Card(card.Props{Class: "bg-muted/40 hover:shadow-lg transition-shadow duration-200"}) {
+							@card.Header(card.HeaderProps{}) {
+								@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) {
+									Community
+								}
+							}
+							@card.Content(card.ContentProps{}) {
+								<ul class="space-y-2">
+									<li>
+										@button.Button(button.Props{Href: "/user/community/leaderboard", Variant: button.VariantLink, Class: "px-0"}) {
+											Leaderboard
+										}
+									</li>
+									<li>
+										@button.Button(button.Props{Href: "/user/settings", Variant: button.VariantLink, Class: "px-0"}) {
+											Settings
+										}
+									</li>
 								</ul>
 							}
 						}

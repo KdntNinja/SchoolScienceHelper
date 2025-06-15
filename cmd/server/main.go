@@ -9,6 +9,8 @@ import (
 
 	"KdnSite/assets"
 	"KdnSite/internal/handlers"
+	"KdnSite/internal/projects"
+	"KdnSite/internal/quizzes"
 	errorpages "KdnSite/ui/pages/error"
 	legalpages "KdnSite/ui/pages/legal"
 	publicpages "KdnSite/ui/pages/public"
@@ -29,6 +31,7 @@ func main() {
 	registerAuthRoutes(mux)
 	registerUserRoutes(mux)
 	SetupAssetsRoutes(mux)
+	registerAPIRoutes(mux)
 
 	hstsMiddleware := func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -184,4 +187,27 @@ func SetupAssetsRoutes(mux *http.ServeMux) {
 		fs.ServeHTTP(w, r)
 	})
 	mux.Handle("GET /assets/", http.StripPrefix("/assets/", assetHandler))
+}
+
+func registerAPIRoutes(mux *http.ServeMux) {
+	mux.HandleFunc("/api/projects", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			projects.ListProjects(w, r)
+		case http.MethodPost:
+			projects.CreateProject(w, r)
+		default:
+			w.WriteHeader(http.StatusMethodNotAllowed)
+		}
+	})
+	mux.HandleFunc("/api/quizzes", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			quizzes.ListQuizzes(w, r)
+		case http.MethodPost:
+			quizzes.CreateQuiz(w, r)
+		default:
+			w.WriteHeader(http.StatusMethodNotAllowed)
+		}
+	})
 }

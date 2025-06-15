@@ -8,16 +8,16 @@ import (
 
 templ Landing(auth0Domain string, auth0ClientID string) {
 	@layouts.BaseLayout() {
-		<main class="flex flex-col min-h-[calc(100vh-72px)] bg-gradient-to-b from-primary/5 to-background text-foreground px-6 py-20 space-y-24">
+		<main class="flex flex-col min-h-[calc(100vh-72px)] bg-background text-foreground px-6 py-20 space-y-24">
 			<!-- Hero Section -->
-			<section class="flex flex-col items-center text-center gap-6">
-				<h1 class="text-6xl md:text-7xl font-black text-primary mb-4 leading-tight drop-shadow-lg">
+			<section class="flex flex-col items-center text-center">
+				<h1 class="text-5xl md:text-6xl font-black text-primary mb-6 leading-tight">
 					Welcome to KdnSite
 				</h1>
-				<p class="max-w-2xl text-xl text-muted-foreground leading-relaxed mb-8">
-					A modern, open-source platform for interactive learning, quizzes, and creative projects. Empowering students and teachers to master any subject, together!
+				<p class="max-w-2xl text-lg text-muted-foreground leading-relaxed mb-10">
+					Your all-in-one platform for science revision, quizzes, and learning. Empowering students and teachers to master science, together!
 				</p>
-				<div class="flex flex-wrap justify-center gap-6 mb-2">
+				<div class="flex flex-wrap justify-center gap-6">
 					@button.Button(button.Props{
 						Variant: "outline",
 						Href:    "https://github.com/KdntNinja/SchoolScienceHelper",
@@ -26,10 +26,9 @@ templ Landing(auth0Domain string, auth0ClientID string) {
 						View on GitHub
 					}
 					@button.Button(button.Props{
-						Variant: "primary",
+						Variant: "secondary",
 						ID:      "get-started-btn",
 						Type:    "button",
-						Class:   "shadow-lg hover:scale-105 transition-transform duration-150",
 					}) {
 						Get Started
 					}
@@ -43,19 +42,44 @@ templ Landing(auth0Domain string, auth0ClientID string) {
 				</span>
 				<script>
 					document.addEventListener('DOMContentLoaded', function() {
+						// --- Auth0 callback handling ---
+						const hash = window.location.hash;
+						if (hash && (hash.includes('id_token') || hash.includes('access_token'))) {
+							const params = new URLSearchParams(hash.substring(1));
+							const idToken = params.get('id_token');
+							if (idToken) {
+								// Send token to backend to set cookie
+								fetch('/api/auth/callback', {
+									method: 'POST',
+									headers: { 'Content-Type': 'application/json' },
+									body: JSON.stringify({ token: idToken })
+								})
+								.then(res => {
+									if (res.ok) {
+										window.location.replace('/dash');
+									} else {
+										alert('Authentication failed.');
+									}
+								});
+								return;
+							}
+						}
+
 						const btn = document.getElementById('get-started-btn');
 						btn.onclick = function(e) {
 							e.preventDefault();
+							// Auth0 config injected from Go backend
 							const domain = "{{ auth0Domain }}";
 							const clientId = "{{ auth0ClientID }}";
 							if (!domain || !clientId) {
 								alert('Auth0 configuration is missing.');
 								return;
 							}
-							const redirectUri = window.location.origin + '/';
+							const redirectUri = window.location.origin + '/'; // Use / as the callback
 							const nonce = Date.now();
 							window.location.href = `https://${domain}/authorize?response_type=id_token%20token&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=openid%20profile%20email&nonce=${nonce}`;
 						};
+						// If already authenticated, redirect to /dash
 						fetch('/api/auth/check', { credentials: 'include' }).then(r => r.json()).then(data => {
 							if (data && data.authenticated) {
 								window.location.replace('/dash');
@@ -65,41 +89,28 @@ templ Landing(auth0Domain string, auth0ClientID string) {
 				</script>
 			</section>
 			<!-- Features Section -->
-			<section class="max-w-6xl mx-auto text-center">
-				<h2 class="text-4xl font-bold mb-10 text-primary drop-shadow">What makes KdnSite different?</h2>
-				<div class="grid grid-cols-1 md:grid-cols-3 gap-10 text-left">
-					@card.Card(card.Props{Class: "p-8 bg-card rounded-2xl shadow-xl border border-border hover:shadow-2xl transition-shadow duration-200"}) {
-						<h3 class="text-2xl font-semibold mb-3">⚡ Interactive Quizzes</h3>
-						<p class="text-muted-foreground text-base">
-							Challenge yourself with engaging, curriculum-aligned quizzes and instant feedback.
+			<section class="max-w-5xl mx-auto text-center">
+				<h2 class="text-3xl font-bold mb-6 text-primary">Why KdnSite?</h2>
+				<div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+					@card.Card(card.Props{Class: "p-6 bg-card rounded-xl shadow border border-border"}) {
+						<h3 class="text-xl font-semibold mb-2">🧪 Interactive Science Quizzes</h3>
+						<p class="text-muted-foreground">
+							Test your knowledge with engaging, curriculum-aligned quizzes for Biology, Chemistry, and Physics.
 						</p>
 					}
-					@card.Card(card.Props{Class: "p-8 bg-card rounded-2xl shadow-xl border border-border hover:shadow-2xl transition-shadow duration-200"}) {
-						<h3 class="text-2xl font-semibold mb-3">🎨 Creative Projects</h3>
-						<p class="text-muted-foreground text-base">
-							Build, share, and remix visual programs and interactive content—no coding experience required.
+					@card.Card(card.Props{Class: "p-6 bg-card rounded-xl shadow border border-border"}) {
+						<h3 class="text-xl font-semibold mb-2">📚 Revision Resources</h3>
+						<p class="text-muted-foreground">
+							Access concise revision notes, diagrams, and flashcards to boost your science grades.
 						</p>
 					}
-					@card.Card(card.Props{Class: "p-8 bg-card rounded-2xl shadow-xl border border-border hover:shadow-2xl transition-shadow duration-200"}) {
-						<h3 class="text-2xl font-semibold mb-3">👥 Community & Progress</h3>
-						<p class="text-muted-foreground text-base">
-							Track your learning, connect with others, and unlock achievements as you grow.
+					@card.Card(card.Props{Class: "p-6 bg-card rounded-xl shadow border border-border"}) {
+						<h3 class="text-xl font-semibold mb-2">👩‍🏫 Teacher Tools</h3>
+						<p class="text-muted-foreground">
+							Track student progress, assign quizzes, and support learning in and out of the classroom.
 						</p>
 					}
 				</div>
-			</section>
-			<!-- Call to Action -->
-			<section class="flex flex-col items-center gap-4 py-16">
-				<h3 class="text-2xl font-bold text-primary mb-2">Ready to get started?</h3>
-				@button.Button(button.Props{
-					Variant: "primary",
-					ID:      "get-started-btn-cta",
-					Type:    "button",
-					Class:   "text-lg px-8 py-3 shadow-lg hover:scale-105 transition-transform duration-150",
-				}) {
-					Join Now
-				}
-				<p class="text-sm text-muted-foreground">Sign up free and start exploring today!</p>
 			</section>
 			<!-- Footer -->
 			<footer class="text-sm text-muted-foreground text-center pt-10 border-t border-border">
