@@ -6,12 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="f3f2d531-c0ce-4474-bb2c-bfb123b6a391" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/pages/public/landing.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/pages/public/landing.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/pages/user/dash.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/pages/user/dash.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/pages/user/science/papers.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/pages/user/science/papers.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/pages/user/science/questions.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/pages/user/science/questions.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/pages/user/science/revision.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/pages/user/science/revision.templ" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/pages/user/science/spec.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/pages/user/science/spec.templ" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,12 +22,12 @@
     &quot;assignee&quot;: &quot;KdntNinja&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/KdntNinja/KdnSite.git&quot;,
-    &quot;accountId&quot;: &quot;f8641087-6f1a-407b-8f0b-f3c7d94cc0d8&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/KdntNinja/SchoolScienceHelper.git",
+    "accountId": "f8641087-6f1a-407b-8f0b-f3c7d94cc0d8"
   }
-}</component>
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
 }</component>

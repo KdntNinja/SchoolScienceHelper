@@ -4,20 +4,15 @@ import (
 	"database/sql"
 	"net/http"
 	"os"
-	"time"
 
 	_ "github.com/lib/pq"
 
 	"KdnSite/assets"
 	"KdnSite/internal/handlers"
-	science "KdnSite/internal/science"
 	errorpages "KdnSite/ui/pages/error"
 	legalpages "KdnSite/ui/pages/legal"
 	publicpages "KdnSite/ui/pages/public"
 	userpages "KdnSite/ui/pages/user"
-	sciencepages "KdnSite/ui/pages/user/science"
-
-	"context"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -28,24 +23,11 @@ func main() {
 	db := setupDatabase()
 	defer db.Close()
 
-	// Start background weekly board data sync
-	go func() {
-		for {
-			log.Info("[Background] Starting weekly exam board scrape...")
-			science.CollectAllBoardData(context.Background(), db)
-			log.Info("[Background] Exam board scrape complete. Next run in 7 days.")
-			time.Sleep(7 * 24 * time.Hour)
-		}
-	}()
-
 	mux := http.NewServeMux()
 	registerStaticRoutes(mux)
 	registerLegalRoutes(mux)
 	registerAuthRoutes(mux)
 	registerUserRoutes(mux)
-	registerScienceAPIRoutes(mux, db)
-	registerScienceUserRoutes(mux)
-	registerScienceHubRoute(mux)
 	SetupAssetsRoutes(mux)
 
 	hstsMiddleware := func(next http.Handler) http.Handler {
@@ -184,100 +166,6 @@ func registerUserRoutes(mux *http.ServeMux) {
 		if err != nil {
 			log.Errorf("Render error (InternalServerError): %v", err)
 		}
-	})
-}
-
-func registerScienceAPIRoutes(mux *http.ServeMux, db *sql.DB) {
-	boards := []string{"aqa", "ocr", "edexcel"}
-	tiers := []string{"foundation", "higher", "separate_foundation", "separate_higher"}
-	for _, board := range boards {
-		for _, tier := range tiers {
-			mux.HandleFunc("/api/"+board+"/"+tier+"/spec", science.SpecsAPI(db))
-			mux.HandleFunc("/api/"+board+"/"+tier+"/papers", science.PapersAPI(db))
-			mux.HandleFunc("/api/"+board+"/"+tier+"/questions", science.QuestionsAPI(db))
-			mux.HandleFunc("/api/"+board+"/"+tier+"/revision", science.RevisionAPI(db))
-		}
-	}
-}
-
-func registerScienceUserRoutes(mux *http.ServeMux) {
-	mux.HandleFunc("/user/science/spec", func(w http.ResponseWriter, r *http.Request) {
-		log.Infof("[ScienceSpecPage] user=%v, path=%s", r.Context().Value("user"), r.URL.Path)
-		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			log.Debugf("Rendering ScienceSpecPage for user=%v", r.Context().Value("user"))
-			err := sciencepages.ScienceSpecPage().Render(r.Context(), w)
-			if err != nil {
-				log.Errorf("Render error (ScienceSpecPage): %v", err)
-				w.WriteHeader(http.StatusInternalServerError)
-				w.Write([]byte("Internal Server Error"))
-				return
-			}
-		})).ServeHTTP(w, r)
-	})
-	mux.HandleFunc("/user/science/papers", func(w http.ResponseWriter, r *http.Request) {
-		log.Infof("[SciencePapersPage] user=%v, path=%s", r.Context().Value("user"), r.URL.Path)
-		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			log.Debugf("Rendering SciencePapersPage for user=%v", r.Context().Value("user"))
-			err := sciencepages.SciencePapersPage().Render(r.Context(), w)
-			if err != nil {
-				log.Errorf("Render error (SciencePapersPage): %v", err)
-				w.WriteHeader(http.StatusInternalServerError)
-				w.Write([]byte("Internal Server Error"))
-				return
-			}
-		})).ServeHTTP(w, r)
-	})
-	mux.HandleFunc("/user/science/questions", func(w http.ResponseWriter, r *http.Request) {
-		log.Infof("[ScienceQuestionsPage] user=%v, path=%s", r.Context().Value("user"), r.URL.Path)
-		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			log.Debugf("Rendering ScienceQuestionsPage for user=%v", r.Context().Value("user"))
-			err := sciencepages.ScienceQuestionsPage().Render(r.Context(), w)
-			if err != nil {
-				log.Errorf("Render error (ScienceQuestionsPage): %v", err)
-				w.WriteHeader(http.StatusInternalServerError)
-				w.Write([]byte("Internal Server Error"))
-				return
-			}
-		})).ServeHTTP(w, r)
-	})
-	mux.HandleFunc("/user/science/revision", func(w http.ResponseWriter, r *http.Request) {
-		log.Infof("[ScienceRevisionPage] user=%v, path=%s", r.Context().Value("user"), r.URL.Path)
-		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			log.Debugf("Rendering ScienceRevisionPage for user=%v", r.Context().Value("user"))
-			err := sciencepages.ScienceRevisionPage().Render(r.Context(), w)
-			if err != nil {
-				log.Errorf("Render error (ScienceRevisionPage): %v", err)
-				w.WriteHeader(http.StatusInternalServerError)
-				w.Write([]byte("Internal Server Error"))
-				return
-			}
-		})).ServeHTTP(w, r)
-	})
-}
-
-func registerScienceHubRoute(mux *http.ServeMux) {
-	mux.HandleFunc("/user/science/", func(w http.ResponseWriter, r *http.Request) {
-		board := "aqa"
-		tier := "foundation"
-		if b, err := r.Cookie("science_board"); err == nil {
-			board = b.Value
-		} else if b := r.URL.Query().Get("board"); b != "" {
-			board = b
-		}
-		if t, err := r.Cookie("science_tier"); err == nil {
-			tier = t.Value
-		} else if t := r.URL.Query().Get("tier"); t != "" {
-			tier = t
-		}
-		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			err := sciencepages.ScienceHubPage(board, tier).Render(r.Context(), w)
-			if err != nil {
-				log.Errorf("Render error (ScienceHubPage): %v", err)
-				w.WriteHeader(http.StatusInternalServerError)
-				w.Write([]byte("Internal Server Error"))
-				return
-			}
-		})).ServeHTTP(w, r)
 	})
 }
 
