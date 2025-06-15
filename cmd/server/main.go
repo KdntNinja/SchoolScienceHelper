@@ -201,6 +201,22 @@ func registerUserRoutes(mux *http.ServeMux) {
 			}
 		})).ServeHTTP(w, r)
 	})
+	mux.HandleFunc("/user/revision", func(w http.ResponseWriter, r *http.Request) {
+		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			err := userpages.Revision().Render(r.Context(), w)
+			if err != nil {
+				log.Errorf("Render error (Revision): %v", err)
+			}
+		})).ServeHTTP(w, r)
+	})
+	mux.HandleFunc("/user/quizzes/quizflow", func(w http.ResponseWriter, r *http.Request) {
+		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			err := userpages_quizzes.QuizFlow().Render(r.Context(), w)
+			if err != nil {
+				log.Errorf("Render error (QuizFlow): %v", err)
+			}
+		})).ServeHTTP(w, r)
+	})
 	mux.HandleFunc("/forbidden", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusForbidden)
 		err := errorpages.Forbidden().Render(r.Context(), w)
