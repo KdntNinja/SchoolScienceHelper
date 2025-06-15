@@ -1,5 +1,6 @@
 // templui component icon - version: v0.75.1 installed by templui v0.75.1
 package icon
+
 // This file is auto generated
 // Using Lucide icons version 0.507.0
 var ALargeSmall = Icon("a-large-small")

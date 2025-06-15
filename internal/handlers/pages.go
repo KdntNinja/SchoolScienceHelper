@@ -26,5 +26,3 @@ func DashPageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	_ = userpages.Dash(displayName).Render(r.Context(), w)
 }
-
-// ...move or wrap page rendering handlers here if needed...

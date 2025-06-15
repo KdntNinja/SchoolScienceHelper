@@ -5,11 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f3f2d531-c0ce-4474-bb2c-bfb123b6a391" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.env.example" beforeDir="false" afterPath="$PROJECT_DIR$/.env.example" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/server/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/server/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/schema.sql" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/handlers/pages.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/handlers/pages.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/fmt.sh" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/fmt.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui/components/icon/icondata.go" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/icon/icondata.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui/components/icon/icondefs.go" beforeDir="false" afterPath="$PROJECT_DIR$/ui/components/icon/icondefs.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui/pages/user/dash.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/pages/user/dash.templ" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui/pages/user/revision.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/pages/user/revision.templ" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui/pages/user/settings.templ" beforeDir="false" afterPath="$PROJECT_DIR$/ui/pages/user/settings.templ" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
