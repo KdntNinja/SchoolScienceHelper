@@ -142,6 +142,9 @@ func registerLegalRoutes(mux *http.ServeMux) {
 func registerAuthRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("/api/auth/check", handlers.AuthStatusHandler)
 	mux.HandleFunc("/api/auth/callback", handlers.HandleAuthCallback)
+	mux.HandleFunc("/api/auth/logout", handlers.LogoutHandler)
+	mux.HandleFunc("/api/auth/delete", handlers.DeleteAccountHandler)
+	mux.HandleFunc("/api/auth/change-password", handlers.ChangePasswordHandler)
 }
 
 func registerUserRoutes(mux *http.ServeMux) {

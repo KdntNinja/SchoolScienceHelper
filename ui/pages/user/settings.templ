@@ -133,7 +133,7 @@ document.getElementById('update-profile-form').onsubmit = async (e) => {
   e.preventDefault();
   clearError('username-input');
   const username = document.getElementById('username-input').value;
-  const res = await fetch('/api/auth/update-profile', {
+  const res = await fetch('/api/user/profile', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
