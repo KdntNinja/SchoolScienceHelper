@@ -8,7 +8,8 @@ A modern, open-source platform for visual programming, interactive quizzes, and 
 - Interactive quizzes and instant feedback
 - User authentication and account management (Auth0)
 - Theme switching (light/dark)
-- User and quiz data stored in Neon (PostgreSQL)
+- User and quiz data stored in PostgreSQL
+- Requires a running PostgreSQL database instance
 - Fully containerized with Docker
 - Community features and progress tracking
 
@@ -36,7 +37,7 @@ A modern, open-source platform for visual programming, interactive quizzes, and 
    # Edit .env with your Neon DB URL, Auth0 credentials, and session keys
    ```
 
-   - `NEON_DATABASE_URL`: Your Neon (PostgreSQL) connection string. Get this from the Neon dashboard.
+   - `POSTGRES_DATABASE_URL`: Your PostgreSQL connection string (e.g. `postgres://user:password@localhost:5432/dbname?sslmode=disable`).
    - `AUTH0_DOMAIN`: Your Auth0 domain (e.g., `dev-xxxxxx.eu.auth0.com`).
    - `AUTH0_CLIENT_ID`: Your Auth0 client ID.
    - `SESSION_HASH_KEY` and `SESSION_BLOCK_KEY`: Random strings for secure cookie sessions. You can generate them with:
@@ -70,7 +71,20 @@ A modern, open-source platform for visual programming, interactive quizzes, and 
 
 ## Environment Variables
 
-See `.env.example` for all required variables. You must set your own secure values for production.
+Edit your `.env` file with your Postgres DB URL, Auth0 credentials, and session keys:
+
+- `POSTGRES_DATABASE_URL`: Your PostgreSQL connection string (e.g. `postgres://user:password@localhost:5432/dbname?sslmode=disable`)
+- `AUTH0_DOMAIN`: Your Auth0 domain (e.g., `dev-xxxxxx.eu.auth0.com`).
+- `AUTH0_CLIENT_ID`: Your Auth0 client ID.
+- `SESSION_HASH_KEY` and `SESSION_BLOCK_KEY`: Random strings for secure cookie sessions. You can generate them with:
+
+  ```sh
+  # Generate a 32-byte random base64 string for each key
+  head -c 32 /dev/urandom | base64
+  ```
+
+- `GO_ENV`: Set to `development` or `production` as needed.
+- `PORT`: (Optional) Port to run the server on (default: 8090).
 
 ## License
 

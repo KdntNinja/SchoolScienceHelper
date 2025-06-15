@@ -86,17 +86,17 @@ func checkEnvVars() {
 	if clientID == "" {
 		log.Fatal("AUTH0_CLIENT_ID environment variable is not set!")
 	}
-	dbURL := os.Getenv("NEON_DATABASE_URL")
+	dbURL := os.Getenv("POSTGRES_DATABASE_URL")
 	if dbURL == "" {
-		log.Fatal("NEON_DATABASE_URL environment variable is not set!")
+		log.Fatal("POSTGRES_DATABASE_URL environment variable is not set!")
 	}
 }
 
 func setupDatabase() *sql.DB {
-	dbURL := os.Getenv("NEON_DATABASE_URL")
+	dbURL := os.Getenv("POSTGRES_DATABASE_URL")
 	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
-		log.Fatalf("Failed to connect to NeonDB: %v", err)
+		log.Fatalf("Failed to connect to Postgres DB: %v", err)
 	}
 	return db
 }

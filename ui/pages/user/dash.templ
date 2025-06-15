@@ -12,55 +12,37 @@ templ Dash(displayName string) {
 			@card.Card(card.Props{Class: "bg-card rounded-2xl shadow-2xl w-full max-w-4xl p-12 border border-border flex flex-col gap-10"}) {
 				@card.Header(card.HeaderProps{}) {
 					<div class="flex flex-col items-center gap-2">
+						<img src="/assets/avatar-default.png" alt="Avatar" class="w-20 h-20 rounded-full border-4 border-primary shadow mb-2" />
 						@card.Title(card.TitleProps{Class: "text-4xl font-black text-center mb-2 text-primary tracking-tight"}) {
-							Welcome back, { displayName }!
-						}
-						@card.Description(card.DescriptionProps{Class: "text-center text-lg text-muted-foreground mb-4"}) {
-							"Keep your streak going! You’ve answered 5 quizzes in a row."
+							Welcome back, {displayName}!
 						}
 					</div>
 				}
 				@card.Content(card.ContentProps{}) {
 					<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
 						@card.Card(card.Props{Class: "bg-muted/40 hover:shadow-lg transition-shadow duration-200 flex flex-col items-center p-6"}) {
-							@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) {
-								Continue Quiz 
-							}
-							@button.Button(button.Props{Href: "/user/quizzes/quizflow", Variant: button.VariantDefault, Class: "mt-2 w-full"}) {
-								Resume 
-							}
+							@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) { Continue Quiz }
+							@button.Button(button.Props{Href: "/user/quizzes/quizflow", Variant: button.VariantDefault, Class: "mt-2 w-full"}) { Resume }
 						}
 						@card.Card(card.Props{Class: "bg-muted/40 hover:shadow-lg transition-shadow duration-200 flex flex-col items-center p-6"}) {
-							@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) {
-								Revision 
-							}
-							@button.Button(button.Props{Href: "/user/revision", Variant: button.VariantDefault, Class: "mt-2 w-full"}) {
-								Go to Revision 
-							}
+							@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) { Revision }
+							@button.Button(button.Props{Href: "/user/revision", Variant: button.VariantDefault, Class: "mt-2 w-full"}) { Go to Revision }
 						}
 						@card.Card(card.Props{Class: "bg-muted/40 hover:shadow-lg transition-shadow duration-200 flex flex-col items-center p-6"}) {
-							@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) {
-								Leaderboard 
-							}
-							@button.Button(button.Props{Href: "/user/community/leaderboard", Variant: button.VariantDefault, Class: "mt-2 w-full"}) {
-								View Leaderboard 
-							}
+							@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) { Leaderboard }
+							@button.Button(button.Props{Href: "/user/community/leaderboard", Variant: button.VariantDefault, Class: "mt-2 w-full"}) { View Leaderboard }
 						}
 					</div>
 					<div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8">
 						@card.Card(card.Props{Class: "bg-muted/30 p-6 flex flex-col gap-2"}) {
-							@card.Title(card.TitleProps{Class: "text-lg font-semibold mb-1"}) {
-								My Progress 
-							}
+							@card.Title(card.TitleProps{Class: "text-lg font-semibold mb-1"}) { My Progress }
 							<div class="w-full bg-gray-200 rounded-full h-4 dark:bg-gray-700">
 								<div class="bg-primary h-4 rounded-full" style="width: 60%"></div>
 							</div>
 							<p class="text-sm text-muted-foreground mt-1">60% complete this week</p>
 						}
 						@card.Card(card.Props{Class: "bg-muted/30 p-6 flex flex-col gap-2"}) {
-							@card.Title(card.TitleProps{Class: "text-lg font-semibold mb-1"}) {
-								Achievements 
-							}
+							@card.Title(card.TitleProps{Class: "text-lg font-semibold mb-1"}) { Achievements }
 							<ul class="flex gap-2 flex-wrap">
 								<li class="bg-primary/10 px-3 py-1 rounded-full text-primary text-xs font-semibold">Quiz Streak</li>
 								<li class="bg-primary/10 px-3 py-1 rounded-full text-primary text-xs font-semibold">100% Score</li>
