@@ -15,24 +15,45 @@ templ Revision() {
 					}
 				}
 				@card.Content(card.ContentProps{}) {
-					<ul class="grid grid-cols-1 md:grid-cols-2 gap-6">
-						<li class="bg-muted/40 rounded-xl p-6 flex flex-col gap-2">
-							<span class="font-semibold text-lg">Flashcards</span>
-							<span class="text-muted-foreground">Review key terms and concepts with interactive flashcards.</span>
-						</li>
-						<li class="bg-muted/40 rounded-xl p-6 flex flex-col gap-2">
-							<span class="font-semibold text-lg">Downloadable Notes</span>
-							<span class="text-muted-foreground">Download concise revision notes for each topic.</span>
-						</li>
-						<li class="bg-muted/40 rounded-xl p-6 flex flex-col gap-2">
-							<span class="font-semibold text-lg">Practice Questions</span>
-							<span class="text-muted-foreground">Test yourself with exam-style questions and instant feedback.</span>
-						</li>
-						<li class="bg-muted/40 rounded-xl p-6 flex flex-col gap-2">
-							<span class="font-semibold text-lg">Topic Summaries</span>
-							<span class="text-muted-foreground">Quickly review the most important points for each topic.</span>
-						</li>
-					</ul>
+					<div class="mb-6 flex flex-col md:flex-row gap-4 items-center">
+						<button id="add-revision-btn" class="btn bg-primary text-white font-bold px-4 py-2 rounded">Add Resource</button>
+					</div>
+					<ul id="revision-list" class="grid grid-cols-1 md:grid-cols-2 gap-6"></ul>
+					<script>
+					async function loadRevisionResources() {
+						const res = await fetch('/api/revision', { credentials: 'include' });
+						const resources = await res.json();
+						const list = document.getElementById('revision-list');
+						if (!resources.length) {
+							list.innerHTML = '<li class="col-span-2 text-center text-muted-foreground">No revision resources yet.</li>';
+							return;
+						}
+						let html = '';
+						for (const r of resources) {
+							html += `<li class='bg-muted/40 rounded-xl p-6 flex flex-col gap-2'>`;
+							html += `<span class='font-semibold text-lg'>${r.type.charAt(0).toUpperCase() + r.type.slice(1)}</span>`;
+							html += `<span class='text-muted-foreground'>`;
+							if (r.topic) html += `<b>Topic:</b> ${r.topic}<br>`;
+							html += `${r.content}</span>`;
+							html += `</li>`;
+						}
+						list.innerHTML = html;
+					}
+					loadRevisionResources();
+					document.getElementById('add-revision-btn').onclick = async function() {
+						const type = prompt('Type (flashcard, note, summary):');
+						const topic = prompt('Topic:');
+						const content = prompt('Content:');
+						if (!type || !content) return;
+						await fetch('/api/revision', {
+							method: 'POST',
+							headers: { 'Content-Type': 'application/json' },
+							credentials: 'include',
+							body: JSON.stringify({ type, topic, content })
+						});
+						loadRevisionResources();
+					};
+					</script>
 				}
 			}
 		</main>
