@@ -1,13 +1,40 @@
 package projects
 
-import "KdnSite/ui/layouts"
+import (
+	"KdnSite/ui/layouts"
+)
 
 templ ProjectEditor() {
 	@layouts.BaseLayout() {
-		<main class="container mx-auto py-12">
-			<h1 class="text-3xl font-bold mb-6 text-primary">Project Editor</h1>
-			<!-- TODO: Visual programming/editor UI goes here -->
-			<p class="text-muted-foreground">Project editor coming soon.</p>
+		<main class="container mx-auto py-12 max-w-xl">
+			<h1 class="text-3xl font-bold mb-6 text-primary">New Project</h1>
+			<form id="project-form" class="space-y-6">
+				<div>
+					<label class="block mb-2 font-semibold">Title</label>
+					<input name="title" class="input input-bordered w-full" required />
+				</div>
+				<div>
+					<label class="block mb-2 font-semibold">Data (JSON)</label>
+					<textarea name="data" class="input input-bordered w-full h-32" required></textarea>
+				</div>
+				<button type="submit" class="btn btn-primary">Create Project</button>
+			</form>
+			<script>
+				document.getElementById('project-form').onsubmit = async function(e) {
+					e.preventDefault();
+					const form = e.target;
+					const res = await fetch('/api/projects', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ Title: form.title.value, Data: form.data.value })
+					});
+					if (res.ok) {
+						window.location.href = '/user/projects/list';
+					} else {
+						alert('Failed to create project');
+					}
+				};
+			</script>
 		</main>
 	}
 }

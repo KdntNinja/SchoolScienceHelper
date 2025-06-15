@@ -1,13 +1,43 @@
 package quizzes
 
-import "KdnSite/ui/layouts"
+import (
+	"KdnSite/ui/layouts"
+)
 
 templ QuizList() {
 	@layouts.BaseLayout() {
 		<main class="container mx-auto py-12">
 			<h1 class="text-3xl font-bold mb-6 text-primary">Your Quizzes</h1>
-			<!-- TODO: List user quizzes here -->
-			<p class="text-muted-foreground">No quizzes yet. Create your first quiz!</p>
+			@QuizzesTable()
 		</main>
 	}
+}
+
+templ QuizzesTable() {
+	<script>
+		async function loadQuizzes() {
+			const res = await fetch('/api/quizzes');
+			const data = await res.json();
+			const tbody = document.getElementById('quizzes-tbody');
+			tbody.innerHTML = '';
+			if (data.length === 0) {
+				tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted-foreground">No quizzes yet. Create your first quiz!</td></tr>';
+				return;
+			}
+			for (const q of data) {
+				tbody.innerHTML += `<tr><td>${q.Title}</td><td>${new Date(q.CreatedAt*1000).toLocaleString()}</td><td>${q.ID}</td></tr>`;
+			}
+		}
+		document.addEventListener('DOMContentLoaded', loadQuizzes);
+	</script>
+	<table class="w-full table-auto border mt-6">
+		<thead>
+			<tr class="bg-muted">
+				<th class="px-4 py-2 text-left">Title</th>
+				<th class="px-4 py-2 text-left">Created</th>
+				<th class="px-4 py-2 text-left">ID</th>
+			</tr>
+		</thead>
+		<tbody id="quizzes-tbody"></tbody>
+	</table>
 }

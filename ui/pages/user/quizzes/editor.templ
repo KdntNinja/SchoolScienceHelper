@@ -1,13 +1,36 @@
 package quizzes
 
-import "KdnSite/ui/layouts"
+import (
+	"KdnSite/ui/layouts"
+)
 
 templ QuizEditor() {
 	@layouts.BaseLayout() {
-		<main class="container mx-auto py-12">
-			<h1 class="text-3xl font-bold mb-6 text-primary">Quiz Editor</h1>
-			<!-- TODO: Quiz creation/editing UI goes here -->
-			<p class="text-muted-foreground">Quiz editor coming soon.</p>
+		<main class="container mx-auto py-12 max-w-xl">
+			<h1 class="text-3xl font-bold mb-6 text-primary">New Quiz</h1>
+			<form id="quiz-form" class="space-y-6">
+				<div>
+					<label class="block mb-2 font-semibold">Title</label>
+					<input name="title" class="input input-bordered w-full" required />
+				</div>
+				<button type="submit" class="btn btn-primary">Create Quiz</button>
+			</form>
+			<script>
+				document.getElementById('quiz-form').onsubmit = async function(e) {
+					e.preventDefault();
+					const form = e.target;
+					const res = await fetch('/api/quizzes', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ Title: form.title.value })
+					});
+					if (res.ok) {
+						window.location.href = '/user/quizzes/list';
+					} else {
+						alert('Failed to create quiz');
+					}
+				};
+			</script>
 		</main>
 	}
 }

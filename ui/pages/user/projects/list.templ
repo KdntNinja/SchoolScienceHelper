@@ -1,13 +1,43 @@
 package projects
 
-import "KdnSite/ui/layouts"
+import (
+	"KdnSite/ui/layouts"
+)
 
 templ ProjectList() {
 	@layouts.BaseLayout() {
 		<main class="container mx-auto py-12">
 			<h1 class="text-3xl font-bold mb-6 text-primary">Your Projects</h1>
-			<!-- TODO: List user projects here -->
-			<p class="text-muted-foreground">No projects yet. Start a new one!</p>
+			@ProjectsTable()
 		</main>
 	}
+}
+
+templ ProjectsTable() {
+	<script>
+		async function loadProjects() {
+			const res = await fetch('/api/projects');
+			const data = await res.json();
+			const tbody = document.getElementById('projects-tbody');
+			tbody.innerHTML = '';
+			if (data.length === 0) {
+				tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted-foreground">No projects yet. Start a new one!</td></tr>';
+				return;
+			}
+			for (const p of data) {
+				tbody.innerHTML += `<tr><td>${p.Title}</td><td>${new Date(p.CreatedAt*1000).toLocaleString()}</td><td>${p.ID}</td></tr>`;
+			}
+		}
+		document.addEventListener('DOMContentLoaded', loadProjects);
+	</script>
+	<table class="w-full table-auto border mt-6">
+		<thead>
+			<tr class="bg-muted">
+				<th class="px-4 py-2 text-left">Title</th>
+				<th class="px-4 py-2 text-left">Created</th>
+				<th class="px-4 py-2 text-left">ID</th>
+			</tr>
+		</thead>
+		<tbody id="projects-tbody"></tbody>
+	</table>
 }
