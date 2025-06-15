@@ -13,7 +13,6 @@ import (
 	"KdnSite/internal/handlers"
 	"KdnSite/internal/leaderboard"
 	"KdnSite/internal/projects"
-	"KdnSite/internal/quizzes"
 	"KdnSite/internal/resources"
 	"KdnSite/internal/revision"
 	"KdnSite/internal/user"
@@ -23,7 +22,6 @@ import (
 	userpages "KdnSite/ui/pages/user"
 	userpages_community "KdnSite/ui/pages/user/community"
 	userpages_projects "KdnSite/ui/pages/user/projects"
-	userpages_quizzes "KdnSite/ui/pages/user/quizzes"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -173,22 +171,6 @@ func registerUserRoutes(mux *http.ServeMux) {
 			}
 		})).ServeHTTP(w, r)
 	})
-	mux.HandleFunc("/user/quizzes/list", func(w http.ResponseWriter, r *http.Request) {
-		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			err := userpages_quizzes.QuizList().Render(r.Context(), w)
-			if err != nil {
-				log.Errorf("Render error (QuizList): %v", err)
-			}
-		})).ServeHTTP(w, r)
-	})
-	mux.HandleFunc("/user/quizzes/editor", func(w http.ResponseWriter, r *http.Request) {
-		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			err := userpages_quizzes.QuizEditor().Render(r.Context(), w)
-			if err != nil {
-				log.Errorf("Render error (QuizEditor): %v", err)
-			}
-		})).ServeHTTP(w, r)
-	})
 	mux.HandleFunc("/user/community/leaderboard", func(w http.ResponseWriter, r *http.Request) {
 		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			err := userpages_community.Leaderboard().Render(r.Context(), w)
@@ -260,16 +242,6 @@ func registerAPIRoutes(mux *http.ServeMux, db *sql.DB) {
 			projects.ListProjects(db)(w, r)
 		case http.MethodPost:
 			projects.CreateProject(db)(w, r)
-		default:
-			w.WriteHeader(http.StatusMethodNotAllowed)
-		}
-	})))
-	mux.Handle("/api/quizzes", handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case http.MethodGet:
-			quizzes.ListQuizzes(db)(w, r)
-		case http.MethodPost:
-			quizzes.CreateQuiz(db)(w, r)
 		default:
 			w.WriteHeader(http.StatusMethodNotAllowed)
 		}
