@@ -31,26 +31,9 @@ templ Revision() {
 							}
 						}
 						@tabs.Content(tabs.ContentProps{Value: "anki", TabsID: "revision-tabs", IsActive: true}) {
-							<!-- Anki Import Section -->
-							<div class="mb-8">
-								<h2 class="text-xl font-semibold mb-2">Import Anki Deck</h2>
-								<form id="anki-import-form" class="flex flex-col md:flex-row gap-2 items-end">
-									@input.Input(input.Props{
-										ID:         "anki-file-input",
-										Type:       input.TypeFile,
-										Class:      "border rounded px-3 py-2",
-										Required:   true,
-										FileAccept: ".apkg",
-									})
-									@button.Button(button.Props{Type: "submit", Variant: button.VariantDefault, Class: "px-4 py-2"}) {
-										Import
-									}
-								</form>
-								<div id="anki-import-status" class="text-sm mt-2"></div>
-							</div>
-							<!-- Anki Decks Section -->
+							<!-- Anki Decks Section (no import for non-admins) -->
 							<div class="mb-10">
-								<h2 class="text-xl font-semibold mb-2">Your Anki Decks</h2>
+								<h2 class="text-xl font-semibold mb-2">Available Anki Decks</h2>
 								@label.Label(label.Props{For: "anki-deck-select", Class: "mb-2 font-semibold"}) {
 									Deck 
 								}
@@ -59,6 +42,9 @@ templ Revision() {
 									Class: "border rounded px-3 py-2 mb-4",
 								})
 								<ul id="anki-cards-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></ul>
+								@button.Button(button.Props{ID: "save-deck-btn", Variant: button.VariantDefault, Class: "mt-4"}) {
+									Save Deck to My Area
+								}
 							</div>
 						}
 						@tabs.Content(tabs.ContentProps{Value: "resources", TabsID: "revision-tabs"}) {
@@ -120,32 +106,10 @@ templ Revision() {
 		<script>
 		// Helper to get token and build headers
 		function getAuthHeaders(extraHeaders = {}) {
-  const token = localStorage.getItem('token');
-  return token ? { ...extraHeaders, 'Authorization': `Bearer ${token}` } : extraHeaders;
-}
-		// Anki Import
-		document.getElementById('anki-import-form').onsubmit = async function(e) {
-			e.preventDefault();
-			const fileInput = document.getElementById('anki-file-input');
-			const status = document.getElementById('anki-import-status');
-			if (!fileInput.files.length) return;
-			const formData = new FormData();
-			formData.append('file', fileInput.files[0]);
-			status.textContent = 'Importing...';
-			const res = await fetch('/api/deckimport', {
-				method: 'POST',
-				credentials: 'include',
-				headers: getAuthHeaders(),
-				body: formData
-			});
-			if (res.ok) {
-				status.textContent = 'Import successful!';
-				loadAnkiDecks();
-			} else {
-				status.textContent = 'Import failed.';
-			}
-		};
-		// Load Anki Decks
+		  const token = localStorage.getItem('token');
+		  return token ? { ...extraHeaders, 'Authorization': `Bearer ${token}` } : extraHeaders;
+		}
+		// Load Anki Decks (all users can see, but only admins can import via /admin)
 		async function loadAnkiDecks() {
 			const res = await fetch('/api/decks', { credentials: 'include', headers: getAuthHeaders() });
 			let data = {};
@@ -155,7 +119,7 @@ templ Revision() {
 			const select = document.getElementById('anki-deck-select');
 			select.innerHTML = '';
 			if (!decks.length) {
-				select.innerHTML = '<option>No decks imported</option>';
+				select.innerHTML = '<option>No decks available</option>';
 				return;
 			}
 			for (const d of decks) {
@@ -164,7 +128,6 @@ templ Revision() {
 				opt.textContent = d.name;
 				select.appendChild(opt);
 			}
-			// Store userId for later use
 			window._ankiUserId = userId;
 			loadAnkiCards(select.value);
 			select.onchange = () => loadAnkiCards(select.value);
@@ -189,6 +152,22 @@ templ Revision() {
 			}
 			list.innerHTML = html;
 		}
+		// Save deck to user area
+		document.getElementById('save-deck-btn').onclick = async function() {
+			const select = document.getElementById('anki-deck-select');
+			const deckId = select.value;
+			const res = await fetch(`/api/decks/save`, {
+				method: 'POST',
+				headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+				credentials: 'include',
+				body: JSON.stringify({ deck_id: deckId })
+			});
+			if (res.ok) {
+				alert('Deck saved to your area!');
+			} else {
+				alert('Failed to save deck.');
+			}
+		};
 		loadAnkiDecks();
 		// Existing Revision Resource JS
 		async function loadRevisionResources() {

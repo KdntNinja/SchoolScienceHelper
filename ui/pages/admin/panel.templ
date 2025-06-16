@@ -1,0 +1,39 @@
+package admin
+
+import (
+	"KdnSite/ui/components/button"
+	"KdnSite/ui/components/card"
+	"KdnSite/ui/layouts"
+)
+
+// Only visible to admins (role check in Go handler)
+templ AdminPanel() {
+	@layouts.BaseLayout() {
+		@card.Card(card.Props{Class: "w-full max-w-2xl mx-auto p-8 mt-12"}) {
+			@card.Header(card.HeaderProps{}) {
+				@card.Title(card.TitleProps{Class: "text-3xl font-bold mb-6 text-primary"}) {
+					Admin Panel
+				}
+			}
+			@card.Content(card.ContentProps{}) {
+				<section class="space-y-8">
+					@card.Card(card.Props{Class: "p-6 bg-muted/30 border border-border"}) {
+						@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) {
+							Import Anki Deck
+						}
+						<form id="anki-import-form" enctype="multipart/form-data" class="space-y-4">
+							<input id="anki-file-input" name="file" type="file" accept=".apkg" class="block" required />
+							@button.Button(button.Props{Type: "submit", Variant: button.VariantDefault}) {
+								Import Deck
+							}
+							<span id="anki-import-status" class="text-sm text-muted-foreground"></span>
+						</form>
+						<script>
+						// ...existing import JS from revision page...
+						</script>
+					}
+				</section>
+			}
+		}
+	}
+}
