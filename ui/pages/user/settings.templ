@@ -133,8 +133,10 @@ fetch('/api/auth/check', { credentials: 'include' })
     document.getElementById('profile-info').innerHTML = 'Failed to load profile.';
   });
 
-document.getElementById('logout-btn').onclick = () => {
-  window.location.href = '/api/auth/logout';
+document.getElementById('logout-btn').onclick = async () => {
+  await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+  document.cookie = 'auth_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+  window.location.href = '/';
 };
 
 document.getElementById('update-profile-form').onsubmit = async (e) => {

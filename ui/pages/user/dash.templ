@@ -55,20 +55,6 @@ templ Dash(displayName string) {
 							}
 						}
 					</div>
-					<script>
-					// Fetch dashboard stats
-					async function loadDashStats() {
-						const decksRes = await fetch('/api/decks', { credentials: 'include' });
-						if (decksRes.ok) {
-							const decks = await decksRes.json();
-							document.getElementById('anki-decks-count').textContent = decks.length;
-							let cardCount = 0;
-							for (const d of decks) cardCount += d.card_count || 0;
-							document.getElementById('anki-cards-count').textContent = cardCount;
-						}
-					}
-					loadDashStats();
-					</script>
 				}
 			}
 		</main>
