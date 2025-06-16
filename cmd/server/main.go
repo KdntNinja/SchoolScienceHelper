@@ -146,6 +146,7 @@ func registerAuthRoutes(mux *http.ServeMux) {
 	mux.Handle("/api/auth/resend-verification", handlers.RequireAuth(http.HandlerFunc(handlers.ResendVerificationHandler)))
 	mux.Handle("/api/auth/logout-all", handlers.RequireAuth(http.HandlerFunc(handlers.LogoutAllHandler)))
 	mux.Handle("/api/auth/sessions", handlers.RequireAuth(http.HandlerFunc(handlers.SessionsHandler)))
+	mux.HandleFunc("/api/auth/check", handlers.AuthCheckHandler)
 }
 
 func registerUserRoutes(mux *http.ServeMux) {
