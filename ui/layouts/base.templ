@@ -37,6 +37,11 @@ templ BaseLayout(footerExtra ...any) {
 			<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 			<title>KdnSite</title>
 			@ThemeSwitcherScript()
+			<!-- Plausible Analytics -->
+			<script defer data-domain="kdnsite.site" src="http://plausible.kdnsite.site/js/script.file-downloads.hash.outbound-links.pageview-props.revenue.tagged-events.js"></script>
+			<script>
+				window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }
+			</script>
 		</head>
 		<body
 			x-data="themeHandler"

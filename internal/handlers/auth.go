@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bytes"
+	"database/sql"
 	"encoding/json"
 	"net/http"
 	"os"
@@ -79,6 +80,19 @@ func DeleteAccountHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
+	}
+	// Remove all user data from DB
+	dbURL := os.Getenv("POSTGRES_DATABASE_URL")
+	db, err := sql.Open("postgres", dbURL)
+	if err == nil {
+		defer db.Close()
+		db.Exec(`DELETE FROM anki_cards WHERE owner_id = $1`, userID)
+		db.Exec(`DELETE FROM anki_decks WHERE owner_id = $1`, userID)
+		db.Exec(`DELETE FROM revision_resources WHERE owner_id = $1`, userID)
+		db.Exec(`DELETE FROM resources WHERE owner_id = $1`, userID)
+		db.Exec(`DELETE FROM leaderboard WHERE user_id = $1`, userID)
+		db.Exec(`DELETE FROM projects WHERE owner_id = $1`, userID)
+		db.Exec(`DELETE FROM users WHERE id = $1`, userID)
 	}
 	domain := os.Getenv("AUTH0_DOMAIN")
 	apiToken := os.Getenv("AUTH0_MANAGEMENT_TOKEN")
