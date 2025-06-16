@@ -192,25 +192,26 @@ templ Revision() {
 		loadAnkiDecks();
 		// Existing Revision Resource JS
 		async function loadRevisionResources() {
-			const res = await fetch('/api/revision', { credentials: 'include', headers: getAuthHeaders() });
-			let resources = [];
-			try { resources = await res.json(); } catch { resources = []; }
-			const list = document.getElementById('revision-list');
-			if (!resources.length) {
-				list.innerHTML = '<li class="col-span-2 text-center text-muted-foreground">No revision resources yet.</li>';
-				return;
-			}
-			let html = '';
-			for (const r of resources) {
-				html += `<li class='bg-muted/40 rounded-xl p-6 flex flex-col gap-2'>`;
-				html += `<span class='font-semibold text-lg'>${r.type.charAt(0).toUpperCase() + r.type.slice(1)}</span>`;
-				html += `<span class='text-muted-foreground'>`;
-				if (r.topic) html += `<b>Topic:</b> ${r.topic}<br>`;
-				html += `${r.content}</span>`;
-				html += `</li>`;
-			}
-			list.innerHTML = html;
-		}
+  const res = await fetch('/api/revision', { credentials: 'include', headers: getAuthHeaders() });
+  let resources = [];
+  try { resources = await res.json(); } catch { resources = []; }
+  if (!Array.isArray(resources)) resources = [];
+  const list = document.getElementById('revision-list');
+  if (!resources.length) {
+    list.innerHTML = '<li class="col-span-2 text-center text-muted-foreground">No revision resources yet.</li>';
+    return;
+  }
+  let html = '';
+  for (const r of resources) {
+    html += `<li class='bg-muted/40 rounded-xl p-6 flex flex-col gap-2'>`;
+    html += `<span class='font-semibold text-lg'>${r.type.charAt(0).toUpperCase() + r.type.slice(1)}</span>`;
+    html += `<span class='text-muted-foreground'>`;
+    if (r.topic) html += `<b>Topic:</b> ${r.topic}<br>`;
+    html += `${r.content}</span>`;
+    html += `</li>`;
+  }
+  list.innerHTML = html;
+}
 		loadRevisionResources();
 		document.getElementById('add-revision-form').onsubmit = async function(e) {
 			e.preventDefault();
