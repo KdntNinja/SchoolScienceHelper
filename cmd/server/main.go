@@ -220,19 +220,16 @@ func registerUserRoutes(mux *http.ServeMux) {
 
 func SetupAssetsRoutes(mux *http.ServeMux) {
 	var isDevelopment = os.Getenv("GO_ENV") != "production"
-	assetHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if isDevelopment {
+	var fs http.Handler
+	if isDevelopment {
+		fs = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Cache-Control", "no-store")
-		}
-		var fs http.Handler
-		if isDevelopment {
-			fs = http.FileServer(http.Dir("./assets"))
-		} else {
-			fs = http.FileServer(http.FS(assets.Assets))
-		}
-		fs.ServeHTTP(w, r)
-	})
-	mux.Handle("GET /assets/", http.StripPrefix("/assets/", assetHandler))
+			http.FileServer(http.Dir("./assets")).ServeHTTP(w, r)
+		})
+	} else {
+		fs = http.FileServer(http.FS(assets.Assets))
+	}
+	mux.Handle("/assets/", http.StripPrefix("/assets/", fs))
 }
 
 func registerAPIRoutes(mux *http.ServeMux, db *sql.DB) {
