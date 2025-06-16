@@ -1,13 +1,15 @@
 package community
 
 import "KdnSite/ui/layouts"
+import "KdnSite/ui/components/card"
 
 templ Leaderboard() {
 	@layouts.BaseLayout() {
-		<main class="container mx-auto py-12">
-			<h1 class="text-3xl font-bold mb-6 text-primary">Leaderboard</h1>
-			<!-- TODO: Show top users -->
+		@card.Card(card.Props{Class: "container mx-auto py-12 max-w-2xl w-full"}) {
+			@card.Title(card.TitleProps{Class: "text-3xl font-bold mb-6 text-primary"}) {
+				Leaderboard
+			}
 			<p class="text-muted-foreground">Leaderboard coming soon.</p>
-		</main>
+		}
 	}
 }

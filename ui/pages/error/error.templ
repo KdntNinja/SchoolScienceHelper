@@ -7,148 +7,140 @@ import (
 
 templ NotFound() {
 	@layouts.BaseLayout() {
-		<main class="flex flex-col items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12">
-			@card.Card(card.Props{Class: "bg-card dark:bg-card rounded-lg shadow-xl w-full max-w-lg p-10 border border-border flex flex-col items-center gap-6"}) {
-				@card.Header(card.HeaderProps{}) {
-					@card.Title(card.TitleProps{Class: "text-5xl font-extrabold text-primary mb-2 text-center"}) {
-						404
-					}
-					@card.Description(card.DescriptionProps{Class: "text-xl text-muted-foreground mb-4 text-center"}) {
-						Page Not Found
-					}
+		@card.Card(card.Props{Class: "flex flex-col items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12 w-full max-w-lg mx-auto rounded-lg shadow-xl border border-border gap-6"}) {
+			@card.Header(card.HeaderProps{}) {
+				@card.Title(card.TitleProps{Class: "text-5xl font-extrabold text-primary mb-2 text-center"}) {
+					404
 				}
-				@card.Content(card.ContentProps{Class: "flex flex-col items-center gap-4 w-full"}) {
-					<p class="text-base text-center text-muted-foreground max-w-md">
-						Sorry, the page you are looking for doesn't exist or has been moved.
-						<br/>
-						You can return to the homepage or explore other parts of the site.
-					</p>
-					<div id="notfound-btn"></div>
-					<script>
-						document.addEventListener('DOMContentLoaded', function() {
-							fetch('/api/auth/check').then(r => r.json()).then(data => {
-								const btn = document.getElementById('notfound-btn');
-								if (data.authenticated) {
-									btn.innerHTML = `<a href='/dash' class='btn btn-primary mt-2 w-full md:w-auto'>Go to Dash</a>`;
-								} else {
-									btn.innerHTML = `<a href='/' class='btn btn-primary mt-2 w-full md:w-auto'>Go Home</a>`;
-								}
-							});
-						});
-					</script>
+				@card.Description(card.DescriptionProps{Class: "text-xl text-muted-foreground mb-4 text-center"}) {
+					Page Not Found
 				}
 			}
-		</main>
+			@card.Content(card.ContentProps{Class: "flex flex-col items-center gap-4 w-full"}) {
+				<p class="text-base text-center text-muted-foreground max-w-md">
+					Sorry, the page you are looking for doesn't exist or has been moved.
+					<br/>
+					You can return to the homepage or explore other parts of the site.
+				</p>
+				<div id="notfound-btn"></div>
+				<script>
+					document.addEventListener('DOMContentLoaded', function() {
+						fetch('/api/auth/check').then(r => r.json()).then(data => {
+							const btn = document.getElementById('notfound-btn');
+							if (data.authenticated) {
+								btn.innerHTML = `<a href='/dash' class='btn btn-primary mt-2 w-full md:w-auto'>Go to Dash</a>`;
+							} else {
+								btn.innerHTML = `<a href='/' class='btn btn-primary mt-2 w-full md:w-auto'>Go Home</a>`;
+							}
+						});
+					});
+				</script>
+			}
+		}
 	}
 }
 
 templ InternalServerError() {
 	@layouts.BaseLayout() {
-		<main class="flex flex-col items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12">
-			@card.Card(card.Props{Class: "bg-card dark:bg-card rounded-lg shadow-xl w-full max-w-lg p-10 border border-border flex flex-col items-center gap-6"}) {
-				@card.Header(card.HeaderProps{}) {
-					@card.Title(card.TitleProps{Class: "text-5xl font-extrabold text-primary mb-2 text-center"}) {
-						500
-					}
-					@card.Description(card.DescriptionProps{Class: "text-xl text-muted-foreground mb-4 text-center"}) {
-						Internal Server Error
-					}
+		@card.Card(card.Props{Class: "flex flex-col items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12 w-full max-w-lg mx-auto rounded-lg shadow-xl border border-border gap-6"}) {
+			@card.Header(card.HeaderProps{}) {
+				@card.Title(card.TitleProps{Class: "text-5xl font-extrabold text-primary mb-2 text-center"}) {
+					500
 				}
-				@card.Content(card.ContentProps{Class: "flex flex-col items-center gap-4 w-full"}) {
-					<p class="text-base text-center text-muted-foreground max-w-md">
-						Oops! Something went wrong on our end.
-						<br/>
-						Please try again later or contact support if the problem persists.
-					</p>
-					<div id="internalerror-btn"></div>
-					<script>
-						document.addEventListener('DOMContentLoaded', function() {
-							fetch('/api/auth/check').then(r => r.json()).then(data => {
-								const btn = document.getElementById('internalerror-btn');
-								if (data.authenticated) {
-									btn.innerHTML = `<a href='/dash' class='btn btn-primary mt-2 w-full md:w-auto'>Go to Dash</a>`;
-								} else {
-									btn.innerHTML = `<a href='/' class='btn btn-primary mt-2 w-full md:w-auto'>Go Home</a>`;
-								}
-							});
-						});
-					</script>
+				@card.Description(card.DescriptionProps{Class: "text-xl text-muted-foreground mb-4 text-center"}) {
+					Internal Server Error
 				}
 			}
-		</main>
+			@card.Content(card.ContentProps{Class: "flex flex-col items-center gap-4 w-full"}) {
+				<p class="text-base text-center text-muted-foreground max-w-md">
+					Oops! Something went wrong on our end.
+					<br/>
+					Please try again later or contact support if the problem persists.
+				</p>
+				<div id="internalerror-btn"></div>
+				<script>
+					document.addEventListener('DOMContentLoaded', function() {
+						fetch('/api/auth/check').then(r => r.json()).then(data => {
+							const btn = document.getElementById('internalerror-btn');
+							if (data.authenticated) {
+								btn.innerHTML = `<a href='/dash' class='btn btn-primary mt-2 w-full md:w-auto'>Go to Dash</a>`;
+							} else {
+								btn.innerHTML = `<a href='/' class='btn btn-primary mt-2 w-full md:w-auto'>Go Home</a>`;
+							}
+						});
+					});
+				</script>
+			}
+		}
 	}
 }
 
 templ Forbidden() {
 	@layouts.BaseLayout() {
-		<main class="flex flex-col items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12">
-			@card.Card(card.Props{Class: "bg-card dark:bg-card rounded-lg shadow-xl w-full max-w-lg p-10 border border-border flex flex-col items-center gap-6"}) {
-				@card.Header(card.HeaderProps{}) {
-					@card.Title(card.TitleProps{Class: "text-5xl font-extrabold text-primary mb-2 text-center"}) {
-						403
-					}
-					@card.Description(card.DescriptionProps{Class: "text-xl text-muted-foreground mb-4 text-center"}) {
-						Forbidden
-					}
+		@card.Card(card.Props{Class: "flex flex-col items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12 w-full max-w-lg mx-auto rounded-lg shadow-xl border border-border gap-6"}) {
+			@card.Header(card.HeaderProps{}) {
+				@card.Title(card.TitleProps{Class: "text-5xl font-extrabold text-primary mb-2 text-center"}) {
+					403
 				}
-				@card.Content(card.ContentProps{Class: "flex flex-col items-center gap-4 w-full"}) {
-					<p class="text-base text-center text-muted-foreground max-w-md">
-						You do not have permission to access this page or resource.
-						<br/>
-						If you believe this is an error, please contact support.
-					</p>
-					<div id="forbidden-btn"></div>
-					<script>
-						document.addEventListener('DOMContentLoaded', function() {
-							fetch('/api/auth/check').then r => r.json()).then(data => {
-								const btn = document.getElementById('forbidden-btn');
-								if (data.authenticated) {
-									btn.innerHTML = `<a href='/dash' class='btn btn-primary mt-2 w-full md:w-auto'>Go to Dash</a>`;
-								} else {
-									btn.innerHTML = `<a href='/' class='btn btn-primary mt-2 w-full md:w-auto'>Go Home</a>`;
-								}
-							});
-						});
-					</script>
+				@card.Description(card.DescriptionProps{Class: "text-xl text-muted-foreground mb-4 text-center"}) {
+					Forbidden
 				}
 			}
-		</main>
+			@card.Content(card.ContentProps{Class: "flex flex-col items-center gap-4 w-full"}) {
+				<p class="text-base text-center text-muted-foreground max-w-md">
+					You do not have permission to access this page or resource.
+					<br/>
+					If you believe this is an error, please contact support.
+				</p>
+				<div id="forbidden-btn"></div>
+				<script>
+					document.addEventListener('DOMContentLoaded', function() {
+						fetch('/api/auth/check').then(r => r.json()).then(data => {
+							const btn = document.getElementById('forbidden-btn');
+							if (data.authenticated) {
+								btn.innerHTML = `<a href='/dash' class='btn btn-primary mt-2 w-full md:w-auto'>Go to Dash</a>`;
+							} else {
+								btn.innerHTML = `<a href='/' class='btn btn-primary mt-2 w-full md:w-auto'>Go Home</a>`;
+							}
+						});
+					});
+				</script>
+			}
+		}
 	}
 }
 
 templ BadRequest() {
 	@layouts.BaseLayout() {
-		<main class="flex flex-col items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12">
-			@card.Card(card.Props{Class: "bg-card dark:bg-card rounded-lg shadow-xl w-full max-w-lg p-10 border border-border flex flex-col items-center gap-6"}) {
-				@card.Header(card.HeaderProps{}) {
-					@card.Title(card.TitleProps{Class: "text-5xl font-extrabold text-primary mb-2 text-center"}) {
-						400
-					}
-					@card.Description(card.DescriptionProps{Class: "text-xl text-muted-foreground mb-4 text-center"}) {
-						Bad Request
-					}
+		@card.Card(card.Props{Class: "flex flex-col items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12 w-full max-w-lg mx-auto rounded-lg shadow-xl border border-border gap-6"}) {
+			@card.Header(card.HeaderProps{}) {
+				@card.Title(card.TitleProps{Class: "text-5xl font-extrabold text-primary mb-2 text-center"}) {
+					400
 				}
-				@card.Content(card.ContentProps{Class: "flex flex-col items-center gap-4 w-full"}) {
-					<p class="text-base text-center text-muted-foreground max-w-md">
-						The request could not be understood or was missing required parameters.
-						<br/>
-						Please check your input and try again.
-					</p>
-					<div id="badrequest-btn"></div>
-					<script>
-						document.addEventListener('DOMContentLoaded', function() {
-							fetch('/api/auth/check').then(r => r.json()).then(data => {
-								const btn = document.getElementById('badrequest-btn');
-								if (data.authenticated) {
-									btn.innerHTML = `<a href='/dash' class='btn btn-primary mt-2 w-full md:w-auto'>Go to Dash</a>`;
-								} else {
-									btn.innerHTML = `<a href='/' class='btn btn-primary mt-2 w-full md:w-auto'>Go Home</a>`;
-								}
-							});
-						});
-					</script>
+				@card.Description(card.DescriptionProps{Class: "text-xl text-muted-foreground mb-4 text-center"}) {
+					Bad Request
 				}
 			}
-		</main>
+			@card.Content(card.ContentProps{Class: "flex flex-col items-center gap-4 w-full"}) {
+				<p class="text-base text-center text-muted-foreground max-w-md">
+					The request could not be understood or was missing required parameters.
+					<br/>
+					Please check your input and try again.
+				</p>
+				<div id="badrequest-btn"></div>
+				<script>
+					document.addEventListener('DOMContentLoaded', function() {
+						fetch('/api/auth/check').then(r => r.json()).then(data => {
+							const btn = document.getElementById('badrequest-btn');
+							if (data.authenticated) {
+								btn.innerHTML = `<a href='/dash' class='btn btn-primary mt-2 w-full md:w-auto'>Go to Dash</a>`;
+							} else {
+								btn.innerHTML = `<a href='/' class='btn btn-primary mt-2 w-full md:w-auto'>Go Home</a>`;
+							}
+						});
+					});
+				</script>
+			}
+		}
 	}
 }

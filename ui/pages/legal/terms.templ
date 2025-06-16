@@ -7,9 +7,11 @@ import (
 
 templ Terms() {
 	@layouts.BaseLayout() {
-		<main class="flex items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12">
-			@card.Card(card.Props{Class: "max-w-2xl w-full py-16 px-6 bg-background text-foreground rounded-xl shadow-lg border border-border mt-10"}) {
-				<h1 class="text-4xl font-extrabold mb-6 text-primary tracking-tight">Terms & Conditions</h1>
+		@card.Card(card.Props{Class: "max-w-2xl w-full py-16 px-6 bg-background text-foreground rounded-xl shadow-lg border border-border mt-10 mx-auto"}) {
+			@card.Title(card.TitleProps{Class: "text-4xl font-extrabold mb-6 text-primary tracking-tight"}) {
+				Terms & Conditions
+			}
+			@card.Content(card.ContentProps{}) {
 				<p class="mb-4 text-muted-foreground">Last updated: June 15, 2025</p>
 				<p class="mb-4">Welcome to KdnSite! By using our platform, you agree to these terms. Please read them carefully.</p>
 				<ul class="list-disc pl-6 space-y-2 mb-6 text-base">
@@ -23,6 +25,6 @@ templ Terms() {
 				</ul>
 				<p class="mb-2">For questions, contact us via <a href="https://github.com/KdntNinja/SchoolScienceHelper/discussions" class="underline text-primary hover:text-primary-foreground">GitHub Discussions</a>.</p>
 			}
-		</main>
+		}
 	}
 }

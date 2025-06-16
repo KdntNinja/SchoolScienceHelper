@@ -16,14 +16,14 @@ templ Dash(displayName string) {
 							Welcome back, { displayName }!
 						}
 						<div class="flex flex-row gap-4 w-full mt-4">
-							<div class="flex-1 bg-muted/30 rounded-xl p-4 flex flex-col items-center">
+							@card.Card(card.Props{Class: "flex-1 bg-muted/30 rounded-xl p-4 flex flex-col items-center"}) {
 								<span id="anki-decks-count" class="text-2xl font-bold text-primary">0</span>
 								<span class="text-sm text-muted-foreground">Anki Decks</span>
-							</div>
-							<div class="flex-1 bg-muted/30 rounded-xl p-4 flex flex-col items-center">
+							}
+							@card.Card(card.Props{Class: "flex-1 bg-muted/30 rounded-xl p-4 flex flex-col items-center"}) {
 								<span id="anki-cards-count" class="text-2xl font-bold text-primary">0</span>
 								<span class="text-sm text-muted-foreground">Anki Cards</span>
-							</div>
+							}
 						</div>
 					</div>
 				</div>

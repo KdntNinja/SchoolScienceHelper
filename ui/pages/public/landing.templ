@@ -10,10 +10,10 @@ templ Landing(auth0Domain string, auth0ClientID string) {
 	@layouts.BaseLayout() {
 		<main class="flex flex-col min-h-[calc(100vh-72px)] bg-background text-foreground px-6 py-20 space-y-24">
 			<!-- Hero Section -->
-			<section class="flex flex-col items-center text-center">
-				<h1 class="text-5xl md:text-6xl font-black text-primary mb-6 leading-tight">
+			@card.Card(card.Props{Class: "flex flex-col items-center text-center p-10 max-w-3xl mx-auto mb-10 bg-background shadow-lg border border-border rounded-2xl"}) {
+				@card.Title(card.TitleProps{Class: "text-5xl md:text-6xl font-black text-primary mb-6 leading-tight"}) {
 					Welcome to KdnSite
-				</h1>
+				}
 				<p class="max-w-2xl text-lg text-muted-foreground leading-relaxed mb-10">
 					Your all-in-one platform for science revision, quizzes, and learning. Empowering students and teachers to master science, together!
 				</p>
@@ -87,10 +87,12 @@ templ Landing(auth0Domain string, auth0ClientID string) {
 						});
 					});
 				</script>
-			</section>
+			}
 			<!-- Features Section -->
-			<section class="max-w-5xl mx-auto text-center">
-				<h2 class="text-3xl font-bold mb-6 text-primary">Why KdnSite?</h2>
+			@card.Card(card.Props{Class: "max-w-5xl mx-auto text-center p-10 bg-background shadow-lg border border-border rounded-2xl"}) {
+				@card.Title(card.TitleProps{Class: "text-3xl font-bold mb-6 text-primary"}) {
+					Why KdnSite?
+				}
 				<div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
 					@card.Card(card.Props{Class: "p-6 bg-card rounded-xl shadow border border-border"}) {
 						<h3 class="text-xl font-semibold mb-2">🧪 Interactive Science Quizzes</h3>
@@ -111,9 +113,9 @@ templ Landing(auth0Domain string, auth0ClientID string) {
 						</p>
 					}
 				</div>
-			</section>
+			}
 			<!-- Footer -->
-			<footer class="text-sm text-muted-foreground text-center pt-10 border-t border-border">
+			@card.Card(card.Props{Class: "text-sm text-muted-foreground text-center pt-10 border-t border-border bg-background rounded-none shadow-none"}) {
 				Have questions or want to get involved? Join the
 				<a
 					href="https://KdnSite/discussions"
@@ -122,7 +124,7 @@ templ Landing(auth0Domain string, auth0ClientID string) {
 				>
 					GitHub Discussions
 				</a> 💬 — or follow us for updates!
-			</footer>
+			}
 		</main>
 	}
 }

@@ -30,22 +30,24 @@ templ ProjectsTable() {
 			New Project 
 		}
 	</div>
-	@table.Table(table.Props{Class: "w-full table-auto border rounded-xl"}) {
-		@table.Header() {
-			@table.Row() {
-				@table.Head() {
-					Title 
-				}
-				@table.Head() {
-					Created 
-				}
-				@table.Head() {
-					ID 
+	@card.Card(card.Props{Class: "w-full p-0 bg-transparent border-none shadow-none"}) {
+		@table.Table(table.Props{Class: "w-full table-auto border rounded-xl"}) {
+			@table.Header() {
+				@table.Row() {
+					@table.Head() {
+						Title 
+					}
+					@table.Head() {
+						Created 
+					}
+					@table.Head() {
+						ID 
+					}
 				}
 			}
-		}
-		@table.Body() {
-			<tbody id="projects-tbody"></tbody>
+			@table.Body() {
+				<tbody id="projects-tbody"></tbody>
+			}
 		}
 	}
 	<script>

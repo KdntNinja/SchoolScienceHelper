@@ -20,8 +20,8 @@ import (
 	legalpages "KdnSite/ui/pages/legal"
 	publicpages "KdnSite/ui/pages/public"
 	userpages "KdnSite/ui/pages/user"
-	userpages_community "KdnSite/ui/pages/user/community"
-	userpages_projects "KdnSite/ui/pages/user/projects"
+	userpagescommunity "KdnSite/ui/pages/user/community"
+	userpagesprojects "KdnSite/ui/pages/user/projects"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -159,7 +159,7 @@ func registerUserRoutes(mux *http.ServeMux) {
 
 	mux.HandleFunc("/user/projects/list", func(w http.ResponseWriter, r *http.Request) {
 		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			err := userpages_projects.ProjectList().Render(r.Context(), w)
+			err := userpagesprojects.ProjectList().Render(r.Context(), w)
 			if err != nil {
 				log.Errorf("Render error (ProjectList): %v", err)
 			}
@@ -167,7 +167,7 @@ func registerUserRoutes(mux *http.ServeMux) {
 	})
 	mux.HandleFunc("/user/projects/editor", func(w http.ResponseWriter, r *http.Request) {
 		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			err := userpages_projects.ProjectEditor().Render(r.Context(), w)
+			err := userpagesprojects.ProjectEditor().Render(r.Context(), w)
 			if err != nil {
 				log.Errorf("Render error (ProjectEditor): %v", err)
 			}
@@ -175,7 +175,7 @@ func registerUserRoutes(mux *http.ServeMux) {
 	})
 	mux.HandleFunc("/user/community/leaderboard", func(w http.ResponseWriter, r *http.Request) {
 		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			err := userpages_community.Leaderboard().Render(r.Context(), w)
+			err := userpagescommunity.Leaderboard().Render(r.Context(), w)
 			if err != nil {
 				log.Errorf("Render error (Leaderboard): %v", err)
 			}
@@ -289,7 +289,7 @@ func registerAPIRoutes(mux *http.ServeMux, db *sql.DB) {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 		}
 	})))
-	mux.Handle("/api/decks", handlers.RequireAuth(http.HandlerFunc(anki.ListDecks(db))))
-	mux.Handle("/api/cards", handlers.RequireAuth(http.HandlerFunc(anki.ListCards(db))))
-	mux.Handle("/api/deckimport", handlers.RequireAuth(http.HandlerFunc(anki.ImportDeck(db))))
+	mux.Handle("/api/decks", handlers.RequireAuth(anki.ListDecks(db)))
+	mux.Handle("/api/cards", handlers.RequireAuth(anki.ListCards(db)))
+	mux.Handle("/api/deckimport", handlers.RequireAuth(anki.ImportDeck(db)))
 }

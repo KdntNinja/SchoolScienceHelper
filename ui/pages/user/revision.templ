@@ -13,14 +13,14 @@ import (
 
 templ Revision() {
 	@layouts.BaseLayout() {
-		<main class="container mx-auto py-12 max-w-3xl">
-			@card.Card(card.Props{Class: "w-full p-8"}) {
-				@card.Header(card.HeaderProps{}) {
-					@card.Title(card.TitleProps{Class: "text-3xl font-bold mb-6 text-primary"}) {
-						Revision Resources
-					}
+		@card.Card(card.Props{Class: "w-full max-w-3xl mx-auto p-8 mt-12"}) {
+			@card.Header(card.HeaderProps{}) {
+				@card.Title(card.TitleProps{Class: "text-3xl font-bold mb-6 text-primary"}) {
+					Revision
 				}
-				@card.Content(card.ContentProps{}) {
+			}
+			@card.Content(card.ContentProps{}) {
+				<main>
 					@tabs.Tabs(tabs.Props{ID: "revision-tabs", Class: "w-full"}) {
 						@tabs.List() {
 							@tabs.Trigger(tabs.TriggerProps{Value: "anki", TabsID: "revision-tabs", IsActive: true}) {
@@ -114,9 +114,9 @@ templ Revision() {
 						}
 					}
 					@tabs.Script()
-				}
+				</main>
 			}
-		</main>
+		}
 		<script>
 		// Helper to get token and build headers
 		function getAuthHeaders(extraHeaders = {}) {
