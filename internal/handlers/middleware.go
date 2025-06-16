@@ -32,7 +32,9 @@ func RequireAuth(next http.Handler) http.Handler {
 			return
 		}
 		// Set user info in context for downstream handlers
-		ctx := context.WithValue(r.Context(), "user", claims)
+		type contextKey string
+		const userContextKey contextKey = "user"
+		ctx := context.WithValue(r.Context(), userContextKey, claims)
 		log.Infof("[RequireAuth] Authenticated user: %v, remote=%s, path=%s", claims["sub"], r.RemoteAddr, r.URL.Path)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})

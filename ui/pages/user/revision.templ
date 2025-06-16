@@ -162,11 +162,23 @@ templ Revision() {
 				credentials: 'include',
 				body: JSON.stringify({ deck_id: deckId })
 			});
+			const btn = document.getElementById('save-deck-btn');
+			const alertDiv = document.createElement('div');
 			if (res.ok) {
-				alert('Deck saved to your area!');
+				alertDiv.innerHTML = `<div class='w-full my-2'>
+					<div class='border border-border rounded-lg p-4 bg-background text-foreground'>
+						<div class='mb-1 font-medium leading-none tracking-tight'>Deck saved to your area!</div>
+					</div>
+				</div>`;
 			} else {
-				alert('Failed to save deck.');
+				alertDiv.innerHTML = `<div class='w-full my-2'>
+					<div class='border border-destructive text-destructive rounded-lg p-4 bg-background'>
+						<div class='mb-1 font-medium leading-none tracking-tight'>Failed to save deck.</div>
+					</div>
+				</div>`;
 			}
+			btn.parentNode.insertBefore(alertDiv, btn.nextSibling);
+			setTimeout(() => alertDiv.remove(), 4000);
 		};
 		loadAnkiDecks();
 		// Existing Revision Resource JS

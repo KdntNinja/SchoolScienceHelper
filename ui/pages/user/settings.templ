@@ -99,7 +99,14 @@ document.getElementById('revoke-sessions-btn').onclick = async () => {
   btn.disabled = true; btn.textContent = 'Logging out...';
   await fetch('/api/auth/logout-all', { method: 'POST', credentials: 'include' });
   btn.disabled = false; btn.textContent = 'Log out from all devices';
-  alert('Logged out from all devices.');
+  const alertDiv = document.createElement('div');
+  alertDiv.innerHTML = `<div class='w-full my-2'>
+    <div class='border border-border rounded-lg p-4 bg-background text-foreground'>
+      <div class='mb-1 font-medium leading-none tracking-tight'>Logged out from all devices.</div>
+    </div>
+  </div>`;
+  btn.parentNode.insertBefore(alertDiv, btn.nextSibling);
+  setTimeout(() => alertDiv.remove(), 4000);
   window.location.reload();
 };
 </script>

@@ -311,7 +311,7 @@ func AssignDefaultRole(userID string) error {
 	}
 	roleID := os.Getenv("AUTH0_DEFAULT_ROLE_ID") // set this in env
 	if roleID == "" {
-		return errors.New("Default role ID not set")
+		return errors.New("default role ID not set")
 	}
 	client := &http.Client{Timeout: 10 * time.Second}
 	payload := map[string][]string{"roles": {roleID}}
@@ -321,7 +321,7 @@ func AssignDefaultRole(userID string) error {
 	req.Header.Set("Content-Type", "application/json")
 	resp, err := client.Do(req)
 	if err != nil || resp.StatusCode >= 400 {
-		return errors.New("Failed to assign role")
+		return errors.New("failed to assign role")
 	}
 	return nil
 }
