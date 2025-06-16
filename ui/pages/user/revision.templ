@@ -118,6 +118,11 @@ templ Revision() {
 			}
 		</main>
 		<script>
+		// Helper to get token and build headers
+		function getAuthHeaders(extraHeaders = {}) {
+  const token = localStorage.getItem('token');
+  return token ? { ...extraHeaders, 'Authorization': `Bearer ${token}` } : extraHeaders;
+}
 		// Anki Import
 		document.getElementById('anki-import-form').onsubmit = async function(e) {
 			e.preventDefault();
@@ -130,6 +135,7 @@ templ Revision() {
 			const res = await fetch('/api/deckimport', {
 				method: 'POST',
 				credentials: 'include',
+				headers: getAuthHeaders(),
 				body: formData
 			});
 			if (res.ok) {
@@ -141,7 +147,7 @@ templ Revision() {
 		};
 		// Load Anki Decks
 		async function loadAnkiDecks() {
-			const res = await fetch('/api/decks', { credentials: 'include' });
+			const res = await fetch('/api/decks', { credentials: 'include', headers: getAuthHeaders() });
 			let data = {};
 			try { data = await res.json(); } catch { data = {}; }
 			const decks = data.decks || [];
@@ -166,7 +172,7 @@ templ Revision() {
 		// Load Anki Cards for selected deck
 		async function loadAnkiCards(deckId) {
 			const userId = window._ankiUserId || '';
-			const res = await fetch(`/api/cards?deck_id=${encodeURIComponent(deckId)}&user_id=${encodeURIComponent(userId)}`, { credentials: 'include' });
+			const res = await fetch(`/api/cards?deck_id=${encodeURIComponent(deckId)}&user_id=${encodeURIComponent(userId)}`, { credentials: 'include', headers: getAuthHeaders() });
 			let cards = [];
 			try { cards = await res.json(); } catch { cards = []; }
 			const list = document.getElementById('anki-cards-list');
@@ -186,7 +192,7 @@ templ Revision() {
 		loadAnkiDecks();
 		// Existing Revision Resource JS
 		async function loadRevisionResources() {
-			const res = await fetch('/api/revision', { credentials: 'include' });
+			const res = await fetch('/api/revision', { credentials: 'include', headers: getAuthHeaders() });
 			let resources = [];
 			try { resources = await res.json(); } catch { resources = []; }
 			const list = document.getElementById('revision-list');
@@ -214,7 +220,7 @@ templ Revision() {
 			if (!type || !content) return;
 			await fetch('/api/revision', {
 				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
+				headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
 				credentials: 'include',
 				body: JSON.stringify({ type, topic, content })
 			});

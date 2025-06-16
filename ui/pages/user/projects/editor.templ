@@ -55,7 +55,7 @@ templ ProjectEditor() {
 							const form = e.target;
 							const res = await fetch('/api/projects', {
 								method: 'POST',
-								headers: { 'Content-Type': 'application/json' },
+								headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
 								body: JSON.stringify({ Title: form.title.value, Data: form.data.value })
 							});
 							if (res.ok) {
@@ -64,6 +64,11 @@ templ ProjectEditor() {
 								alert('Failed to create project');
 							}
 						};
+						// Helper to get token and build headers
+						function getAuthHeaders(extraHeaders = {}) {
+						  const token = localStorage.getItem('token');
+						  return token ? { ...extraHeaders, 'Authorization': `Bearer ${token}` } : extraHeaders;
+						}
 					</script>
 				}
 			}

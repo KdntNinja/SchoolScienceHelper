@@ -49,8 +49,14 @@ templ ProjectsTable() {
 		}
 	}
 	<script>
+		// Helper to get token and build headers
+		function getAuthHeaders(extraHeaders = {}) {
+		  const token = localStorage.getItem('token');
+		  return token ? { ...extraHeaders, 'Authorization': `Bearer ${token}` } : extraHeaders;
+		}
+
 		async function loadProjects() {
-			const res = await fetch('/api/projects');
+			const res = await fetch('/api/projects', { headers: getAuthHeaders() });
 			const data = await res.json();
 			const tbody = document.getElementById('projects-tbody');
 			tbody.innerHTML = '';
