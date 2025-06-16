@@ -50,6 +50,23 @@ func HandleAuthCallback(w http.ResponseWriter, r *http.Request) {
 	log.Infof("[HandleAuthCallback] Set auth_token cookie for remote=%s, secure=%v, path=%s, expires=%v", r.RemoteAddr, secure, cookie.Path, cookie.Expires)
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("ok"))
+
+	// If the user signed up with username/password and is not verified, trigger verification email
+	claims, err := auth.ValidateAndParseJWT(req.Token)
+	if err == nil {
+		if conn, ok := claims["https://auth0.kdnsite.site/connection"].(string); ok && conn == "Username-Password-Authentication" {
+			emailVerified, _ := claims["email_verified"].(bool)
+			if !emailVerified {
+				userID, _ := claims["sub"].(string)
+				go ResendVerificationEmail(userID)
+				// Redirect user to verify email page
+				w.Header().Set("HX-Redirect", "/error/verifyemail")
+				w.WriteHeader(http.StatusOK)
+				w.Write([]byte("verify"))
+				return
+			}
+		}
+	}
 }
 
 // POST /api/auth/logout - clears the auth_token cookie
@@ -305,4 +322,20 @@ func AssignDefaultRole(userID string) error {
 		return errors.New("Failed to assign role")
 	}
 	return nil
+}
+
+// Helper to trigger verification email (calls Auth0 Management API)
+func ResendVerificationEmail(userID string) {
+	domain := os.Getenv("AUTH0_DOMAIN")
+	apiToken := os.Getenv("AUTH0_MANAGEMENT_TOKEN")
+	if domain == "" || apiToken == "" || userID == "" {
+		return
+	}
+	payload := map[string]string{"user_id": userID, "client_id": os.Getenv("AUTH0_CLIENT_ID")}
+	body, _ := json.Marshal(payload)
+	client := &http.Client{Timeout: 10 * time.Second}
+	req, _ := http.NewRequest("POST", "https://"+domain+"/api/v2/jobs/verification-email", bytes.NewReader(body))
+	req.Header.Set("Authorization", "Bearer "+apiToken)
+	req.Header.Set("Content-Type", "application/json")
+	client.Do(req) // ignore response
 }
