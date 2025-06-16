@@ -1,163 +1,142 @@
 package pages
 
 import (
+	"KdnSite/ui/components/avatar"
+	"KdnSite/ui/components/badge"
 	"KdnSite/ui/components/button"
 	"KdnSite/ui/components/card"
+	"KdnSite/ui/components/input"
 	"KdnSite/ui/components/tabs"
 	"KdnSite/ui/layouts"
 )
 
 templ Settings(auth0Domain string, auth0ClientID string) {
 	@layouts.BaseLayout() {
-		@card.Card(card.Props{Class: "flex flex-col items-center min-h-[calc(100vh-72px)] bg-gradient-to-b from-primary/5 to-background px-4 py-12 relative w-full max-w-2xl mx-auto p-8"}) {
+		@card.Card(card.Props{Class: "flex flex-col items-center min-h-[calc(100vh-72px)] bg-gradient-to-b from-primary/5 to-background px-4 py-12 relative w-full max-w-2xl mx-auto p-8 gap-8"}) {
 			@card.Header(card.HeaderProps{}) {
-				@card.Title(card.TitleProps{Class: "text-3xl font-bold mb-6 text-primary"}) {
-					Settings
-				}
+				@card.Title(card.TitleProps{Class: "text-3xl font-bold mb-2 text-primary"}) { Settings }
 			}
 			@card.Content(card.ContentProps{}) {
+				<!-- User Profile Card -->
+				@card.Card(card.Props{Class: "w-full flex flex-col items-center justify-center mb-8 p-6 rounded-xl border border-border bg-muted/30 shadow"}) {
+					@avatar.Avatar(avatar.Props{Class: "w-16 h-16 mb-2", ID: "profile-avatar"}) {}
+					@card.Title(card.TitleProps{Class: "font-semibold text-lg mb-1", ID: "profile-name"}) { }
+					@card.Description(card.DescriptionProps{Class: "text-sm text-muted-foreground mb-1", ID: "profile-email"}) { }
+					@badge.Badge(badge.Props{Class: "mb-1", ID: "profile-roles"}) { }
+					@badge.Badge(badge.Props{Class: "mb-1", ID: "profile-verified"}) { }
+				}
 				@tabs.Tabs(tabs.Props{ID: "settings-tabs", Class: "w-full"}) {
 					@tabs.List(tabs.ListProps{ID: "settings-tabs-list", Class: "mb-6"}) {
 						@tabs.Trigger(tabs.TriggerProps{Value: "security", TabsID: "settings-tabs"}) { Security }
-						@tabs.Trigger(tabs.TriggerProps{Value: "delete", TabsID: "settings-tabs"}) { Delete Account }
+						@tabs.Trigger(tabs.TriggerProps{Value: "account", TabsID: "settings-tabs"}) { Account }
+						@tabs.Trigger(tabs.TriggerProps{Value: "theme", TabsID: "settings-tabs"}) { Theme }
+						@tabs.Trigger(tabs.TriggerProps{Value: "notifications", TabsID: "settings-tabs"}) { Notifications }
 					}
 					@tabs.Content(tabs.ContentProps{Value: "security", TabsID: "settings-tabs"}) {
 						<section class="space-y-8">
 							@card.Card(card.Props{Class: "mb-6 p-4 bg-muted/30 rounded-xl border border-border"}) {
-								@card.Title(card.TitleProps{Class: "text-lg font-semibold mb-2"}) {
-									Email Verification
-								}
-								<div id="email-verification-status" class="mb-2 text-sm"></div>
-								@button.Button(button.Props{
-									ID: "resend-verification-btn",
-									Class: "btn btn-sm btn-primary hidden",
-								}) {
-									Resend Verification Email
-								}
+								@card.Title(card.TitleProps{Class: "text-lg font-semibold mb-2"}) { Email Verification }
+								@card.Description(card.DescriptionProps{ID: "email-verification-status", Class: "mb-2 text-sm"}) { }
+								@button.Button(button.Props{ID: "resend-verification-btn", Class: "btn btn-sm btn-primary hidden"}) { Resend Verification Email }
 							}
 							@card.Card(card.Props{Class: "mb-6 p-4 bg-muted/30 rounded-xl border border-border"}) {
-								@card.Title(card.TitleProps{Class: "text-lg font-semibold mb-2"}) {
-									Multi-Factor Authentication (MFA)
-								}
-								@button.Button(button.Props{
-									ID: "mfa-btn",
-									Class: "btn btn-sm btn-primary",
-								}) {
-									Manage MFA
-								}
-								<div class="text-xs text-muted-foreground mt-2">
-									MFA helps protect your account with an extra layer of security.
-								</div>
+								@card.Title(card.TitleProps{Class: "text-lg font-semibold mb-2"}) { Multi-Factor Authentication (MFA) }
+								@button.Button(button.Props{ID: "mfa-btn", Class: "btn btn-sm btn-primary"}) { Manage MFA }
+								@card.Description(card.DescriptionProps{Class: "text-xs text-muted-foreground mt-2"}) { MFA helps protect your account with an extra layer of security. }
 							}
 							@card.Card(card.Props{Class: "mb-6 p-4 bg-muted/30 rounded-xl border border-border"}) {
-								@card.Title(card.TitleProps{Class: "text-lg font-semibold mb-2"}) {
-									Social Login
-								}
-								@button.Button(button.Props{
-									ID: "link-social-btn",
-									Class: "btn btn-sm btn-primary",
-								}) {
-									Manage Social Accounts
-								}
-								<div class="text-xs text-muted-foreground mt-2">
-									Link or unlink Google, GitHub, or other social accounts.
-								</div>
+								@card.Title(card.TitleProps{Class: "text-lg font-semibold mb-2"}) { Social Login }
+								@button.Button(button.Props{ID: "link-social-btn", Class: "btn btn-sm btn-primary"}) { Manage Social Accounts }
+								@card.Description(card.DescriptionProps{Class: "text-xs text-muted-foreground mt-2"}) { Link or unlink Google, GitHub, or other social accounts. }
 							}
 							@card.Card(card.Props{Class: "mb-6 p-4 bg-muted/30 rounded-xl border border-border"}) {
-								@card.Title(card.TitleProps{Class: "text-lg font-semibold mb-2"}) {
-									Passwordless Login
-								}
-								@button.Button(button.Props{
-									ID: "passwordless-btn",
-									Class: "btn btn-sm btn-primary",
-								}) {
-									Enable Passwordless (Magic Link)
-								}
-								<div class="text-xs text-muted-foreground mt-2">
-									Sign in with a magic link sent to your email.
-								</div>
+								@card.Title(card.TitleProps{Class: "text-lg font-semibold mb-2"}) { Passwordless Login }
+								@button.Button(button.Props{ID: "passwordless-btn", Class: "btn btn-sm btn-primary"}) { Enable Passwordless (Magic Link) }
+								@card.Description(card.DescriptionProps{Class: "text-xs text-muted-foreground mt-2"}) { Sign in with a magic link sent to your email. }
 							}
 							@card.Card(card.Props{Class: "mb-6 p-4 bg-muted/30 rounded-xl border border-border"}) {
-								@card.Title(card.TitleProps{Class: "text-lg font-semibold mb-2"}) {
-									Active Sessions
-								}
+								@card.Title(card.TitleProps{Class: "text-lg font-semibold mb-2"}) { Active Sessions }
 								<ul id="session-list" class="text-sm"></ul>
-								@button.Button(button.Props{
-									ID: "revoke-sessions-btn",
-									Class: "btn btn-sm btn-destructive mt-2",
-								}) {
-									Log out from all devices
-								}
+								@button.Button(button.Props{ID: "revoke-sessions-btn", Class: "btn btn-sm btn-destructive mt-2"}) { Log out from all devices }
 							}
 						</section>
 						<script>
-  let emailVerified = false;
-  fetch('/api/auth/check', { credentials: 'include' })
-    .then(r => r.ok ? r.json() : Promise.reject('Failed to check auth'))
-    .then(data => {
-      if (data && data.user) {
-        emailVerified = !!data.user.email_verified;
-        document.getElementById('email-verification-status').textContent = emailVerified ? 'Your email is verified.' : 'Your email is not verified.';
-        document.getElementById('resend-verification-btn').classList.toggle('hidden', emailVerified);
-        // Optionally disable sensitive actions if not verified
-        document.getElementById('update-profile-form').querySelector('button[type="submit"]').disabled = !emailVerified;
-        document.getElementById('change-password-form').querySelector('button[type="submit"]').disabled = !emailVerified;
-        document.getElementById('delete-btn').disabled = !emailVerified;
-      }
-    });
-  document.getElementById('resend-verification-btn').onclick = async () => {
-    await fetch('/api/auth/resend-verification', { method: 'POST', credentials: 'include' });
-    document.getElementById('email-verification-status').textContent = 'Verification email sent!';
-  };
-  document.getElementById('mfa-btn').onclick = () => {
-    window.location.href = `https://${auth0Domain}/u/mfa-otp`;
-  };
-  document.getElementById('link-social-btn').onclick = () => {
-    window.location.href = `https://${auth0Domain}/u/social-accounts`;
-  };
-  document.getElementById('passwordless-btn').onclick = () => {
-    window.location.href = `https://${auth0Domain}/u/passwordless`;
-  };
-  // Session management (stub, requires backend support)
-  document.getElementById('revoke-sessions-btn').onclick = async () => {
-    await fetch('/api/auth/logout-all', { method: 'POST', credentials: 'include' });
-    alert('Logged out from all devices.');
-    window.location.reload();
-  };
-  </script>
+// Profile info
+fetch('/api/auth/check', { credentials: 'include' })
+  .then(r => r.ok ? r.json() : Promise.reject('Failed to check auth'))
+  .then(data => {
+    if (data && data.user) {
+      const user = data.user;
+      document.getElementById('profile-avatar').textContent = (user.name ? user.name[0] : '?').toUpperCase();
+      document.getElementById('profile-name').textContent = user.name || 'Unknown';
+      document.getElementById('profile-email').textContent = user.email || '';
+      document.getElementById('profile-roles').textContent = user.roles ? user.roles.join(', ') : '';
+      document.getElementById('profile-verified').textContent = user.email_verified ? 'Verified' : 'Not Verified';
+      // Email verification
+      let emailVerified = !!user.email_verified;
+      document.getElementById('email-verification-status').textContent = emailVerified ? 'Your email is verified.' : 'Your email is not verified.';
+      document.getElementById('resend-verification-btn').classList.toggle('hidden', emailVerified);
+    }
+  });
+document.getElementById('resend-verification-btn').onclick = async () => {
+  const btn = document.getElementById('resend-verification-btn');
+  btn.disabled = true; btn.textContent = 'Sending...';
+  const resp = await fetch('/api/auth/resend-verification', { method: 'POST', credentials: 'include' });
+  btn.disabled = false; btn.textContent = 'Resend Verification Email';
+  document.getElementById('email-verification-status').textContent = resp.ok ? 'Verification email sent!' : 'Failed to send verification email.';
+};
+document.getElementById('mfa-btn').onclick = () => {
+  window.location.href = `https://${auth0Domain}/u/mfa-otp`;
+};
+document.getElementById('link-social-btn').onclick = () => {
+  window.location.href = `https://${auth0Domain}/u/social-accounts`;
+};
+document.getElementById('passwordless-btn').onclick = () => {
+  window.location.href = `https://${auth0Domain}/u/passwordless`;
+};
+document.getElementById('revoke-sessions-btn').onclick = async () => {
+  const btn = document.getElementById('revoke-sessions-btn');
+  btn.disabled = true; btn.textContent = 'Logging out...';
+  await fetch('/api/auth/logout-all', { method: 'POST', credentials: 'include' });
+  btn.disabled = false; btn.textContent = 'Log out from all devices';
+  alert('Logged out from all devices.');
+  window.location.reload();
+};
+</script>
 					}
-					@tabs.Content(tabs.ContentProps{Value: "delete", TabsID: "settings-tabs"}) {
+					@tabs.Content(tabs.ContentProps{Value: "account", TabsID: "settings-tabs"}) {
 						<section class="space-y-8">
 							@card.Card(card.Props{Class: "p-6 bg-muted/30 border border-border"}) {
-								@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) {
-									Delete Account 
-								}
-								<p class="text-muted-foreground mb-4">This will permanently delete your account and all data. This action cannot be undone.</p>
+								@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) { Change Password }
+								@input.Input(input.Props{ID: "change-password-email", Type: "email", Placeholder: "Your email", Class: "mb-2 w-full"}) {}
+								@button.Button(button.Props{ID: "change-password-btn", Class: "btn btn-primary w-full"}) { Send Password Change Email }
+								@card.Description(card.DescriptionProps{ID: "change-password-status", Class: "text-xs mt-2"}) { }
+							}
+							@card.Card(card.Props{Class: "p-6 bg-muted/30 border border-border"}) {
+								@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) { Delete Account }
 								<div id="delete-confirm-section">
-									@button.Button(button.Props{ID: "delete-btn", Variant: button.VariantDefault, Class: "w-full text-red-600 border-red-600 hover:bg-red-50"}) {
-										Delete Account 
-									}
+									@button.Button(button.Props{ID: "delete-btn", Variant: button.VariantDefault, Class: "w-full text-red-600 border-red-600 hover:bg-red-50"}) { Delete Account }
 								</div>
 							}
 						</section>
 						<script>
+document.getElementById('change-password-form').onsubmit = async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('change-password-email').value;
+  const status = document.getElementById('change-password-status');
+  status.textContent = 'Sending...';
+  const resp = await fetch('/api/auth/change-password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+    credentials: 'include',
+  });
+  status.textContent = resp.ok ? 'Password change email sent!' : 'Failed to send password change email.';
+};
 let deleteConfirm = false;
-
-function showError(id, msg) {
-  let el = document.getElementById(id + '-error');
-  if (!el) return;
-  el.innerHTML = `<div>${TemplUI.renderAlert(msg)}</div>`;
-}
-function clearError(id) {
-  let el = document.getElementById(id + '-error');
-  if (el) el.innerHTML = '';
-}
-
 document.getElementById('delete-btn').onclick = async () => {
-  clearError('delete-btn');
   const section = document.getElementById('delete-confirm-section');
   if (!deleteConfirm) {
-    // Show password input for confirmation
     section.innerHTML = `
       <div class="mb-4">
         <label for="delete-password-input" class="block text-sm font-semibold mb-2">Enter your password to confirm:</label>
@@ -210,7 +189,34 @@ document.getElementById('delete-btn').onclick = async () => {
     return;
   }
 };
-						</script>
+</script>
+					}
+					@tabs.Content(tabs.ContentProps{Value: "theme", TabsID: "settings-tabs"}) {
+						@card.Card(card.Props{Class: "p-6 bg-muted/30 border border-border"}) {
+							@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) { Theme }
+							<div class="flex gap-4 items-center">
+								@button.Button(button.Props{ID: "theme-light", Class: "btn btn-sm"}) { Light }
+								@button.Button(button.Props{ID: "theme-dark", Class: "btn btn-sm"}) { Dark }
+								@button.Button(button.Props{ID: "theme-system", Class: "btn btn-sm"}) { System }
+							</div>
+							@card.Description(card.DescriptionProps{ID: "theme-status", Class: "text-xs mt-2"}) { }
+						}
+						<script>
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('theme', theme);
+  document.getElementById('theme-status').textContent = `Theme set to ${theme}`;
+}
+document.getElementById('theme-light').onclick = () => setTheme('light');
+document.getElementById('theme-dark').onclick = () => setTheme('dark');
+document.getElementById('theme-system').onclick = () => setTheme('system');
+</script>
+					}
+					@tabs.Content(tabs.ContentProps{Value: "notifications", TabsID: "settings-tabs"}) {
+						@card.Card(card.Props{Class: "p-6 bg-muted/30 border border-border"}) {
+							@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) { Notification Preferences }
+							@card.Description(card.DescriptionProps{Class: "text-muted-foreground"}) { Coming soon: control your email and in-app notification preferences. }
+						}
 					}
 					@tabs.Script()
 				}

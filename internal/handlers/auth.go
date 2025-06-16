@@ -54,7 +54,9 @@ func HandleAuthCallback(w http.ResponseWriter, r *http.Request) {
 	// If the user signed up with username/password and is not verified, trigger verification email
 	claims, err := auth.ValidateAndParseJWT(req.Token)
 	if err == nil {
-		if conn, ok := claims["https://auth0.kdnsite.site/connection"].(string); ok && conn == "Username-Password-Authentication" {
+		domain := os.Getenv("AUTH0_DOMAIN")
+		connClaim := "https://" + domain + "/connection"
+		if conn, ok := claims[connClaim].(string); ok && conn == "Username-Password-Authentication" {
 			emailVerified, _ := claims["email_verified"].(bool)
 			if !emailVerified {
 				userID, _ := claims["sub"].(string)
