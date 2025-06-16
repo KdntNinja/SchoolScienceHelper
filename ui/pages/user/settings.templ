@@ -7,7 +7,7 @@ import (
 	"KdnSite/ui/layouts"
 )
 
-templ Settings() {
+templ Settings(auth0Domain string, auth0ClientID string) {
 	@layouts.BaseLayout() {
 		@card.Card(card.Props{Class: "flex flex-col items-center min-h-[calc(100vh-72px)] bg-gradient-to-b from-primary/5 to-background px-4 py-12 relative w-full max-w-2xl mx-auto p-8"}) {
 			@card.Header(card.HeaderProps{}) {
@@ -110,13 +110,13 @@ templ Settings() {
     document.getElementById('email-verification-status').textContent = 'Verification email sent!';
   };
   document.getElementById('mfa-btn').onclick = () => {
-    window.location.href = 'https://YOUR_AUTH0_DOMAIN/u/mfa-otp';
+    window.location.href = `https://${auth0Domain}/u/mfa-otp`;
   };
   document.getElementById('link-social-btn').onclick = () => {
-    window.location.href = 'https://YOUR_AUTH0_DOMAIN/u/social-accounts';
+    window.location.href = `https://${auth0Domain}/u/social-accounts`;
   };
   document.getElementById('passwordless-btn').onclick = () => {
-    window.location.href = 'https://YOUR_AUTH0_DOMAIN/u/passwordless';
+    window.location.href = `https://${auth0Domain}/u/passwordless`;
   };
   // Session management (stub, requires backend support)
   document.getElementById('revoke-sessions-btn').onclick = async () => {

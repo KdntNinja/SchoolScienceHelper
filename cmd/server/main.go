@@ -183,8 +183,10 @@ func registerUserRoutes(mux *http.ServeMux) {
 		})).ServeHTTP(w, r)
 	})
 	mux.HandleFunc("/user/settings", func(w http.ResponseWriter, r *http.Request) {
+		domain := os.Getenv("AUTH0_DOMAIN")
+		clientID := os.Getenv("AUTH0_CLIENT_ID")
 		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			err := userpages.Settings().Render(r.Context(), w)
+			err := userpages.Settings(domain, clientID).Render(r.Context(), w)
 			if err != nil {
 				log.Errorf("Render error (Settings): %v", err)
 			}
@@ -197,6 +199,12 @@ func registerUserRoutes(mux *http.ServeMux) {
 				log.Errorf("Render error (Revision): %v", err)
 			}
 		})).ServeHTTP(w, r)
+	})
+	mux.HandleFunc("/error/verifyemail", func(w http.ResponseWriter, r *http.Request) {
+		err := errorpages.VerifyEmail().Render(r.Context(), w)
+		if err != nil {
+			log.Errorf("Render error (VerifyEmail): %v", err)
+		}
 	})
 	mux.HandleFunc("/forbidden", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusForbidden)

@@ -27,7 +27,8 @@ func RequireAuth(next http.Handler) http.Handler {
 		emailVerified, ok := claims["email_verified"].(bool)
 		if !ok || !emailVerified {
 			log.Warnf("[RequireAuth] Email not verified for user: %v, remote=%s, path=%s", claims["sub"], r.RemoteAddr, r.URL.Path)
-			http.Redirect(w, r, "/", http.StatusFound)
+			// Optionally: trigger verification email here if you have an API for it
+			http.Redirect(w, r, "/error/verifyemail", http.StatusFound)
 			return
 		}
 		// Set user info in context for downstream handlers
