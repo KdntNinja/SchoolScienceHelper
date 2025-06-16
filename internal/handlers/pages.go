@@ -3,8 +3,8 @@ package handlers
 import (
 	"KdnSite/internal/auth"
 	"KdnSite/internal/user"
-	"database/sql"
 	userpages "KdnSite/ui/pages/user"
+	"database/sql"
 	"net/http"
 	"os"
 	"strings"
