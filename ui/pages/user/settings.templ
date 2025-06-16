@@ -5,6 +5,7 @@ import (
 	"KdnSite/ui/components/card"
 	"KdnSite/ui/components/input"
 	"KdnSite/ui/components/label"
+	"KdnSite/ui/components/tabs"
 	"KdnSite/ui/layouts"
 )
 
@@ -22,80 +23,43 @@ templ Settings() {
 					}
 				}
 				@card.Content(card.ContentProps{}) {
-					<section class="space-y-8">
-						@card.Card(card.Props{Class: "mb-8 p-6 bg-muted/30 border border-border"}) {
-							@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) {
-								Profile 
-							}
-							<div id="profile-info" class="text-muted-foreground mb-4">Loading profile...</div>
-							<form id="update-profile-form" class="space-y-4">
-								<div>
-									@label.Label(label.Props{For: "username-input", Class: "mb-2 font-semibold"}) {
-										Username 
-									}
-									@input.Input(input.Props{
-										ID:          "username-input",
-										Name:        "username",
-										Type:        input.TypeText,
-										Class:       "w-full",
-										Required:    true,
-										Placeholder: "Enter your username",
-									})
-								</div>
-								@button.Button(button.Props{Type: "submit", Variant: button.VariantDefault, Class: "w-full"}) {
-									Update Username
-								}
-							</form>
-							<form id="change-password-form" class="space-y-4 mt-6">
-								<div>
-									@label.Label(label.Props{For: "password-input", Class: "mb-2 font-semibold"}) {
-										New Password 
-									}
-									@input.Input(input.Props{
-										ID:          "password-input",
-										Name:        "password",
-										Type:        input.TypePassword,
-										Class:       "w-full",
-										Required:    true,
-										Placeholder: "Enter new password",
-									})
-								</div>
-								<div>
-									@label.Label(label.Props{For: "confirm-password-input", Class: "mb-2 font-semibold"}) {
-										Confirm Password 
-									}
-									@input.Input(input.Props{
-										ID:          "confirm-password-input",
-										Name:        "confirm-password",
-										Type:        input.TypePassword,
-										Class:       "w-full",
-										Required:    true,
-										Placeholder: "Re-enter new password",
-									})
-								</div>
-								@button.Button(button.Props{Type: "submit", Variant: button.VariantDefault, Class: "w-full"}) {
-									Change Password
-								}
-							</form>
-							@button.Button(button.Props{ID: "logout-btn", Variant: button.VariantDefault, Class: "w-full mt-6 text-red-600 border-red-600 hover:bg-red-50"}) {
-								Log Out 
-							}
+					@tabs.Tabs(tabs.Props{ID: "settings-tabs", Class: "w-full"}) {
+						@tabs.List() {
+							@tabs.Trigger(tabs.TriggerProps{Value: "profile", TabsID: "settings-tabs", IsActive: true}) { Profile }
+							@tabs.Trigger(tabs.TriggerProps{Value: "security", TabsID: "settings-tabs"}) { Security }
+							@tabs.Trigger(tabs.TriggerProps{Value: "delete", TabsID: "settings-tabs"}) { Delete Account }
 						}
-						@card.Card(card.Props{Class: "p-6 bg-muted/30 border border-border"}) {
-							@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) {
-								Delete Account 
-							}
-							<p class="text-muted-foreground mb-4">This will permanently delete your account and all data. This action cannot be undone.</p>
-							<div id="delete-confirm-section">
-								@button.Button(button.Props{ID: "delete-btn", Variant: button.VariantDefault, Class: "w-full text-red-600 border-red-600 hover:bg-red-50"}) {
-									Delete Account 
+						@tabs.Content(tabs.ContentProps{Value: "profile", TabsID: "settings-tabs", IsActive: true}) {
+							<section class="space-y-8">
+								@card.Card(card.Props{Class: "mb-8 p-6 bg-muted/30 border border-border"}) {
+									@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) {
+										Profile 
+									}
+									<div id="profile-info" class="text-muted-foreground mb-4">Loading profile...</div>
+									<form id="update-profile-form" class="space-y-4">
+										<div>
+											@label.Label(label.Props{For: "username-input", Class: "mb-2 font-semibold"}) {
+												Username 
+											}
+											@input.Input(input.Props{
+												ID:          "username-input",
+												Name:        "username",
+												Type:        input.TypeText,
+												Class:       "w-full",
+												Required:    true,
+												Placeholder: "Enter your username",
+											})
+										</div>
+										@button.Button(button.Props{Type: "submit", Variant: button.VariantDefault, Class: "w-full"}) {
+											Update Username
+										}
+									</form>
+									@button.Button(button.Props{ID: "logout-btn", Variant: button.VariantDefault, Class: "w-full mt-6 text-red-600 border-red-600 hover:bg-red-50"}) {
+										Log Out 
+									}
 								}
-							</div>
-						}
-					</section>
-					<script>
-let deleteConfirm = false;
-let deletePassword = '';
+							</section>
+							<script>
 let actualUsername = '';
 
 function showError(id, msg) {
@@ -135,7 +99,15 @@ fetch('/api/auth/check', { credentials: 'include' })
 
 document.getElementById('logout-btn').onclick = async () => {
   await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
-  document.cookie = 'auth_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+  // Remove all cookies
+  document.cookie.split(';').forEach(function(c) {
+    document.cookie = c.replace(/^ +/, '').replace(/=.*/, '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/');
+  });
+  // Remove password fields if present
+  const pw1 = document.getElementById('password-input');
+  const pw2 = document.getElementById('confirm-password-input');
+  if (pw1) pw1.value = '';
+  if (pw2) pw2.value = '';
   window.location.href = '/';
 };
 
@@ -160,6 +132,110 @@ document.getElementById('update-profile-form').onsubmit = async (e) => {
     showError('username-input', 'Network error.');
   }
 };
+							</script>
+						}
+						@tabs.Content(tabs.ContentProps{Value: "security", TabsID: "settings-tabs"}) {
+							<section class="space-y-8">
+								<form id="change-password-form" class="space-y-4">
+									<div>
+										@label.Label(label.Props{For: "password-input", Class: "mb-2 font-semibold"}) {
+											New Password 
+										}
+										@input.Input(input.Props{
+											ID:          "password-input",
+											Name:        "password",
+											Type:        input.TypePassword,
+											Class:       "w-full",
+											Required:    true,
+											Placeholder: "Enter new password",
+										})
+									</div>
+									<div>
+										@label.Label(label.Props{For: "confirm-password-input", Class: "mb-2 font-semibold"}) {
+											Confirm Password 
+										}
+										@input.Input(input.Props{
+											ID:          "confirm-password-input",
+											Name:        "confirm-password",
+											Type:        input.TypePassword,
+											Class:       "w-full",
+											Required:    true,
+											Placeholder: "Re-enter new password",
+										})
+									</div>
+									@button.Button(button.Props{Type: "submit", Variant: button.VariantDefault, Class: "w-full"}) {
+										Change Password
+									}
+								</form>
+							</section>
+							<script>
+document.getElementById('change-password-form').onsubmit = async (e) => {
+  e.preventDefault();
+  clearError('password-input');
+  clearError('confirm-password-input');
+  const password = document.getElementById('password-input').value;
+  const confirm = document.getElementById('confirm-password-input').value;
+  if (password.length < 6) {
+    showError('password-input', 'Password must be at least 6 characters.');
+    return;
+  }
+  if (password !== confirm) {
+    showError('confirm-password-input', 'Passwords do not match.');
+    return;
+  }
+  try {
+    const res = await fetch('/api/auth/change-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ password })
+    });
+    if (res.ok) {
+      document.getElementById('profile-info').innerHTML = 'Password changed!';
+    } else {
+      const err = await res.text();
+      showError('password-input', err || 'Failed to change password.');
+    }
+  } catch {
+    showError('password-input', 'Network error.');
+  }
+};
+							</script>
+						}
+						@tabs.Content(tabs.ContentProps{Value: "delete", TabsID: "settings-tabs"}) {
+							<section class="space-y-8">
+								@card.Card(card.Props{Class: "p-6 bg-muted/30 border border-border"}) {
+									@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) {
+										Delete Account 
+									}
+									<p class="text-muted-foreground mb-4">This will permanently delete your account and all data. This action cannot be undone.</p>
+									<div id="delete-confirm-section">
+										@button.Button(button.Props{ID: "delete-btn", Variant: button.VariantDefault, Class: "w-full text-red-600 border-red-600 hover:bg-red-50"}) {
+											Delete Account 
+										}
+									</div>
+								}
+							</section>
+							<script>
+let deleteConfirm = false;
+
+function showError(id, msg) {
+  let el = document.getElementById(id);
+  if (!el) return;
+  let err = el.parentElement.querySelector('.form-error');
+  if (!err) {
+    err = document.createElement('div');
+    err.className = 'form-error text-destructive text-sm mt-1';
+    el.parentElement.appendChild(err);
+  }
+  err.textContent = msg;
+}
+function clearError(id) {
+  let el = document.getElementById(id);
+  if (!el) return;
+  let err = el.parentElement.querySelector('.form-error');
+  if (err) err.textContent = '';
+}
 
 document.getElementById('delete-btn').onclick = async () => {
   clearError('delete-btn');
@@ -218,39 +294,10 @@ document.getElementById('delete-btn').onclick = async () => {
     return;
   }
 };
-
-document.getElementById('change-password-form').onsubmit = async (e) => {
-  e.preventDefault();
-  clearError('password-input');
-  clearError('confirm-password-input');
-  const password = document.getElementById('password-input').value;
-  const confirm = document.getElementById('confirm-password-input').value;
-  if (password.length < 6) {
-    showError('password-input', 'Password must be at least 6 characters.');
-    return;
-  }
-  if (password !== confirm) {
-    showError('confirm-password-input', 'Passwords do not match.');
-    return;
-  }
-  try {
-    const res = await fetch('/api/auth/change-password', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ password })
-    });
-    if (res.ok) {
-      document.getElementById('profile-info').innerHTML = 'Password changed!';
-    } else {
-      const err = await res.text();
-      showError('password-input', err || 'Failed to change password.');
-    }
-  } catch {
-    showError('password-input', 'Network error.');
-  }
-};
-					</script>
+							</script>
+						}
+					}
+					@tabs.Script()
 				}
 			}
 		</main>
