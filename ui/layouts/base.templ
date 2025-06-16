@@ -1,6 +1,9 @@
 package layouts
 
-import "KdnSite/ui/modules"
+import (
+	"KdnSite/ui/modules"
+	"KdnSite/ui/components/tabs"
+)
 
 templ ThemeSwitcherScript() {
 	{{ handle := templ.NewOnceHandle() }}
@@ -40,6 +43,7 @@ templ BaseLayout(footerExtra ...any) {
 			<!-- Plausible Analytics -->
 			<script defer data-domain="app.kdnsite.site" src="http://plausible.kdnsite.site/js/script.file-downloads.hash.outbound-links.pageview-props.revenue.tagged-events.js"></script>
 			<script>window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }</script>
+			@tabs.Script()
 		</head>
 		<body
 			x-data="themeHandler"

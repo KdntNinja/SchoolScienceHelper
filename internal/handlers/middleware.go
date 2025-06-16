@@ -11,14 +11,32 @@ import (
 // Auth middleware for all user related routes
 func RequireAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		userID, err := auth.GetUserIDFromRequest(r)
-		if err != nil || userID == "" {
-			log.Warnf("[RequireAuth] Unauthorized access: %v, remote=%s, path=%s, cookie=%v", err, r.RemoteAddr, r.URL.Path, r.Header.Get("Cookie"))
+		userID, emailVerified, _, err := getUserClaimsFromJWT(r)
+		if err != nil || userID == "" || !emailVerified {
+			log.Warnf("[RequireAuth] Unauthorized or unverified: %v, remote=%s, path=%s, cookie=%v", err, r.RemoteAddr, r.URL.Path, r.Header.Get("Cookie"))
 			http.Redirect(w, r, "/", http.StatusFound)
 			return
 		}
 		log.Infof("[RequireAuth] Authenticated user: %s, remote=%s, path=%s", userID, r.RemoteAddr, r.URL.Path)
 		next.ServeHTTP(w, r)
+	})
+}
+
+// RequireRole middleware for admin endpoints
+func RequireRole(role string, next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, _, roles, err := getUserClaimsFromJWT(r)
+		if err != nil {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		for _, userRole := range roles {
+			if userRole == role {
+				next.ServeHTTP(w, r)
+				return
+			}
+		}
+		w.WriteHeader(http.StatusForbidden)
 	})
 }
 

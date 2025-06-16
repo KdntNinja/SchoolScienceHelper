@@ -139,11 +139,13 @@ func registerLegalRoutes(mux *http.ServeMux) {
 }
 
 func registerAuthRoutes(mux *http.ServeMux) {
-	mux.HandleFunc("/api/auth/check", handlers.AuthStatusHandler)
 	mux.HandleFunc("/api/auth/callback", handlers.HandleAuthCallback)
 	mux.HandleFunc("/api/auth/logout", handlers.LogoutHandler)
 	mux.HandleFunc("/api/auth/delete", handlers.DeleteAccountHandler)
 	mux.HandleFunc("/api/auth/change-password", handlers.ChangePasswordHandler)
+	mux.Handle("/api/auth/resend-verification", handlers.RequireAuth(http.HandlerFunc(handlers.ResendVerificationHandler)))
+	mux.Handle("/api/auth/logout-all", handlers.RequireAuth(http.HandlerFunc(handlers.LogoutAllHandler)))
+	mux.Handle("/api/auth/sessions", handlers.RequireAuth(http.HandlerFunc(handlers.SessionsHandler)))
 }
 
 func registerUserRoutes(mux *http.ServeMux) {

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"os"
 	"time"
@@ -154,6 +155,93 @@ func ChangePasswordHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Password change email sent"))
 }
 
+// POST /api/auth/resend-verification - triggers Auth0 verification email
+func ResendVerificationHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+	userID, err := getUserIDFromJWT(r)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+	domain := os.Getenv("AUTH0_DOMAIN")
+	apiToken := os.Getenv("AUTH0_MANAGEMENT_TOKEN")
+	if domain == "" || apiToken == "" {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Auth0 config missing"))
+		return
+	}
+	// Get user email from Auth0
+	client := &http.Client{Timeout: 10 * time.Second}
+	req, _ := http.NewRequest("GET", "https://"+domain+"/api/v2/users/"+userID, nil)
+	req.Header.Set("Authorization", "Bearer "+apiToken)
+	resp, err := client.Do(req)
+	if err != nil || resp.StatusCode >= 400 {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Failed to get user info"))
+		return
+	}
+	var user struct {
+		Email string `json:"email"`
+	}
+	json.NewDecoder(resp.Body).Decode(&user)
+	resp.Body.Close()
+	if user.Email == "" {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("No email found"))
+		return
+	}
+	// Trigger verification email
+	payload := map[string]string{"user_id": userID, "client_id": os.Getenv("AUTH0_CLIENT_ID")}
+	body, _ := json.Marshal(payload)
+	req, _ = http.NewRequest("POST", "https://"+domain+"/api/v2/jobs/verification-email", bytes.NewReader(body))
+	req.Header.Set("Authorization", "Bearer "+apiToken)
+	req.Header.Set("Content-Type", "application/json")
+	resp, err = client.Do(req)
+	if err != nil || resp.StatusCode >= 400 {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Failed to send verification email"))
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Verification email sent"))
+}
+
+// POST /api/auth/logout-all - logs out user from all sessions (Auth0 global logout)
+func LogoutAllHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+	// Just clear the cookie and redirect to Auth0 logout endpoint
+	cookie := &http.Cookie{
+		Name:     "auth_token",
+		Value:    "",
+		Path:     "/",
+		HttpOnly: true,
+		Expires:  time.Unix(0, 0),
+		MaxAge:   -1,
+	}
+	http.SetCookie(w, cookie)
+	domain := os.Getenv("AUTH0_DOMAIN")
+	clientID := os.Getenv("AUTH0_CLIENT_ID")
+	if domain == "" || clientID == "" {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+	logoutURL := "https://" + domain + "/v2/logout?client_id=" + clientID + "&returnTo=" + os.Getenv("APP_URL")
+	w.Header().Set("HX-Redirect", logoutURL)
+	w.WriteHeader(http.StatusOK)
+}
+
+// GET /api/auth/sessions - (stub) returns active sessions (requires Auth0 Enterprise for full support)
+func SessionsHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+	w.Write([]byte("Session listing not supported on free Auth0 tier."))
+}
+
 // Helper to extract user ID from JWT (sub claim)
 func getUserIDFromJWT(r *http.Request) (string, error) {
 	cookie, err := r.Cookie("auth_token")
@@ -168,4 +256,53 @@ func getUserIDFromJWT(r *http.Request) (string, error) {
 		return sub, nil
 	}
 	return "", http.ErrNoCookie
+}
+
+// Helper: Check email_verified and roles from JWT claims
+func getUserClaimsFromJWT(r *http.Request) (userID string, emailVerified bool, roles []string, err error) {
+	cookie, err := r.Cookie("auth_token")
+	if err != nil {
+		return "", false, nil, err
+	}
+	claims, err := auth.ValidateAndParseJWT(cookie.Value)
+	if err != nil {
+		return "", false, nil, err
+	}
+	userID, _ = claims["sub"].(string)
+	emailVerified, _ = claims["email_verified"].(bool)
+	roles = nil
+	if appMeta, ok := claims["https://app.kdnsite.site/app_metadata"].(map[string]interface{}); ok {
+		if rs, ok := appMeta["roles"].([]interface{}); ok {
+			for _, r := range rs {
+				if s, ok := r.(string); ok {
+					roles = append(roles, s)
+				}
+			}
+		}
+	}
+	return
+}
+
+// Helper: Assign default role to user (call from callback or user provisioning)
+func AssignDefaultRole(userID string) error {
+	domain := os.Getenv("AUTH0_DOMAIN")
+	apiToken := os.Getenv("AUTH0_MANAGEMENT_TOKEN")
+	if domain == "" || apiToken == "" {
+		return errors.New("Auth0 config missing")
+	}
+	roleID := os.Getenv("AUTH0_DEFAULT_ROLE_ID") // set this in env
+	if roleID == "" {
+		return errors.New("Default role ID not set")
+	}
+	client := &http.Client{Timeout: 10 * time.Second}
+	payload := map[string][]string{"roles": {roleID}}
+	body, _ := json.Marshal(payload)
+	req, _ := http.NewRequest("POST", "https://"+domain+"/api/v2/users/"+userID+"/roles", bytes.NewReader(body))
+	req.Header.Set("Authorization", "Bearer "+apiToken)
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := client.Do(req)
+	if err != nil || resp.StatusCode >= 400 {
+		return errors.New("Failed to assign role")
+	}
+	return nil
 }
