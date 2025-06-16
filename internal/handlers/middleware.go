@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"net/http"
 
 	"KdnSite/internal/auth"
@@ -11,14 +12,28 @@ import (
 // Auth middleware for all user related routes
 func RequireAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		userID, emailVerified, _, err := getUserClaimsFromJWT(r)
-		if err != nil || userID == "" || !emailVerified {
-			log.Warnf("[RequireAuth] Unauthorized or unverified: %v, remote=%s, path=%s, cookie=%v", err, r.RemoteAddr, r.URL.Path, r.Header.Get("Cookie"))
+		tokenStr := auth.GetJWTFromRequest(r)
+		if tokenStr == "" {
+			log.Warnf("[RequireAuth] No auth_token found, remote=%s, path=%s, cookie=%v", r.RemoteAddr, r.URL.Path, r.Header.Get("Cookie"))
 			http.Redirect(w, r, "/", http.StatusFound)
 			return
 		}
-		log.Infof("[RequireAuth] Authenticated user: %s, remote=%s, path=%s", userID, r.RemoteAddr, r.URL.Path)
-		next.ServeHTTP(w, r)
+		claims, err := auth.ValidateAndParseJWT(tokenStr)
+		if err != nil {
+			log.Warnf("[RequireAuth] Invalid JWT: %v, remote=%s, path=%s", err, r.RemoteAddr, r.URL.Path)
+			http.Redirect(w, r, "/", http.StatusFound)
+			return
+		}
+		emailVerified, ok := claims["email_verified"].(bool)
+		if !ok || !emailVerified {
+			log.Warnf("[RequireAuth] Email not verified for user: %v, remote=%s, path=%s", claims["sub"], r.RemoteAddr, r.URL.Path)
+			http.Redirect(w, r, "/", http.StatusFound)
+			return
+		}
+		// Set user info in context for downstream handlers
+		ctx := context.WithValue(r.Context(), "user", claims)
+		log.Infof("[RequireAuth] Authenticated user: %v, remote=%s, path=%s", claims["sub"], r.RemoteAddr, r.URL.Path)
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
