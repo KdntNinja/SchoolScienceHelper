@@ -42,6 +42,18 @@ templ VerifyEmail() {
 									spinner.style.display = 'none';
 									message.textContent = 'Failed to send verification email. Please try again later or contact support.';
 								});
+							// Use SSE for verification status
+							const evtSource = new EventSource('/api/sse/email-verified');
+							evtSource.onmessage = function(event) {
+								try {
+									const data = JSON.parse(event.data);
+									if (data.verified) {
+										message.textContent = 'Your email is now verified! Redirecting...';
+										evtSource.close();
+										setTimeout(() => { window.location.href = '/dash'; }, 1200);
+									}
+								} catch {}
+							};
 						});
 					</script>
 				}

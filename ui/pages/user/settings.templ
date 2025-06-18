@@ -97,21 +97,20 @@ document.getElementById('resend-verification-btn').onclick = async () => {
   btn.disabled = false; btn.textContent = 'Resend Verification Email';
   document.getElementById('email-verification-status').textContent = resp.ok ? 'Verification email sent!' : 'Failed to send verification email.';
 };
+document.getElementById('logout-btn').onclick = () => {
+  const auth0Domain = "{{ auth0Domain }}";
+  const auth0ClientID = "{{ auth0ClientID }}";
+  const returnTo = encodeURIComponent('https://app.kdnsite.site');
+  window.location.href = `https://${auth0Domain}/v2/logout?client_id=${auth0ClientID}&returnTo=${returnTo}`;
+};
 document.getElementById('revoke-sessions-btn').onclick = async () => {
   const btn = document.getElementById('revoke-sessions-btn');
   btn.disabled = true; btn.textContent = 'Logging out...';
   await fetch('/api/auth/logout-all', { method: 'POST', credentials: 'include' });
-  // Redirect to Auth0 logout endpoint to clear all tokens
-  const auth0Domain = "${auth0Domain}";
-  const auth0ClientID = "${auth0ClientID}";
-  const returnTo = window.location.origin;
-  window.location.href = `https://${auth0Domain}/v2/logout?client_id=${auth0ClientID}&returnTo=${encodeURIComponent(returnTo)}`;
-};
-document.getElementById('logout-btn').onclick = () => {
-  const auth0Domain = "${auth0Domain}";
-  const auth0ClientID = "${auth0ClientID}";
-  const returnTo = window.location.origin;
-  window.location.href = `https://${auth0Domain}/v2/logout?client_id=${auth0ClientID}&returnTo=${encodeURIComponent(returnTo)}`;
+  const auth0Domain = "{{ auth0Domain }}";
+  const auth0ClientID = "{{ auth0ClientID }}";
+  const returnTo = encodeURIComponent('https://app.kdnsite.site');
+  window.location.href = `https://${auth0Domain}/v2/logout?client_id=${auth0ClientID}&returnTo=${returnTo}`;
 };
 </script>
 					}

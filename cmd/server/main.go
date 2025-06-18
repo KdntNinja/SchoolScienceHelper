@@ -320,6 +320,7 @@ func registerAPIRoutes(mux *http.ServeMux, db *sql.DB) {
 	mux.Handle("/api/decks", handlers.RequireAuth(anki.ListDecks(db)))
 	mux.Handle("/api/cards", handlers.RequireAuth(anki.ListCards(db)))
 	mux.Handle("/api/deckimport", handlers.RequireAuth(anki.ImportDeck(db)))
+	mux.HandleFunc("/api/sse/email-verified", handlers.EmailVerificationSSE)
 }
 
 func hasPermission(claims map[string]interface{}, permission string) bool {
