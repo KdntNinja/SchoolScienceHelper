@@ -40,23 +40,7 @@ templ Settings(auth0Domain string, auth0ClientID string) {
 								@button.Button(button.Props{ID: "resend-verification-btn", Class: "btn btn-sm btn-primary hidden"}) { Resend Verification Email }
 							}
 							@card.Card(card.Props{Class: "mb-6 p-4 bg-muted/30 rounded-xl border border-border"}) {
-								@card.Title(card.TitleProps{Class: "text-lg font-semibold mb-2"}) { Multi-Factor Authentication (MFA) }
-								@button.Button(button.Props{ID: "mfa-btn", Class: "btn btn-sm btn-primary"}) { Manage MFA }
-								@card.Description(card.DescriptionProps{Class: "text-xs text-muted-foreground mt-2"}) { MFA helps protect your account with an extra layer of security. }
-							}
-							@card.Card(card.Props{Class: "mb-6 p-4 bg-muted/30 rounded-xl border border-border"}) {
-								@card.Title(card.TitleProps{Class: "text-lg font-semibold mb-2"}) { Social Login }
-								@button.Button(button.Props{ID: "link-social-btn", Class: "btn btn-sm btn-primary"}) { Manage Social Accounts }
-								@card.Description(card.DescriptionProps{Class: "text-xs text-muted-foreground mt-2"}) { Link or unlink Google, GitHub, or other social accounts. }
-							}
-							@card.Card(card.Props{Class: "mb-6 p-4 bg-muted/30 rounded-xl border border-border"}) {
-								@card.Title(card.TitleProps{Class: "text-lg font-semibold mb-2"}) { Passwordless Login }
-								@button.Button(button.Props{ID: "passwordless-btn", Class: "btn btn-sm btn-primary"}) { Enable Passwordless (Magic Link) }
-								@card.Description(card.DescriptionProps{Class: "text-xs text-muted-foreground mt-2"}) { Sign in with a magic link sent to your email. }
-							}
-							@card.Card(card.Props{Class: "mb-6 p-4 bg-muted/30 rounded-xl border border-border"}) {
-								@card.Title(card.TitleProps{Class: "text-lg font-semibold mb-2"}) { Active Sessions }
-								<ul id="session-list" class="text-sm"></ul>
+								@card.Title(card.TitleProps{Class: "text-lg font-semibold mb-2"}) { Log out from all devices }
 								@button.Button(button.Props{ID: "revoke-sessions-btn", Class: "btn btn-sm btn-destructive mt-2"}) { Log out from all devices }
 							}
 						</section>
@@ -84,15 +68,6 @@ document.getElementById('resend-verification-btn').onclick = async () => {
   const resp = await fetch('/api/auth/resend-verification', { method: 'POST', credentials: 'include' });
   btn.disabled = false; btn.textContent = 'Resend Verification Email';
   document.getElementById('email-verification-status').textContent = resp.ok ? 'Verification email sent!' : 'Failed to send verification email.';
-};
-document.getElementById('mfa-btn').onclick = () => {
-  window.location.href = `https://${auth0Domain}/u/mfa-otp`;
-};
-document.getElementById('link-social-btn').onclick = () => {
-  window.location.href = `https://${auth0Domain}/u/social-accounts`;
-};
-document.getElementById('passwordless-btn').onclick = () => {
-  window.location.href = `https://${auth0Domain}/u/passwordless`;
 };
 document.getElementById('revoke-sessions-btn').onclick = async () => {
   const btn = document.getElementById('revoke-sessions-btn');
