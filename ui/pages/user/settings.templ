@@ -25,7 +25,10 @@ templ Settings(auth0Domain string, auth0ClientID string) {
 					@card.Title(card.TitleProps{Class: "font-semibold text-lg mb-1", ID: "profile-name"})
 					@card.Description(card.DescriptionProps{Class: "text-sm text-muted-foreground mb-1", ID: "profile-email"})
 					@badge.Badge(badge.Props{Class: "mb-1", ID: "profile-roles"})
-					@badge.Badge(badge.Props{Class: "mb-1", ID: "profile-verified-status"})
+					<div class="flex items-center gap-2 mt-1">
+						<span class="text-xs text-muted-foreground">Email Status:</span>
+						@badge.Badge(badge.Props{Class: "mb-1", ID: "profile-verified-status"})
+					</div>
 				}
 				@tabs.Tabs(tabs.Props{ID: "settings-tabs", Class: "w-full"}) {
 					@tabs.List(tabs.ListProps{ID: "settings-tabs-list", Class: "mb-6"}) {
@@ -81,18 +84,6 @@ fetch('/api/auth/check', { credentials: 'include' })
       document.getElementById('profile-name').textContent = user.name || 'Unknown';
       document.getElementById('profile-email').textContent = user.email || '';
       document.getElementById('profile-roles').textContent = user.roles ? user.roles.join(', ') : '';
-      document.getElementById('profile-verified').textContent = user.email_verified ? 'Verified' : 'Not Verified';
-      // Add visual badge for email verification
-      const badge = document.getElementById('profile-verified-status');
-      if (user.email_verified) {
-        badge.innerHTML = `<span class='inline-flex items-center gap-1 text-green-600'><svg xmlns='http://www.w3.org/2000/svg' class='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 13l4 4L19 7' /></svg> Verified</span>`;
-        badge.classList.remove('bg-red-100', 'text-red-700');
-        badge.classList.add('bg-green-100', 'text-green-700');
-      } else {
-        badge.innerHTML = `<span class='inline-flex items-center gap-1 text-red-600'><svg xmlns='http://www.w3.org/2000/svg' class='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 18L18 6M6 6l12 12' /></svg> Not Verified</span>`;
-        badge.classList.remove('bg-green-100', 'text-green-700');
-        badge.classList.add('bg-red-100', 'text-red-700');
-      }
       // Email verification
       let emailVerified = !!user.email_verified;
       document.getElementById('email-verification-status').textContent = emailVerified ? 'Your email is verified.' : 'Your email is not verified.';
