@@ -16,12 +16,15 @@ import (
 	"KdnSite/internal/resources"
 	"KdnSite/internal/revision"
 	"KdnSite/internal/user"
+	adminpages "KdnSite/ui/pages/admin"
 	errorpages "KdnSite/ui/pages/error"
 	legalpages "KdnSite/ui/pages/legal"
 	publicpages "KdnSite/ui/pages/public"
 	userpages "KdnSite/ui/pages/user"
 	userpagescommunity "KdnSite/ui/pages/user/community"
 	userpagesprojects "KdnSite/ui/pages/user/projects"
+
+	"github.com/golang-jwt/jwt/v4"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -227,6 +230,26 @@ func registerUserRoutes(mux *http.ServeMux) {
 			log.Errorf("Render error (InternalServerError): %v", err)
 		}
 	})
+	mux.HandleFunc("/admin", func(w http.ResponseWriter, r *http.Request) {
+		user := r.Context().Value("user")
+		var claims map[string]interface{}
+		if user != nil {
+			if token, ok := user.(*jwt.Token); ok {
+				if c, ok := token.Claims.(jwt.MapClaims); ok {
+					claims = make(map[string]interface{})
+					for k, v := range c {
+						claims[k] = v
+					}
+				}
+			}
+		}
+		if claims == nil || !isAdmin(claims) {
+			w.WriteHeader(http.StatusForbidden)
+			_ = errorpages.Forbidden().Render(r.Context(), w)
+			return
+		}
+		_ = adminpages.AdminPanel().Render(r.Context(), w)
+	})
 }
 
 func SetupAssetsRoutes(mux *http.ServeMux) {
@@ -301,4 +324,17 @@ func registerAPIRoutes(mux *http.ServeMux, db *sql.DB) {
 	mux.Handle("/api/decks", handlers.RequireAuth(anki.ListDecks(db)))
 	mux.Handle("/api/cards", handlers.RequireAuth(anki.ListCards(db)))
 	mux.Handle("/api/deckimport", handlers.RequireAuth(anki.ImportDeck(db)))
+}
+
+func isAdmin(claims map[string]interface{}) bool {
+	roles, ok := claims["roles"].([]interface{})
+	if !ok {
+		return false
+	}
+	for _, role := range roles {
+		if roleStr, ok := role.(string); ok && roleStr == "admin" {
+			return true
+		}
+	}
+	return false
 }
