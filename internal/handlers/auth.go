@@ -220,8 +220,11 @@ func ResendVerificationHandler(w http.ResponseWriter, r *http.Request) {
 	req.Header.Set("Content-Type", "application/json")
 	resp, err = client.Do(req)
 	if err != nil || resp.StatusCode >= 400 {
+		var respBody bytes.Buffer
+		respBody.ReadFrom(resp.Body)
+		log.Errorf("[ResendVerificationHandler] Auth0 error: %s", respBody.String())
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Failed to send verification email"))
+		w.Write([]byte("Failed to send verification email: " + respBody.String()))
 		return
 	}
 	w.WriteHeader(http.StatusOK)
@@ -331,6 +334,7 @@ func ResendVerificationEmail(userID string) {
 	domain := os.Getenv("AUTH0_DOMAIN")
 	apiToken := os.Getenv("AUTH0_MANAGEMENT_TOKEN")
 	if domain == "" || apiToken == "" || userID == "" {
+		log.Error("[ResendVerificationEmail] Missing config or userID")
 		return
 	}
 	payload := map[string]string{"user_id": userID, "client_id": os.Getenv("AUTH0_CLIENT_ID")}
@@ -339,5 +343,15 @@ func ResendVerificationEmail(userID string) {
 	req, _ := http.NewRequest("POST", "https://"+domain+"/api/v2/jobs/verification-email", bytes.NewReader(body))
 	req.Header.Set("Authorization", "Bearer "+apiToken)
 	req.Header.Set("Content-Type", "application/json")
-	client.Do(req) // ignore response
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Errorf("[ResendVerificationEmail] Request error: %v", err)
+		return
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode >= 400 {
+		var respBody bytes.Buffer
+		respBody.ReadFrom(resp.Body)
+		log.Errorf("[ResendVerificationEmail] Auth0 error: %s", respBody.String())
+	}
 }
