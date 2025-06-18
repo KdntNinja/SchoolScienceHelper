@@ -75,6 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Check for existing session
   fetch('/api/auth/check', { credentials: 'include' }).then(r => r.json()).then(data => {
     if (data && data.authenticated) {
+      // Allow all authenticated users (even if unverified) to access /dash
       window.location.replace('/dash');
       return;
     }
@@ -110,12 +111,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		const nonce = Date.now();
 		window.location.href = `https://${domain}/authorize?response_type=id_token%20token&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=openid%20profile%20email&nonce=${nonce}`;
 	};
-	// If already authenticated, redirect to /dash
-	fetch('/api/auth/check', { credentials: 'include' }).then(r => r.json()).then(data => {
-		if (data && data.authenticated) {
-			window.location.replace('/dash');
-		}
-	});
+  // Note: /dash and other privileged pages should check email_verified on the backend and restrict actions accordingly.
 });
 </script>
 			}
