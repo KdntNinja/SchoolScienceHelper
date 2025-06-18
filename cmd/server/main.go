@@ -327,12 +327,16 @@ func registerAPIRoutes(mux *http.ServeMux, db *sql.DB) {
 }
 
 func isAdmin(claims map[string]interface{}) bool {
+	adminRoleID := os.Getenv("ADMIN_ROLE_ID")
+	if adminRoleID == "" {
+		return false
+	}
 	roles, ok := claims["roles"].([]interface{})
 	if !ok {
 		return false
 	}
 	for _, role := range roles {
-		if roleStr, ok := role.(string); ok && roleStr == "admin" {
+		if roleStr, ok := role.(string); ok && roleStr == adminRoleID {
 			return true
 		}
 	}
