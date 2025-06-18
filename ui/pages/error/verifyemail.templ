@@ -7,20 +7,45 @@ import (
 
 templ VerifyEmail() {
 	@layouts.BaseLayout() {
-		@card.Card(card.Props{Class: "flex flex-col items-center justify-center min-h-[calc(100vh-72px)] bg-background px-4 py-12 w-full max-w-lg mx-auto rounded-lg shadow-xl border border-border gap-6"}) {
-			@card.Header(card.HeaderProps{}) {
-				@card.Title(card.TitleProps{Class: "text-3xl font-bold text-primary mb-2 text-center"}) {
-					Verify Your Email
+		<div class="flex items-center justify-center min-h-screen bg-background px-4">
+			@card.Card(card.Props{Class: "flex flex-col items-center justify-center bg-background py-12 max-w-lg w-full mx-auto rounded-lg shadow-xl border border-border gap-6"}) {
+				@card.Header(card.HeaderProps{}) {
+					@card.Title(card.TitleProps{Class: "text-3xl font-bold text-primary mb-2 text-center"}) {
+						Verify Your Email
+					}
+					@card.Description(card.DescriptionProps{Class: "text-lg text-muted-foreground mb-4 text-center"}) {
+						A verification email has been sent to your address. Please check your inbox and follow the link to verify your account.
+					}
 				}
-				@card.Description(card.DescriptionProps{Class: "text-lg text-muted-foreground mb-4 text-center"}) {
-					A verification email has been sent to your address. Please check your inbox and follow the link to verify your account.
+				@card.Content(card.ContentProps{Class: "flex flex-col items-center gap-4 w-full"}) {
+					<div id="verify-status" class="w-full flex flex-col items-center">
+						<span id="verify-spinner" class="mb-2">Sending verification email...</span>
+						<span id="verify-message" class="text-base text-center text-muted-foreground max-w-md"></span>
+					</div>
+					<p class="text-base text-center text-muted-foreground max-w-md">
+						If you don't see the email, check your spam folder or <a href="/" class="text-primary underline">return home</a>.
+					</p>
+					<script>
+						document.addEventListener('DOMContentLoaded', function() {
+							const spinner = document.getElementById('verify-spinner');
+							const message = document.getElementById('verify-message');
+							fetch('/api/auth/resend-verification', { method: 'POST', credentials: 'include' })
+								.then(r => {
+									spinner.style.display = 'none';
+									if (r.ok) {
+										message.textContent = 'A verification email has been sent to your address. Please check your inbox and follow the link to verify your account.';
+									} else {
+										message.textContent = 'Failed to send verification email. Please try again later or contact support.';
+									}
+								})
+								.catch(() => {
+									spinner.style.display = 'none';
+									message.textContent = 'Failed to send verification email. Please try again later or contact support.';
+								});
+						});
+					</script>
 				}
 			}
-			@card.Content(card.ContentProps{Class: "flex flex-col items-center gap-4 w-full"}) {
-				<p class="text-base text-center text-muted-foreground max-w-md">
-					If you don't see the email, check your spam folder or <a href="/" class="text-primary underline">return home</a>.
-				</p>
-			}
-		}
+		</div>
 	}
 }
