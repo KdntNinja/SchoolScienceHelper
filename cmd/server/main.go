@@ -243,7 +243,8 @@ func registerUserRoutes(mux *http.ServeMux) {
 				}
 			}
 		}
-		if claims == nil || !isAdmin(claims) {
+		adminPerm := os.Getenv("ADMIN_PERMISSION")
+		if claims == nil || adminPerm == "" || !hasPermission(claims, adminPerm) {
 			w.WriteHeader(http.StatusForbidden)
 			_ = errorpages.Forbidden().Render(r.Context(), w)
 			return
@@ -326,17 +327,13 @@ func registerAPIRoutes(mux *http.ServeMux, db *sql.DB) {
 	mux.Handle("/api/deckimport", handlers.RequireAuth(anki.ImportDeck(db)))
 }
 
-func isAdmin(claims map[string]interface{}) bool {
-	adminRoleID := os.Getenv("ADMIN_ROLE_ID")
-	if adminRoleID == "" {
-		return false
-	}
-	roles, ok := claims["roles"].([]interface{})
+func hasPermission(claims map[string]interface{}, permission string) bool {
+	perms, ok := claims["permissions"].([]interface{})
 	if !ok {
 		return false
 	}
-	for _, role := range roles {
-		if roleStr, ok := role.(string); ok && roleStr == adminRoleID {
+	for _, p := range perms {
+		if pstr, ok := p.(string); ok && pstr == permission {
 			return true
 		}
 	}
