@@ -25,10 +25,6 @@ templ Settings(auth0Domain string, auth0ClientID string) {
 					@card.Title(card.TitleProps{Class: "font-semibold text-lg mb-1", ID: "profile-name"})
 					@card.Description(card.DescriptionProps{Class: "text-sm text-muted-foreground mb-1", ID: "profile-email"})
 					@badge.Badge(badge.Props{Class: "mb-1", ID: "profile-roles"})
-					<div class="flex items-center gap-2 mt-1">
-						<span class="text-xs text-muted-foreground">Email Status:</span>
-						@badge.Badge(badge.Props{Class: "mb-1", ID: "profile-verified-status"})
-					</div>
 				}
 				@tabs.Tabs(tabs.Props{ID: "settings-tabs", Class: "w-full"}) {
 					@tabs.List(tabs.ListProps{ID: "settings-tabs-list", Class: "mb-6"}) {
@@ -48,13 +44,18 @@ templ Settings(auth0Domain string, auth0ClientID string) {
 					@tabs.Content(tabs.ContentProps{Value: "security", TabsID: "settings-tabs"}) {
 						<section class="space-y-8">
 							@card.Card(card.Props{Class: "mb-6 p-4 bg-muted/30 rounded-xl border border-border"}) {
-								@card.Title(card.TitleProps{Class: "text-lg font-semibold mb-2"}) {
-									Email Verification 
-								}
-								@card.Description(card.DescriptionProps{ID: "email-verification-status", Class: "mb-2 text-sm"})
-								@button.Button(button.Props{ID: "resend-verification-btn", Class: "btn btn-sm btn-primary hidden"}) {
-									Resend Verification Email 
-								}
+  @card.Title(card.TitleProps{Class: "text-lg font-semibold mb-2 flex items-center gap-2"}) {
+    Email Verification
+    <span id="profile-verified-status" class="inline-flex items-center text-xs font-semibold px-2 py-1 rounded transition-colors duration-200"></span>
+  }
+  <div class="flex flex-col gap-2 mb-2">
+    <span id="email-verification-status" class="text-sm"></span>
+    <span id="email-verification-feedback" class="text-xs"></span>
+  </div>
+  <button id="resend-verification-btn" class="btn btn-sm btn-primary hidden flex items-center gap-2" type="button">
+    <span id="resend-spinner" class="hidden animate-spin h-4 w-4 border-2 border-t-transparent border-white rounded-full"></span>
+    <span>Resend Verification Email</span>
+  </button>
 							}
 							@card.Card(card.Props{Class: "mb-6 p-4 bg-muted/30 rounded-xl border border-border"}) {
 								@card.Title(card.TitleProps{Class: "text-lg font-semibold mb-2"}) {
@@ -75,6 +76,17 @@ templ Settings(auth0Domain string, auth0ClientID string) {
 						</section>
 						<script>
 // Profile info
+function updateVerificationBadge(emailVerified) {
+  const badge = document.getElementById('profile-verified-status');
+  if (!badge) return;
+  if (emailVerified) {
+    badge.innerHTML = `<svg class='h-4 w-4 text-green-600 inline' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 13l4 4L19 7' /></svg> <span class='text-green-700'>Verified</span>`;
+    badge.className = 'inline-flex items-center text-xs font-semibold px-2 py-1 rounded bg-green-100 text-green-700';
+  } else {
+    badge.innerHTML = `<svg class='h-4 w-4 text-red-600 inline' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 18L18 6M6 6l12 12' /></svg> <span class='text-red-700'>Not Verified</span>`;
+    badge.className = 'inline-flex items-center text-xs font-semibold px-2 py-1 rounded bg-red-100 text-red-700';
+  }
+}
 fetch('/api/auth/check', { credentials: 'include' })
   .then(r => r.ok ? r.json() : Promise.reject('Failed to check auth'))
   .then(data => {
@@ -84,18 +96,29 @@ fetch('/api/auth/check', { credentials: 'include' })
       document.getElementById('profile-name').textContent = user.name || 'Unknown';
       document.getElementById('profile-email').textContent = user.email || '';
       document.getElementById('profile-roles').textContent = user.roles ? user.roles.join(', ') : '';
-      // Email verification
       let emailVerified = !!user.email_verified;
-      document.getElementById('email-verification-status').textContent = emailVerified ? 'Your email is verified.' : 'Your email is not verified.';
+      updateVerificationBadge(emailVerified);
+      document.getElementById('email-verification-status').textContent = emailVerified ? 'Your email is verified.' : 'Your email is not verified. Please verify to unlock all features.';
       document.getElementById('resend-verification-btn').classList.toggle('hidden', emailVerified);
     }
   });
 document.getElementById('resend-verification-btn').onclick = async () => {
   const btn = document.getElementById('resend-verification-btn');
-  btn.disabled = true; btn.textContent = 'Sending...';
+  const spinner = document.getElementById('resend-spinner');
+  const feedback = document.getElementById('email-verification-feedback');
+  btn.disabled = true;
+  spinner.classList.remove('hidden');
+  feedback.textContent = '';
   const resp = await fetch('/api/auth/resend-verification', { method: 'POST', credentials: 'include' });
-  btn.disabled = false; btn.textContent = 'Resend Verification Email';
-  document.getElementById('email-verification-status').textContent = resp.ok ? 'Verification email sent!' : 'Failed to send verification email.';
+  spinner.classList.add('hidden');
+  btn.disabled = false;
+  if (resp.ok) {
+    feedback.textContent = 'Verification email sent! Check your inbox.';
+    feedback.className = 'text-green-600';
+  } else {
+    feedback.textContent = 'Failed to send verification email.';
+    feedback.className = 'text-red-600';
+  }
 };
 document.getElementById('logout-btn').onclick = () => {
   const auth0Domain = "{{ auth0Domain }}";
