@@ -24,8 +24,6 @@ import (
 	userpagescommunity "KdnSite/ui/pages/user/community"
 	userpagesprojects "KdnSite/ui/pages/user/projects"
 
-	"github.com/golang-jwt/jwt/v4"
-
 	log "github.com/sirupsen/logrus"
 )
 
@@ -231,25 +229,22 @@ func registerUserRoutes(mux *http.ServeMux) {
 		}
 	})
 	mux.HandleFunc("/admin", func(w http.ResponseWriter, r *http.Request) {
-		user := r.Context().Value("user")
-		var claims map[string]interface{}
-		if user != nil {
-			if token, ok := user.(*jwt.Token); ok {
-				if c, ok := token.Claims.(jwt.MapClaims); ok {
-					claims = make(map[string]interface{})
-					for k, v := range c {
-						claims[k] = v
-					}
+		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			user := r.Context().Value("user")
+			var claims map[string]interface{}
+			if user != nil {
+				if c, ok := user.(map[string]interface{}); ok {
+					claims = c
 				}
 			}
-		}
-		adminPerm := os.Getenv("ADMIN_PERMISSION")
-		if claims == nil || adminPerm == "" || !hasPermission(claims, adminPerm) {
-			w.WriteHeader(http.StatusForbidden)
-			_ = errorpages.Forbidden().Render(r.Context(), w)
-			return
-		}
-		_ = adminpages.AdminPanel().Render(r.Context(), w)
+			adminPerm := os.Getenv("ADMIN_PERMISSION")
+			if claims == nil || adminPerm == "" || !hasPermission(claims, adminPerm) {
+				w.WriteHeader(http.StatusForbidden)
+				_ = errorpages.Forbidden().Render(r.Context(), w)
+				return
+			}
+			_ = adminpages.AdminPanel().Render(r.Context(), w)
+		})).ServeHTTP(w, r)
 	})
 }
 

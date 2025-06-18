@@ -11,14 +11,14 @@ templ ErrorPage(code int, title, description string) {
 			@card.Card(card.Props{Class: "flex flex-col items-center justify-center bg-background py-12 max-w-lg w-full mx-auto rounded-lg shadow-xl border border-border gap-6"}) {
 				@card.Header(card.HeaderProps{}) {
 					@card.Title(card.TitleProps{Class: "text-5xl font-extrabold text-primary mb-2 text-center"}) {
-						{code}
+						{ code }
 					}
 					@card.Description(card.DescriptionProps{Class: "text-xl text-primary font-semibold mb-2 text-center"}) {
-						{title}
+						{ title }
 					}
 				}
 				@card.Content(card.ContentProps{Class: "flex flex-col items-center gap-4 w-full"}) {
-					<p class="text-base text-center text-muted-foreground max-w-md mb-4">{description}</p>
+					<p class="text-base text-center text-muted-foreground max-w-md mb-4">{ description }</p>
 					<div id="error-btn"></div>
 					<script>
 						document.addEventListener('DOMContentLoaded', function() {

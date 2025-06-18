@@ -14,34 +14,60 @@ templ Settings(auth0Domain string, auth0ClientID string) {
 	@layouts.BaseLayout() {
 		@card.Card(card.Props{Class: "flex flex-col items-center min-h-[calc(100vh-72px)] bg-gradient-to-b from-primary/5 to-background px-4 py-12 relative w-full max-w-2xl mx-auto p-8 gap-8"}) {
 			@card.Header(card.HeaderProps{}) {
-				@card.Title(card.TitleProps{Class: "text-3xl font-bold mb-2 text-primary"}) { Settings }
+				@card.Title(card.TitleProps{Class: "text-3xl font-bold mb-2 text-primary"}) {
+					Settings 
+				}
 			}
 			@card.Content(card.ContentProps{}) {
 				<!-- User Profile Card -->
 				@card.Card(card.Props{Class: "w-full flex flex-col items-center justify-center mb-8 p-6 rounded-xl border border-border bg-muted/30 shadow"}) {
-					@avatar.Avatar(avatar.Props{Class: "w-16 h-16 mb-2", ID: "profile-avatar"}) {}
-					@card.Title(card.TitleProps{Class: "font-semibold text-lg mb-1", ID: "profile-name"}) { }
-					@card.Description(card.DescriptionProps{Class: "text-sm text-muted-foreground mb-1", ID: "profile-email"}) { }
-					@badge.Badge(badge.Props{Class: "mb-1", ID: "profile-roles"}) { }
-					@badge.Badge(badge.Props{Class: "mb-1", ID: "profile-verified"}) { }
+					@avatar.Avatar(avatar.Props{Class: "w-16 h-16 mb-2", ID: "profile-avatar"})
+					@card.Title(card.TitleProps{Class: "font-semibold text-lg mb-1", ID: "profile-name"})
+					@card.Description(card.DescriptionProps{Class: "text-sm text-muted-foreground mb-1", ID: "profile-email"})
+					@badge.Badge(badge.Props{Class: "mb-1", ID: "profile-roles"})
+					@badge.Badge(badge.Props{Class: "mb-1", ID: "profile-verified-status"})
 				}
 				@tabs.Tabs(tabs.Props{ID: "settings-tabs", Class: "w-full"}) {
 					@tabs.List(tabs.ListProps{ID: "settings-tabs-list", Class: "mb-6"}) {
-						@tabs.Trigger(tabs.TriggerProps{Value: "security", TabsID: "settings-tabs"}) { Security }
-						@tabs.Trigger(tabs.TriggerProps{Value: "account", TabsID: "settings-tabs"}) { Account }
-						@tabs.Trigger(tabs.TriggerProps{Value: "theme", TabsID: "settings-tabs"}) { Theme }
-						@tabs.Trigger(tabs.TriggerProps{Value: "notifications", TabsID: "settings-tabs"}) { Notifications }
+						@tabs.Trigger(tabs.TriggerProps{Value: "security", TabsID: "settings-tabs"}) {
+							Security 
+						}
+						@tabs.Trigger(tabs.TriggerProps{Value: "account", TabsID: "settings-tabs"}) {
+							Account 
+						}
+						@tabs.Trigger(tabs.TriggerProps{Value: "theme", TabsID: "settings-tabs"}) {
+							Theme 
+						}
+						@tabs.Trigger(tabs.TriggerProps{Value: "notifications", TabsID: "settings-tabs"}) {
+							Notifications 
+						}
 					}
 					@tabs.Content(tabs.ContentProps{Value: "security", TabsID: "settings-tabs"}) {
 						<section class="space-y-8">
 							@card.Card(card.Props{Class: "mb-6 p-4 bg-muted/30 rounded-xl border border-border"}) {
-								@card.Title(card.TitleProps{Class: "text-lg font-semibold mb-2"}) { Email Verification }
-								@card.Description(card.DescriptionProps{ID: "email-verification-status", Class: "mb-2 text-sm"}) { }
-								@button.Button(button.Props{ID: "resend-verification-btn", Class: "btn btn-sm btn-primary hidden"}) { Resend Verification Email }
+								@card.Title(card.TitleProps{Class: "text-lg font-semibold mb-2"}) {
+									Email Verification 
+								}
+								@card.Description(card.DescriptionProps{ID: "email-verification-status", Class: "mb-2 text-sm"})
+								@button.Button(button.Props{ID: "resend-verification-btn", Class: "btn btn-sm btn-primary hidden"}) {
+									Resend Verification Email 
+								}
 							}
 							@card.Card(card.Props{Class: "mb-6 p-4 bg-muted/30 rounded-xl border border-border"}) {
-								@card.Title(card.TitleProps{Class: "text-lg font-semibold mb-2"}) { Log out from all devices }
-								@button.Button(button.Props{ID: "revoke-sessions-btn", Class: "btn btn-sm btn-destructive mt-2"}) { Log out from all devices }
+								@card.Title(card.TitleProps{Class: "text-lg font-semibold mb-2"}) {
+									Log out 
+								}
+								@button.Button(button.Props{ID: "logout-btn", Class: "btn btn-sm btn-destructive mt-2"}) {
+									Log out 
+								}
+							}
+							@card.Card(card.Props{Class: "mb-6 p-4 bg-muted/30 rounded-xl border border-border"}) {
+								@card.Title(card.TitleProps{Class: "text-lg font-semibold mb-2"}) {
+									Log out from all devices 
+								}
+								@button.Button(button.Props{ID: "revoke-sessions-btn", Class: "btn btn-sm btn-destructive mt-2"}) {
+									Log out from all devices 
+								}
 							}
 						</section>
 						<script>
@@ -56,6 +82,17 @@ fetch('/api/auth/check', { credentials: 'include' })
       document.getElementById('profile-email').textContent = user.email || '';
       document.getElementById('profile-roles').textContent = user.roles ? user.roles.join(', ') : '';
       document.getElementById('profile-verified').textContent = user.email_verified ? 'Verified' : 'Not Verified';
+      // Add visual badge for email verification
+      const badge = document.getElementById('profile-verified-status');
+      if (user.email_verified) {
+        badge.innerHTML = `<span class='inline-flex items-center gap-1 text-green-600'><svg xmlns='http://www.w3.org/2000/svg' class='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 13l4 4L19 7' /></svg> Verified</span>`;
+        badge.classList.remove('bg-red-100', 'text-red-700');
+        badge.classList.add('bg-green-100', 'text-green-700');
+      } else {
+        badge.innerHTML = `<span class='inline-flex items-center gap-1 text-red-600'><svg xmlns='http://www.w3.org/2000/svg' class='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 18L18 6M6 6l12 12' /></svg> Not Verified</span>`;
+        badge.classList.remove('bg-green-100', 'text-green-700');
+        badge.classList.add('bg-red-100', 'text-red-700');
+      }
       // Email verification
       let emailVerified = !!user.email_verified;
       document.getElementById('email-verification-status').textContent = emailVerified ? 'Your email is verified.' : 'Your email is not verified.';
@@ -79,29 +116,41 @@ document.getElementById('revoke-sessions-btn').onclick = async () => {
   const returnTo = window.location.origin;
   window.location.href = `https://${auth0Domain}/v2/logout?client_id=${auth0ClientID}&returnTo=${encodeURIComponent(returnTo)}`;
 };
+document.getElementById('logout-btn').onclick = () => {
+  const auth0Domain = "${auth0Domain}";
+  const auth0ClientID = "${auth0ClientID}";
+  const returnTo = window.location.origin;
+  window.location.href = `https://${auth0Domain}/v2/logout?client_id=${auth0ClientID}&returnTo=${encodeURIComponent(returnTo)}`;
+};
 </script>
 					}
 					@tabs.Content(tabs.ContentProps{Value: "account", TabsID: "settings-tabs"}) {
 						<section class="space-y-8">
 							@card.Card(card.Props{Class: "p-6 bg-muted/30 border border-border"}) {
-								@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) { Change Password }
-								@input.Input(input.Props{ID: "change-password-email", Type: "email", Placeholder: "Your email", Class: "mb-2 w-full"}) {}
-								@button.Button(button.Props{ID: "change-password-btn", Class: "btn btn-primary w-full"}) { Send Password Change Email }
-								@card.Description(card.DescriptionProps{ID: "change-password-status", Class: "text-xs mt-2"}) { }
+								@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) {
+									Change Password 
+								}
+								@input.Input(input.Props{ID: "change-password-email", Type: "email", Placeholder: "Your email", Class: "mb-2 w-full"})
+								@button.Button(button.Props{ID: "change-password-btn", Class: "btn btn-primary w-full"}) {
+									Send Password Change Email 
+								}
+								@card.Description(card.DescriptionProps{ID: "change-password-status", Class: "text-xs mt-2"})
 							}
 							@card.Card(card.Props{Class: "p-6 bg-muted/30 border border-border"}) {
-								@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) { Delete Account }
+								@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) {
+									Delete Account 
+								}
 								<div id="delete-confirm-section">
 									@button.Button(button.Props{
-    ID: "delete-btn",
-    Variant: button.VariantDefault,
-    Class: "w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded shadow transition-colors duration-150 mt-4",
-    Attributes: templ.Attributes{
-        "data-theme-btn": "true",
-    },
-}) {
-    Delete Account
-}
+										ID:      "delete-btn",
+										Variant: button.VariantDefault,
+										Class:   "w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded shadow transition-colors duration-150 mt-4",
+										Attributes: templ.Attributes{
+											"data-theme-btn": "true",
+										},
+									}) {
+										Delete Account
+									}
 								</div>
 							}
 						</section>
@@ -191,13 +240,21 @@ themeBtns.forEach(btn => {
 					}
 					@tabs.Content(tabs.ContentProps{Value: "theme", TabsID: "settings-tabs"}) {
 						@card.Card(card.Props{Class: "p-6 bg-muted/30 border border-border"}) {
-							@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) { Theme }
+							@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) {
+								Theme 
+							}
 							<div class="flex gap-4 items-center">
-								@button.Button(button.Props{ID: "theme-light", Class: "btn btn-sm"}) { Light }
-								@button.Button(button.Props{ID: "theme-dark", Class: "btn btn-sm"}) { Dark }
-								@button.Button(button.Props{ID: "theme-system", Class: "btn btn-sm"}) { System }
+								@button.Button(button.Props{ID: "theme-light", Class: "btn btn-sm"}) {
+									Light 
+								}
+								@button.Button(button.Props{ID: "theme-dark", Class: "btn btn-sm"}) {
+									Dark 
+								}
+								@button.Button(button.Props{ID: "theme-system", Class: "btn btn-sm"}) {
+									System 
+								}
 							</div>
-							@card.Description(card.DescriptionProps{ID: "theme-status", Class: "text-xs mt-2"}) { }
+							@card.Description(card.DescriptionProps{ID: "theme-status", Class: "text-xs mt-2"})
 						}
 						<script>
 function setTheme(theme) {
@@ -212,8 +269,12 @@ document.getElementById('theme-system').onclick = () => setTheme('system');
 					}
 					@tabs.Content(tabs.ContentProps{Value: "notifications", TabsID: "settings-tabs"}) {
 						@card.Card(card.Props{Class: "p-6 bg-muted/30 border border-border"}) {
-							@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) { Notification Preferences }
-							@card.Description(card.DescriptionProps{Class: "text-muted-foreground"}) { Coming soon: control your email and in-app notification preferences. }
+							@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) {
+								Notification Preferences 
+							}
+							@card.Description(card.DescriptionProps{Class: "text-muted-foreground"}) {
+								Coming soon: control your email and in-app notification preferences. 
+							}
 						}
 					}
 					@tabs.Script()

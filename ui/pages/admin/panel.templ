@@ -22,7 +22,7 @@ templ AdminPanel() {
 							Import Anki Deck
 						}
 						<form id="anki-import-form" enctype="multipart/form-data" class="space-y-4">
-							<input id="anki-file-input" name="file" type="file" accept=".apkg" class="block" required />
+							<input id="anki-file-input" name="file" type="file" accept=".apkg" class="block" required/>
 							@button.Button(button.Props{Type: "submit", Variant: button.VariantDefault}) {
 								Import Deck
 							}
