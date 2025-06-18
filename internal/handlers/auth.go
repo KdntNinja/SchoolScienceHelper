@@ -186,15 +186,19 @@ func ResendVerificationHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	domain := os.Getenv("AUTH0_DOMAIN")
+	mgmtDomain := os.Getenv("AUTH0_MANAGEMENT_DOMAIN")
+	if mgmtDomain == "" {
+		mgmtDomain = domain
+	}
 	apiToken := os.Getenv("AUTH0_MANAGEMENT_TOKEN")
-	if domain == "" || apiToken == "" {
+	if mgmtDomain == "" || apiToken == "" {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("Auth0 config missing"))
 		return
 	}
 	// Get user email from Auth0
 	client := &http.Client{Timeout: 10 * time.Second}
-	req, _ := http.NewRequest("GET", "https://"+domain+"/api/v2/users/"+userID, nil)
+	req, _ := http.NewRequest("GET", "https://"+mgmtDomain+"/api/v2/users/"+userID, nil)
 	req.Header.Set("Authorization", "Bearer "+apiToken)
 	resp, err := client.Do(req)
 	if err != nil || resp.StatusCode >= 400 {
@@ -215,7 +219,7 @@ func ResendVerificationHandler(w http.ResponseWriter, r *http.Request) {
 	// Trigger verification email
 	payload := map[string]string{"user_id": userID, "client_id": os.Getenv("AUTH0_CLIENT_ID")}
 	body, _ := json.Marshal(payload)
-	req, _ = http.NewRequest("POST", "https://"+domain+"/api/v2/jobs/verification-email", bytes.NewReader(body))
+	req, _ = http.NewRequest("POST", "https://"+mgmtDomain+"/api/v2/jobs/verification-email", bytes.NewReader(body))
 	req.Header.Set("Authorization", "Bearer "+apiToken)
 	req.Header.Set("Content-Type", "application/json")
 	resp, err = client.Do(req)
@@ -332,15 +336,19 @@ func AssignDefaultRole(userID string) error {
 // Helper to trigger verification email (calls Auth0 Management API)
 func ResendVerificationEmail(userID string) {
 	domain := os.Getenv("AUTH0_DOMAIN")
+	mgmtDomain := os.Getenv("AUTH0_MANAGEMENT_DOMAIN")
+	if mgmtDomain == "" {
+		mgmtDomain = domain
+	}
 	apiToken := os.Getenv("AUTH0_MANAGEMENT_TOKEN")
-	if domain == "" || apiToken == "" || userID == "" {
+	if mgmtDomain == "" || apiToken == "" || userID == "" {
 		log.Error("[ResendVerificationEmail] Missing config or userID")
 		return
 	}
 	payload := map[string]string{"user_id": userID, "client_id": os.Getenv("AUTH0_CLIENT_ID")}
 	body, _ := json.Marshal(payload)
 	client := &http.Client{Timeout: 10 * time.Second}
-	req, _ := http.NewRequest("POST", "https://"+domain+"/api/v2/jobs/verification-email", bytes.NewReader(body))
+	req, _ := http.NewRequest("POST", "https://"+mgmtDomain+"/api/v2/jobs/verification-email", bytes.NewReader(body))
 	req.Header.Set("Authorization", "Bearer "+apiToken)
 	req.Header.Set("Content-Type", "application/json")
 	resp, err := client.Do(req)
