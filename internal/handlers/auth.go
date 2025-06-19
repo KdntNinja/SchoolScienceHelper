@@ -259,7 +259,10 @@ func ChangeUsernameHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	client := &http.Client{Timeout: 10 * time.Second}
-	payload := map[string]string{"username": req.Username}
+	payload := map[string]interface{}{
+		"nickname": req.Username, // Auth0 uses "nickname" for display name
+		// "username" is only available for certain DB connections, but "nickname" is always present
+	}
 	body, _ := json.Marshal(payload)
 	url := "https://" + domain + "/api/v2/users/" + userID
 	reqAPI, _ := http.NewRequest("PATCH", url, bytes.NewReader(body))
@@ -268,11 +271,11 @@ func ChangeUsernameHandler(w http.ResponseWriter, r *http.Request) {
 	resp, err := client.Do(reqAPI)
 	if err != nil || resp.StatusCode >= 400 {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Failed to update username"))
+		w.Write([]byte("Failed to update username in Auth0"))
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Username updated"))
+	w.Write([]byte("Username updated in Auth0"))
 }
 
 // Helper to extract user ID from JWT (sub claim)
