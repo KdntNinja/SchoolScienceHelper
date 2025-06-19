@@ -144,10 +144,21 @@ func registerAuthRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("/api/auth/logout", handlers.LogoutHandler)
 	mux.HandleFunc("/api/auth/delete", handlers.DeleteAccountHandler)
 	mux.HandleFunc("/api/auth/change-password", handlers.ChangePasswordHandler)
+	mux.HandleFunc("/api/auth/change-username", handlers.ChangeUsernameHandler)
 	mux.Handle("/api/auth/resend-verification", handlers.RequireAuth(http.HandlerFunc(handlers.ResendVerificationHandler)))
 	mux.Handle("/api/auth/logout-all", handlers.RequireAuth(http.HandlerFunc(handlers.LogoutAllHandler)))
 	mux.Handle("/api/auth/sessions", handlers.RequireAuth(http.HandlerFunc(handlers.SessionsHandler)))
 	mux.HandleFunc("/api/auth/check", handlers.AuthCheckHandler)
+	mux.HandleFunc("/api/auth/current-username", func(w http.ResponseWriter, r *http.Request) {
+		username, err := handlers.GetUsernameFromJWT(r)
+		if err != nil {
+			w.WriteHeader(http.StatusUnauthorized)
+			w.Write([]byte(""))
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(username))
+	})
 }
 
 func registerUserRoutes(mux *http.ServeMux) {

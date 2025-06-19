@@ -231,6 +231,50 @@ func SessionsHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Session listing not supported on free Auth0 tier."))
 }
 
+// POST /api/auth/change-username - changes the user's username in Auth0
+func ChangeUsernameHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+	var req struct {
+		Username string `json:"username"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.Username == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Missing username"))
+		return
+	}
+	userID, err := getUserIDFromJWT(r)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("Unauthorized"))
+		return
+	}
+	domain := os.Getenv("AUTH0_DOMAIN")
+	apiToken := os.Getenv("AUTH0_MANAGEMENT_TOKEN")
+	if domain == "" || apiToken == "" {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Auth0 config missing"))
+		return
+	}
+	client := &http.Client{Timeout: 10 * time.Second}
+	payload := map[string]string{"username": req.Username}
+	body, _ := json.Marshal(payload)
+	url := "https://" + domain + "/api/v2/users/" + userID
+	reqAPI, _ := http.NewRequest("PATCH", url, bytes.NewReader(body))
+	reqAPI.Header.Set("Authorization", "Bearer "+apiToken)
+	reqAPI.Header.Set("Content-Type", "application/json")
+	resp, err := client.Do(reqAPI)
+	if err != nil || resp.StatusCode >= 400 {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Failed to update username"))
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Username updated"))
+}
+
 // Helper to extract user ID from JWT (sub claim)
 func getUserIDFromJWT(r *http.Request) (string, error) {
 	cookie, err := r.Cookie("auth_token")
@@ -326,4 +370,28 @@ func SendVerificationEmail(userID string) error {
 		return errors.New(respBody.String())
 	}
 	return nil
+}
+
+// Helper to extract username from JWT (preferred claim: "nickname" or "username")
+func getUsernameFromJWT(r *http.Request) (string, error) {
+	cookie, err := r.Cookie("auth_token")
+	if err != nil {
+		return "", err
+	}
+	claims, err := auth.ValidateAndParseJWT(cookie.Value)
+	if err != nil {
+		return "", err
+	}
+	if username, ok := claims["username"].(string); ok && username != "" {
+		return username, nil
+	}
+	if nickname, ok := claims["nickname"].(string); ok && nickname != "" {
+		return nickname, nil
+	}
+	return "", errors.New("username not found in JWT")
+}
+
+// Exported version for use in main.go
+func GetUsernameFromJWT(r *http.Request) (string, error) {
+	return getUsernameFromJWT(r)
 }
