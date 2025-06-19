@@ -39,14 +39,7 @@ A modern, open-source platform for visual programming, interactive quizzes, and 
 
    - `POSTGRES_DATABASE_URL`: Your PostgreSQL connection string (e.g. `postgres://user:password@localhost:5432/dbname?sslmode=disable`).
    - `AUTH0_DOMAIN`: Your Auth0 domain (e.g., `dev-xxxxxx.eu.auth0.com`).
-   - `AUTH0_CLIENT_ID`: Your Auth0 client ID.
-   - `SESSION_HASH_KEY` and `SESSION_BLOCK_KEY`: Random strings for secure cookie sessions. You can generate them with:
-
-     ```sh
-     # Generate a 32-byte random base64 string for each key
-     head -c 32 /dev/urandom | base64
-     ```
-
+   - `AUTH0_CLIENT_ID`: Your Auth0 client ID.cookie sessions.
    - `GO_ENV`: Set to `development` or `production` as needed.
    - `PORT`: (Optional) Port to run the server on (default: 8090).
 

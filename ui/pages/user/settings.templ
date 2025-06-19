@@ -5,9 +5,9 @@ import (
 	"KdnSite/ui/components/badge"
 	"KdnSite/ui/components/button"
 	"KdnSite/ui/components/card"
+	"KdnSite/ui/components/form"
 	"KdnSite/ui/components/input"
 	"KdnSite/ui/components/tabs"
-	"KdnSite/ui/components/form"
 	"KdnSite/ui/layouts"
 )
 
@@ -29,11 +29,21 @@ templ Settings(auth0Domain string, auth0ClientID string) {
 				}
 				@tabs.Tabs(tabs.Props{ID: "settings-tabs", Class: "w-full"}) {
 					@tabs.List(tabs.ListProps{ID: "settings-tabs-list", Class: "mb-6"}) {
-						@tabs.Trigger(tabs.TriggerProps{Value: "profile", TabsID: "settings-tabs"}) { Profile }
-						@tabs.Trigger(tabs.TriggerProps{Value: "account", TabsID: "settings-tabs"}) { Account }
-						@tabs.Trigger(tabs.TriggerProps{Value: "security", TabsID: "settings-tabs"}) { Security }
-						@tabs.Trigger(tabs.TriggerProps{Value: "theme", TabsID: "settings-tabs"}) { Theme }
-						@tabs.Trigger(tabs.TriggerProps{Value: "notifications", TabsID: "settings-tabs"}) { Notifications }
+						@tabs.Trigger(tabs.TriggerProps{Value: "profile", TabsID: "settings-tabs"}) {
+							Profile 
+						}
+						@tabs.Trigger(tabs.TriggerProps{Value: "account", TabsID: "settings-tabs"}) {
+							Account 
+						}
+						@tabs.Trigger(tabs.TriggerProps{Value: "security", TabsID: "settings-tabs"}) {
+							Security 
+						}
+						@tabs.Trigger(tabs.TriggerProps{Value: "theme", TabsID: "settings-tabs"}) {
+							Theme 
+						}
+						@tabs.Trigger(tabs.TriggerProps{Value: "notifications", TabsID: "settings-tabs"}) {
+							Notifications 
+						}
 					}
 					@tabs.Content(tabs.ContentProps{Value: "profile", TabsID: "settings-tabs"}) {
 						@card.Card(card.Props{Class: "w-full flex flex-col items-center justify-center p-6 rounded-xl border border-border bg-muted/30 shadow"}) {
@@ -46,14 +56,20 @@ templ Settings(auth0Domain string, auth0ClientID string) {
 					@tabs.Content(tabs.ContentProps{Value: "account", TabsID: "settings-tabs"}) {
 						<div class="space-y-8">
 							@card.Card(card.Props{Class: "p-6 bg-muted/30 border border-border"}) {
-								@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) { Change Username }
+								@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) {
+									Change Username 
+								}
 								<form id="change-username-form" class="mb-2 w-full">
 									@form.Item() {
-  @form.Label(form.LabelProps{For: "change-username-input"}) { Username }
-  @input.Input(input.Props{ID: "change-username-input", Type: input.TypeText, Placeholder: "New username", Class: "mb-2 w-full"})
-  @form.Description(form.DescriptionProps{ID: "change-username-status", Class: "text-xs mt-2"})
-  @button.Button(button.Props{ID: "change-username-btn", Class: "btn btn-primary w-full", Type: button.TypeSubmit}) { Change Username }
-}
+										@form.Label(form.LabelProps{For: "change-username-input"}) {
+											Username 
+										}
+										@input.Input(input.Props{ID: "change-username-input", Type: input.TypeText, Placeholder: "New username", Class: "mb-2 w-full"})
+										@form.Description(form.DescriptionProps{ID: "change-username-status", Class: "text-xs mt-2"})
+										@button.Button(button.Props{ID: "change-username-btn", Class: "btn btn-primary w-full", Type: button.TypeSubmit}) {
+											Change Username 
+										}
+									}
 								</form>
 							}
 							@card.Card(card.Props{Class: "p-6 bg-muted/30 border border-border"}) {
@@ -234,10 +250,14 @@ document.getElementById('revoke-sessions-btn').onclick = async () => {
 								Customize the look and feel of your app. 
 							}
 							<div class="flex gap-4">
-  @button.Button(button.Props{ID: "light-theme-btn", Class: "w-full p-4", Type: button.TypeButton}) { Light Theme }
-  @button.Button(button.Props{ID: "dark-theme-btn", Class: "w-full p-4", Type: button.TypeButton}) { Dark Theme }
-</div>
-						<script>
+								@button.Button(button.Props{ID: "light-theme-btn", Class: "w-full p-4", Type: button.TypeButton}) {
+									Light Theme 
+								}
+								@button.Button(button.Props{ID: "dark-theme-btn", Class: "w-full p-4", Type: button.TypeButton}) {
+									Dark Theme 
+								}
+							</div>
+							<script>
 document.getElementById('light-theme-btn').onclick = () => {
   document.documentElement.setAttribute('data-theme', 'light');
   localStorage.setItem('theme', 'light');
@@ -259,18 +279,19 @@ if (localStorage.getItem("theme") === "dark") {
   document.documentElement.setAttribute("data-theme", "light");
 }
 </script>
-					}
-					@tabs.Content(tabs.ContentProps{Value: "notifications", TabsID: "settings-tabs"}) {
-						@card.Card(card.Props{Class: "p-6 bg-muted/30 border border-border"}) {
-							@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) {
-								Notification Preferences 
-							}
-							@card.Description(card.DescriptionProps{Class: "text-muted-foreground"}) {
-								Coming soon: control your email and in-app notification preferences. 
+						}
+						@tabs.Content(tabs.ContentProps{Value: "notifications", TabsID: "settings-tabs"}) {
+							@card.Card(card.Props{Class: "p-6 bg-muted/30 border border-border"}) {
+								@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) {
+									Notification Preferences 
+								}
+								@card.Description(card.DescriptionProps{Class: "text-muted-foreground"}) {
+									Coming soon: control your email and in-app notification preferences. 
+								}
 							}
 						}
+						@tabs.Script()
 					}
-					@tabs.Script()
 				}
 			}
 		}
