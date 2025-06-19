@@ -85,10 +85,12 @@ document.getElementById('revoke-sessions-btn').onclick = async () => {
 								@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) {
 									Change Password 
 								}
-								@input.Input(input.Props{ID: "change-password-email", Type: "email", Placeholder: "Your email", Class: "mb-2 w-full"})
-								@button.Button(button.Props{ID: "change-password-btn", Class: "btn btn-primary w-full"}) {
-									Send Password Change Email 
-								}
+								<form id="change-password-form" class="mb-2 w-full">
+									@input.Input(input.Props{ID: "change-password-email", Type: "email", Placeholder: "Your email", Class: "mb-2 w-full"})
+									@button.Button(button.Props{ID: "change-password-btn", Class: "btn btn-primary w-full", Type: "submit"}) {
+										Send Password Change Email 
+									}
+								</form>
 								@card.Description(card.DescriptionProps{ID: "change-password-status", Class: "text-xs mt-2"})
 							}
 							@card.Card(card.Props{Class: "p-6 bg-muted/30 border border-border"}) {
@@ -123,8 +125,15 @@ document.getElementById('change-password-form').onsubmit = async (e) => {
   });
   status.textContent = resp.ok ? 'Password change email sent!' : 'Failed to send password change email.';
 };
+// Fix delete account button JS
 let deleteConfirm = false;
-document.getElementById('delete-btn').onclick = async () => {
+function resetDeleteButton() {
+  const section = document.getElementById('delete-confirm-section');
+  section.innerHTML = `<button id="delete-btn" class="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded shadow transition-colors duration-150 mt-4" data-theme-btn="true">Delete Account </button>`;
+  document.getElementById('delete-btn').onclick = deleteHandler;
+  deleteConfirm = false;
+}
+function deleteHandler() {
   const section = document.getElementById('delete-confirm-section');
   if (!deleteConfirm) {
     section.innerHTML = `
@@ -171,29 +180,22 @@ document.getElementById('delete-btn').onclick = async () => {
         errDiv.style.display = '';
       }
     };
-    cancelBtn.onclick = () => {
-      section.innerHTML = `<button id=\"delete-btn\" class=\"w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded shadow transition-colors duration-150 mt-4\" data-theme-btn=\"true\">Delete Account </button>`;
-      document.getElementById('delete-btn').onclick = arguments.callee;
-      deleteConfirm = false;
-    };
+    cancelBtn.onclick = resetDeleteButton;
     return;
   }
-};
-// Theme switching integration
+}
+document.getElementById('delete-btn').onclick = deleteHandler;
+// Theme switching integration (clarified)
 const themeBtns = document.querySelectorAll('[data-theme-btn]');
 themeBtns.forEach(btn => {
   btn.addEventListener('click', () => {
-    // Use the same logic as your ThemeSwitcher Alpine/JS handler
     if (window.toggleTheme) {
       window.toggleTheme();
-    } else if (typeof Alpine !== 'undefined' && Alpine.store && Alpine.store('theme')) {sm", Attributes: templ.Attributes{"x-on:click": "isDark = window.matchMedia('(prefers-color-scheme: dark)').matches; localStorage.setItem('appTheme', 'system'); document.documentElement.classList.toggle('dark', isDark); $refs.themeStatus.textContent = 'Theme set to system'"}}) {
-									System 
-								}
-							</div>
-							@card.Description(card.DescriptionProps{ID: "theme-status", Class: "text-xs mt-2", Attributes: templ.Attributes{"x-ref": "themeStatus"}})
-						}
-						<script>
-// Remove old JS theme handlers, Alpine handles theme switching now
+    } else if (typeof Alpine !== 'undefined' && Alpine.store && Alpine.store('theme')) {
+      // Alpine theme logic here if needed
+    }
+  });
+});
 </script>
 					}
 					@tabs.Content(tabs.ContentProps{Value: "notifications", TabsID: "settings-tabs"}) {
