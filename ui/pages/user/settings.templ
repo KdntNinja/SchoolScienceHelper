@@ -62,24 +62,6 @@ templ Settings(auth0Domain string, auth0ClientID string) {
 						</section>
 						<script>
 // Profile info
-document.getElementById('resend-verification-btn').onclick = async () => {
-  const btn = document.getElementById('resend-verification-btn');
-  const spinner = document.getElementById('resend-spinner');
-  const feedback = document.getElementById('email-verification-feedback');
-  btn.disabled = true;
-  spinner.classList.remove('hidden');
-  feedback.textContent = '';
-  const resp = await fetch('/api/auth/resend-verification', { method: 'POST', credentials: 'include' });
-  spinner.classList.add('hidden');
-  btn.disabled = false;
-  if (resp.ok) {
-    feedback.textContent = 'Verification email sent! Check your inbox.';
-    feedback.className = 'text-green-600';
-  } else {
-    feedback.textContent = 'Failed to send verification email.';
-    feedback.className = 'text-red-600';
-  }
-};
 document.getElementById('logout-btn').onclick = () => {
   const auth0Domain = "{{ auth0Domain }}";
   const auth0ClientID = "{{ auth0ClientID }}";
