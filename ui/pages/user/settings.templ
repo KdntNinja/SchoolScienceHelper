@@ -38,9 +38,6 @@ templ Settings(auth0Domain string, auth0ClientID string) {
 						@tabs.Trigger(tabs.TriggerProps{Value: "security", TabsID: "settings-tabs"}) {
 							Security 
 						}
-						@tabs.Trigger(tabs.TriggerProps{Value: "theme", TabsID: "settings-tabs"}) {
-							Theme 
-						}
 						@tabs.Trigger(tabs.TriggerProps{Value: "notifications", TabsID: "settings-tabs"}) {
 							Notifications 
 						}
@@ -92,9 +89,10 @@ templ Settings(auth0Domain string, auth0ClientID string) {
 									@button.Button(button.Props{
 										ID:      "delete-btn",
 										Variant: button.VariantDefault,
-										Class:   "w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded shadow transition-colors duration-150 mt-4",
+										Class:   "w-full flex items-center justify-center gap-2 bg-[#ff2222] text-black font-semibold px-4 py-2 rounded shadow transition-colors duration-150 mt-4",
 										Attributes: templ.Attributes{
 											"data-theme-btn": "true",
+											"style": "background-color:#ff2222!important;color:#000!important;border:none!important;",
 										},
 									}) {
 										Delete Account
@@ -129,7 +127,6 @@ document.getElementById('change-password-form').onsubmit = async (e) => {
   });
   status.textContent = resp.ok ? 'Password change email sent!' : 'Failed to send password change email.';
 };
-// Fix delete account button JS
 let deleteConfirm = false;
 function resetDeleteButton() {
   const section = document.getElementById('delete-confirm-section');
@@ -240,58 +237,18 @@ document.getElementById('revoke-sessions-btn').onclick = async () => {
 };
 </script>
 					}
-					@tabs.Content(tabs.ContentProps{Value: "theme", TabsID: "settings-tabs"}) {
-						<!-- Theme settings content -->
+					@tabs.Content(tabs.ContentProps{Value: "notifications", TabsID: "settings-tabs"}) {
+						<!-- Notification settings content -->
 						@card.Card(card.Props{Class: "p-6 bg-muted/30 border border-border"}) {
 							@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) {
-								Theme Settings 
+								Notification Preferences 
 							}
-							@card.Description(card.DescriptionProps{Class: "text-muted-foreground mb-4"}) {
-								Customize the look and feel of your app. 
-							}
-							<div class="flex gap-4">
-								@button.Button(button.Props{ID: "light-theme-btn", Class: "w-full p-4", Type: button.TypeButton}) {
-									Light Theme 
-								}
-								@button.Button(button.Props{ID: "dark-theme-btn", Class: "w-full p-4", Type: button.TypeButton}) {
-									Dark Theme 
-								}
-							</div>
-							<script>
-document.getElementById('light-theme-btn').onclick = () => {
-  document.documentElement.setAttribute('data-theme', 'light');
-  localStorage.setItem('theme', 'light');
-};
-document.getElementById('dark-theme-btn').onclick = () => {
-  document.documentElement.setAttribute('data-theme', 'dark');
-  localStorage.setItem('theme', 'dark');
-};
-// Auto-detect and set theme based on system preference
-const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
-prefersDarkScheme.addEventListener("change", e => {
-  const theme = e.matches ? "dark" : "light";
-  document.documentElement.setAttribute("data-theme", theme);
-  localStorage.setItem("theme", theme);
-});
-if (localStorage.getItem("theme") === "dark") {
-  document.documentElement.setAttribute("data-theme", "dark");
-} else {
-  document.documentElement.setAttribute("data-theme", "light");
-}
-</script>
-						}
-						@tabs.Content(tabs.ContentProps{Value: "notifications", TabsID: "settings-tabs"}) {
-							@card.Card(card.Props{Class: "p-6 bg-muted/30 border border-border"}) {
-								@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) {
-									Notification Preferences 
-								}
-								@card.Description(card.DescriptionProps{Class: "text-muted-foreground"}) {
-									Coming soon: control your email and in-app notification preferences. 
-								}
+							@card.Description(card.DescriptionProps{Class: "text-muted-foreground"}) {
+								Coming soon: control your email and in-app notification preferences. 
 							}
 						}
-						@tabs.Script()
 					}
+					@tabs.Script()
 				}
 			}
 		}
