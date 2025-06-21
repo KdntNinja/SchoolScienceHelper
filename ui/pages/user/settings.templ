@@ -170,38 +170,42 @@ fileInput.onchange = (e) => {
 									}
 								</form>
 								<script>
-                document.getElementById('change-username-form').onsubmit = async (e) => {
-                    e.preventDefault();
-                    const username = document.getElementById('change-username-input').value;
-                    const status = document.getElementById('change-username-status');
-                    status.textContent = 'Updating...';
-                    const resp = await fetch('/api/auth/change-username', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ username }),
-                        credentials: 'include',
-                    });
-                    if (resp.ok) {
-                        status.textContent = 'Username updated!';
-                        // Refresh profile info (avatar, name, etc)
-                        fetch('/api/auth/check', { credentials: 'include' })
-                          .then(r => r.ok ? r.json() : Promise.reject('Failed to check auth'))
-                          .then(data => {
-                            if (data && data.user) {
-                              document.getElementById('profile-name').textContent = data.user.name || data.user.nickname || 'Unknown';
-                              // Optionally update avatar if name initial is used
-                              const avatar = document.getElementById('profile-avatar');
-                              if (!data.user.picture && avatar) {
-                                avatar.textContent = (data.user.name ? data.user.name[0] : '?').toUpperCase();
-                              }
-                            }
-                          });
-                    } else {
-                        const err = await resp.text();
-                        status.textContent = err || 'Failed to update username.';
-                    }
-                };
-            </script>
+function getAuthHeaders(extraHeaders = {}) {
+  const token = localStorage.getItem('token');
+  return token ? { ...extraHeaders, 'Authorization': `Bearer ${token}` } : extraHeaders;
+}
+document.getElementById('change-username-form').onsubmit = async (e) => {
+  e.preventDefault();
+  const username = document.getElementById('change-username-input').value;
+  const status = document.getElementById('change-username-status');
+  status.textContent = 'Updating...';
+  const resp = await fetch('/api/auth/change-username', {
+    method: 'POST',
+    headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+    body: JSON.stringify({ username }),
+    credentials: 'include',
+  });
+  if (resp.ok) {
+    status.textContent = 'Username updated!';
+    // Refresh profile info (avatar, name, etc)
+    fetch('/api/auth/check', { credentials: 'include' })
+      .then(r => r.ok ? r.json() : Promise.reject('Failed to check auth'))
+      .then(data => {
+        if (data && data.user) {
+          document.getElementById('profile-name').textContent = data.user.name || data.user.nickname || 'Unknown';
+          // Optionally update avatar if name initial is used
+          const avatar = document.getElementById('profile-avatar');
+          if (!data.user.picture && avatar) {
+            avatar.textContent = (data.user.name ? data.user.name[0] : '?').toUpperCase();
+          }
+        }
+      });
+  } else {
+    const err = await resp.text();
+    status.textContent = err || 'Failed to update username.';
+  }
+};
+</script>
 							}
 							@card.Card(card.Props{Class: "p-6 bg-muted/40 border border-border shadow-lg transition-all duration-300 hover:shadow-2xl"}) {
 								@card.Title(card.TitleProps{Class: "text-xl font-bold text-primary mb-4 flex items-center gap-2"}) {
