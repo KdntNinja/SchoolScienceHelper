@@ -15,16 +15,6 @@ templ Dash(displayName string) {
 						@card.Title(card.TitleProps{Class: "text-4xl font-black text-center md:text-left mb-2 text-primary tracking-tight"}) {
 							Welcome back, { displayName }!
 						}
-						<div class="flex flex-row gap-4 w-full mt-4">
-							@card.Card(card.Props{Class: "flex-1 bg-muted/30 rounded-xl p-4 flex flex-col items-center"}) {
-								<span id="anki-decks-count" class="text-2xl font-bold text-primary">0</span>
-								<span class="text-sm text-muted-foreground">Anki Decks</span>
-							}
-							@card.Card(card.Props{Class: "flex-1 bg-muted/30 rounded-xl p-4 flex flex-col items-center"}) {
-								<span id="anki-cards-count" class="text-2xl font-bold text-primary">0</span>
-								<span class="text-sm text-muted-foreground">Anki Cards</span>
-							}
-						</div>
 					</div>
 				</div>
 				@card.Content(card.ContentProps{Class: "p-10 pt-8"}) {
@@ -36,7 +26,6 @@ templ Dash(displayName string) {
 							@button.Button(button.Props{Href: "/user/revision", Variant: button.VariantDefault, Class: "mt-2 w-full"}) {
 								Go to Revision 
 							}
-							<a href="/user/revision" class="text-xs text-primary underline mt-2">Import Anki Deck</a>
 						}
 						@card.Card(card.Props{Class: "bg-muted/40 hover:shadow-lg transition-shadow duration-200 flex flex-col items-center p-6"}) {
 							@card.Title(card.TitleProps{Class: "text-xl font-semibold mb-2"}) {

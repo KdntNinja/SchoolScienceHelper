@@ -1,7 +1,6 @@
 package admin
 
 import (
-	"KdnSite/ui/components/button"
 	"KdnSite/ui/components/card"
 	"KdnSite/ui/layouts"
 )
@@ -17,21 +16,7 @@ templ AdminPanel() {
 			}
 			@card.Content(card.ContentProps{}) {
 				<section class="space-y-8">
-					@card.Card(card.Props{Class: "p-6 bg-muted/30 border border-border"}) {
-						@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) {
-							Import Anki Deck
-						}
-						<form id="anki-import-form" enctype="multipart/form-data" class="space-y-4">
-							<input id="anki-file-input" name="file" type="file" accept=".apkg" class="block" required/>
-							@button.Button(button.Props{Type: "submit", Variant: button.VariantDefault}) {
-								Import Deck
-							}
-							<span id="anki-import-status" class="text-sm text-muted-foreground"></span>
-						</form>
-						<script>
-						// ...existing import JS from revision page...
-						</script>
-					}
+					<!-- Removed Import Anki Deck admin card/form -->
 				</section>
 			}
 		}

@@ -6,7 +6,6 @@ import (
 	"KdnSite/ui/components/input"
 	"KdnSite/ui/components/label"
 	"KdnSite/ui/components/selectbox"
-	"KdnSite/ui/components/tabs"
 	"KdnSite/ui/components/textarea"
 	"KdnSite/ui/layouts"
 )
@@ -21,85 +20,55 @@ templ Revision() {
 			}
 			@card.Content(card.ContentProps{}) {
 				<main>
-					@tabs.Tabs(tabs.Props{ID: "revision-tabs", Class: "w-full"}) {
-						@tabs.List() {
-							@tabs.Trigger(tabs.TriggerProps{Value: "anki", TabsID: "revision-tabs", IsActive: true}) {
-								Anki Decks 
-							}
-							@tabs.Trigger(tabs.TriggerProps{Value: "resources", TabsID: "revision-tabs"}) {
-								Revision Resources 
-							}
-						}
-						@tabs.Content(tabs.ContentProps{Value: "anki", TabsID: "revision-tabs", IsActive: true}) {
-							<!-- Anki Decks Section (no import for non-admins) -->
-							<div class="mb-10">
-								<h2 class="text-xl font-semibold mb-2">Available Anki Decks</h2>
-								@label.Label(label.Props{For: "anki-deck-select", Class: "mb-2 font-semibold"}) {
-									Deck 
+					<!-- Removed Anki-related tabs and UI. Only show Revision Resources section. -->
+					<div class="mb-6 flex flex-col md:flex-row gap-4 items-center">
+						<form id="add-revision-form" class="flex flex-col md:flex-row gap-2 w-full md:items-end">
+							<div class="flex flex-col flex-1">
+								@label.Label(label.Props{For: "type-input", Class: "font-semibold mb-1"}) {
+									Type 
 								}
 								@selectbox.SelectBox(selectbox.Props{
-									ID:    "anki-deck-select",
-									Class: "border rounded px-3 py-2 mb-4",
-								})
-								<ul id="anki-cards-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></ul>
-								@button.Button(button.Props{ID: "save-deck-btn", Variant: button.VariantDefault, Class: "mt-4"}) {
-									Save Deck to My Area
+									ID:    "type-input",
+									Class: "border rounded px-3 py-2 bg-background text-foreground",
+								}) {
+									@selectbox.Item(selectbox.ItemProps{Value: "flashcard"}) {
+										Flashcard 
+									}
+									@selectbox.Item(selectbox.ItemProps{Value: "note"}) {
+										Note 
+									}
+									@selectbox.Item(selectbox.ItemProps{Value: "summary"}) {
+										Summary 
+									}
 								}
 							</div>
-						}
-						@tabs.Content(tabs.ContentProps{Value: "resources", TabsID: "revision-tabs"}) {
-							<!-- Revision Resource Add/List UI -->
-							<div class="mb-6 flex flex-col md:flex-row gap-4 items-center">
-								<form id="add-revision-form" class="flex flex-col md:flex-row gap-2 w-full md:items-end">
-									<div class="flex flex-col flex-1">
-										@label.Label(label.Props{For: "type-input", Class: "font-semibold mb-1"}) {
-											Type 
-										}
-										@selectbox.SelectBox(selectbox.Props{
-											ID:    "type-input",
-											Class: "border rounded px-3 py-2 bg-background text-foreground",
-										}) {
-											@selectbox.Item(selectbox.ItemProps{Value: "flashcard"}) {
-												Flashcard 
-											}
-											@selectbox.Item(selectbox.ItemProps{Value: "note"}) {
-												Note 
-											}
-											@selectbox.Item(selectbox.ItemProps{Value: "summary"}) {
-												Summary 
-											}
-										}
-									</div>
-									<div class="flex flex-col flex-1">
-										@label.Label(label.Props{For: "topic-input", Class: "font-semibold mb-1"}) {
-											Topic 
-										}
-										@input.Input(input.Props{
-											ID:          "topic-input",
-											Type:        input.TypeText,
-											Class:       "border rounded px-3 py-2 bg-background text-foreground",
-											Placeholder: "e.g. Cell Biology",
-										})
-									</div>
-									<div class="flex flex-col flex-1">
-										@label.Label(label.Props{For: "content-input", Class: "font-semibold mb-1"}) {
-											Content 
-										}
-										@textarea.Textarea(textarea.Props{
-											ID:          "content-input",
-											Class:       "border rounded px-3 py-2 bg-background text-foreground",
-											Placeholder: "Enter content here...",
-										})
-									</div>
-									@button.Button(button.Props{Type: "submit", Variant: button.VariantDefault, Class: "px-4 py-2"}) {
-										Add
-									}
-								</form>
+							<div class="flex flex-col flex-1">
+								@label.Label(label.Props{For: "topic-input", Class: "font-semibold mb-1"}) {
+									Topic 
+								}
+								@input.Input(input.Props{
+									ID:          "topic-input",
+									Type:        input.TypeText,
+									Class:       "border rounded px-3 py-2 bg-background text-foreground",
+									Placeholder: "e.g. Cell Biology",
+								})
 							</div>
-							<ul id="revision-list" class="grid grid-cols-1 md:grid-cols-2 gap-6"></ul>
-						}
-					}
-					@tabs.Script()
+							<div class="flex flex-col flex-1">
+								@label.Label(label.Props{For: "content-input", Class: "font-semibold mb-1"}) {
+									Content 
+								}
+								@textarea.Textarea(textarea.Props{
+									ID:          "content-input",
+									Class:       "border rounded px-3 py-2 bg-background text-foreground",
+									Placeholder: "Enter content here...",
+								})
+							</div>
+							@button.Button(button.Props{Type: "submit", Variant: button.VariantDefault, Class: "px-4 py-2"}) {
+								Add
+							}
+						</form>
+					</div>
+					<ul id="revision-list" class="grid grid-cols-1 md:grid-cols-2 gap-6"></ul>
 				</main>
 			}
 		}
@@ -109,78 +78,6 @@ templ Revision() {
 		  const token = localStorage.getItem('token');
 		  return token ? { ...extraHeaders, 'Authorization': `Bearer ${token}` } : extraHeaders;
 		}
-		// Load Anki Decks (all users can see, but only admins can import via /admin)
-		async function loadAnkiDecks() {
-			const res = await fetch('/api/decks', { credentials: 'include', headers: getAuthHeaders() });
-			let data = {};
-			try { data = await res.json(); } catch { data = {}; }
-			const decks = data.decks || [];
-			const userId = data.user_id || '';
-			const select = document.getElementById('anki-deck-select');
-			select.innerHTML = '';
-			if (!decks.length) {
-				select.innerHTML = '<option>No decks available</option>';
-				return;
-			}
-			for (const d of decks) {
-				const opt = document.createElement('option');
-				opt.value = d.id;
-				opt.textContent = d.name;
-				select.appendChild(opt);
-			}
-			window._ankiUserId = userId;
-			loadAnkiCards(select.value);
-			select.onchange = () => loadAnkiCards(select.value);
-		}
-		// Load Anki Cards for selected deck
-		async function loadAnkiCards(deckId) {
-			const userId = window._ankiUserId || '';
-			const res = await fetch(`/api/cards?deck_id=${encodeURIComponent(deckId)}&user_id=${encodeURIComponent(userId)}`, { credentials: 'include', headers: getAuthHeaders() });
-			let cards = [];
-			try { cards = await res.json(); } catch { cards = []; }
-			const list = document.getElementById('anki-cards-list');
-			if (!cards.length) {
-				list.innerHTML = '<li class="col-span-2 text-center text-muted-foreground">No cards in this deck.</li>';
-				return;
-			}
-			let html = '';
-			for (const c of cards) {
-				html += `<li class='bg-muted/40 rounded-xl p-4 flex flex-col gap-2'>`;
-				html += `<span class='font-semibold'>Front:</span><span>${c.front}</span>`;
-				html += `<span class='font-semibold'>Back:</span><span>${c.back}</span>`;
-				html += `</li>`;
-			}
-			list.innerHTML = html;
-		}
-		// Save deck to user area
-		document.getElementById('save-deck-btn').onclick = async function() {
-			const select = document.getElementById('anki-deck-select');
-			const deckId = select.value;
-			const res = await fetch(`/api/decks/save`, {
-				method: 'POST',
-				headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
-				credentials: 'include',
-				body: JSON.stringify({ deck_id: deckId })
-			});
-			const btn = document.getElementById('save-deck-btn');
-			const alertDiv = document.createElement('div');
-			if (res.ok) {
-				alertDiv.innerHTML = `<div class='w-full my-2'>
-					<div class='border border-border rounded-lg p-4 bg-background text-foreground'>
-						<div class='mb-1 font-medium leading-none tracking-tight'>Deck saved to your area!</div>
-					</div>
-				</div>`;
-			} else {
-				alertDiv.innerHTML = `<div class='w-full my-2'>
-					<div class='border border-destructive text-destructive rounded-lg p-4 bg-background'>
-						<div class='mb-1 font-medium leading-none tracking-tight'>Failed to save deck.</div>
-					</div>
-				</div>`;
-			}
-			btn.parentNode.insertBefore(alertDiv, btn.nextSibling);
-			setTimeout(() => alertDiv.remove(), 4000);
-		};
-		loadAnkiDecks();
 		// Existing Revision Resource JS
 		async function loadRevisionResources() {
   const res = await fetch('/api/revision', { credentials: 'include', headers: getAuthHeaders() });

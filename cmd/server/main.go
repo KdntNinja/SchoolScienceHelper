@@ -9,7 +9,6 @@ import (
 
 	"KdnSite/assets"
 	"KdnSite/internal/achievements"
-	"KdnSite/internal/anki"
 	"KdnSite/internal/handlers"
 	"KdnSite/internal/leaderboard"
 	"KdnSite/internal/projects"
@@ -328,9 +327,6 @@ func registerAPIRoutes(mux *http.ServeMux, db *sql.DB) {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 		}
 	})))
-	mux.Handle("/api/decks", handlers.RequireAuth(anki.ListDecks(db)))
-	mux.Handle("/api/cards", handlers.RequireAuth(anki.ListCards(db)))
-	mux.Handle("/api/deckimport", handlers.RequireAuth(anki.ImportDeck(db)))
 	mux.HandleFunc("/api/sse/email-verified", handlers.EmailVerificationSSE)
 }
 
