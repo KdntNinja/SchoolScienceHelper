@@ -17,7 +17,13 @@ func AuthCheckHandler(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
-	// Fetch avatar_url from DB and inject as user.picture
+	// Always use Auth0 nickname (or name) for username
+	if user["nickname"] != nil {
+		user["username"] = user["nickname"]
+	} else if user["name"] != nil {
+		user["username"] = user["name"]
+	}
+	// Fetch avatar_url from DB and inject as user.picture if present
 	userID, _ := user["sub"].(string)
 	if userID != "" {
 		dbURL := os.Getenv("POSTGRES_DATABASE_URL")
