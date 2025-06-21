@@ -231,18 +231,6 @@ document.getElementById('revoke-sessions-btn').onclick = async () => {
 };
 </script>
 					}
-					@tabs.Content(tabs.ContentProps{Value: "notifications", TabsID: "settings-tabs"}) {
-						<!-- Notification settings content -->
-						@card.Card(card.Props{Class: "p-6 bg-muted/30 border border-border"}) {
-							@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) {
-								Notification Preferences 
-							}
-							@card.Description(card.DescriptionProps{Class: "text-muted-foreground"}) {
-								Coming soon: control your email and in-app notification preferences. 
-							}
-						}
-					}
-					@tabs.Script()
 				}
 			}
 		}
