@@ -21,8 +21,8 @@ templ Settings(auth0Domain string, auth0ClientID string) {
 			}
 			@card.Content(card.ContentProps{}) {
 				<!-- User Profile Card -->
-				@card.Card(card.Props{Class: "w-full flex flex-col items-center justify-center p-6 rounded-xl border border-border bg-muted/30 shadow"}) {
-				  <div class="relative group mb-2">
+				@card.Card(card.Props{Class: "w-full flex flex-col items-center justify-center p-8 md:p-12 rounded-2xl border border-border bg-muted/30 shadow gap-8 md:gap-10"}) {
+				  <div class="relative group mb-4 md:mb-6">
 				    @avatar.Avatar(avatar.Props{ID: "profile-avatar", Size: avatar.SizeLg, Class: "shadow-lg border-4 border-primary/40"}) {
 				      <span id="avatar-image-slot"></span>
 				    }
@@ -35,8 +35,8 @@ templ Settings(auth0Domain string, auth0ClientID string) {
 				    </div>
 				  </div>
 				  @form.Item() {
-				    <form id="avatar-upload-form" class="flex flex-col items-center gap-2 mt-2 w-full max-w-xs" enctype="multipart/form-data">
-				      <div class="w-full flex flex-row gap-2 items-center justify-center">
+				    <form id="avatar-upload-form" class="flex flex-col items-center gap-3 mt-2 w-full max-w-xs" enctype="multipart/form-data">
+				      <div class="w-full flex flex-row gap-3 items-center justify-center">
 				        @button.Button(button.Props{Type: button.TypeSubmit, Variant: button.VariantDefault, Class: "w-full flex-1 rounded-lg font-semibold shadow-sm hover:shadow-md transition-all duration-200"}) {
 				          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5-5m0 0l5 5m-5-5v12" /></svg>
 				          Upload New Avatar
@@ -45,9 +45,9 @@ templ Settings(auth0Domain string, auth0ClientID string) {
 				      @form.Message(form.MessageProps{ID: "avatar-upload-status", Class: "mt-1"})
 				    </form>
 				  }
-				  @card.Title(card.TitleProps{Class: "font-semibold text-lg mb-1", ID: "profile-name"})
-				  @card.Description(card.DescriptionProps{Class: "text-sm text-muted-foreground mb-1", ID: "profile-email"})
-				  @badge.Badge(badge.Props{Class: "mb-1", ID: "profile-roles"})
+				  @card.Title(card.TitleProps{Class: "font-semibold text-lg mb-2 mt-2 md:mb-3 md:mt-4", ID: "profile-name"})
+				  @card.Description(card.DescriptionProps{Class: "text-sm text-muted-foreground mb-2", ID: "profile-email"})
+				  @badge.Badge(badge.Props{Class: "mb-2", ID: "profile-roles"})
 				  <script>
 				  // Fetch user profile and update avatar, name, email, roles
 				  fetch('/api/auth/check', { credentials: 'include' })
@@ -123,8 +123,8 @@ templ Settings(auth0Domain string, auth0ClientID string) {
 				  };
 				  </script>
 				}
-				@tabs.Tabs(tabs.Props{ID: "settings-tabs", Class: "w-full"}) {
-					@tabs.List(tabs.ListProps{ID: "settings-tabs-list", Class: "mb-6"}) {
+				@tabs.Tabs(tabs.Props{ID: "settings-tabs", Class: "w-full mt-8 md:mt-12"}) {
+					@tabs.List(tabs.ListProps{ID: "settings-tabs-list", Class: "mb-8 md:mb-10 gap-4 md:gap-8 flex-row flex-wrap justify-center"}) {
 						@tabs.Trigger(tabs.TriggerProps{Value: "profile", TabsID: "settings-tabs"}) {
 							Profile 
 						}
@@ -136,8 +136,8 @@ templ Settings(auth0Domain string, auth0ClientID string) {
 						}
 					}
 					@tabs.Content(tabs.ContentProps{Value: "profile", TabsID: "settings-tabs"}) {
-						@card.Card(card.Props{Class: "w-full flex flex-col items-center justify-center p-6 rounded-xl border border-border bg-muted/30 shadow"}) {
-						  <div class="relative group mb-2">
+						@card.Card(card.Props{Class: "w-full flex flex-col items-center justify-center p-8 md:p-12 rounded-2xl border border-border bg-muted/30 shadow gap-8 md:gap-10"}) {
+						  <div class="relative group mb-4 md:mb-6">
 						    @avatar.Avatar(avatar.Props{ID: "profile-avatar", Size: avatar.SizeLg, Class: "shadow-lg border-4 border-primary/40"}) {
 						      <span id="avatar-image-slot"></span>
 						    }
@@ -150,8 +150,8 @@ templ Settings(auth0Domain string, auth0ClientID string) {
 						    </div>
 						  </div>
 						  @form.Item() {
-						    <form id="avatar-upload-form" class="flex flex-col items-center gap-2 mt-2 w-full max-w-xs" enctype="multipart/form-data">
-						      <div class="w-full flex flex-row gap-2 items-center justify-center">
+						    <form id="avatar-upload-form" class="flex flex-col items-center gap-3 mt-2 w-full max-w-xs" enctype="multipart/form-data">
+						      <div class="w-full flex flex-row gap-3 items-center justify-center">
 						        @button.Button(button.Props{Type: button.TypeSubmit, Variant: button.VariantDefault, Class: "w-full flex-1 rounded-lg font-semibold shadow-sm hover:shadow-md transition-all duration-200"}) {
 						          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5-5m0 0l5 5m-5-5v12" /></svg>
 						          Upload New Avatar
@@ -160,9 +160,9 @@ templ Settings(auth0Domain string, auth0ClientID string) {
 						      @form.Message(form.MessageProps{ID: "avatar-upload-status", Class: "mt-1"})
 						    </form>
 						  }
-						  @card.Title(card.TitleProps{Class: "font-semibold text-lg mb-1", ID: "profile-name"})
-						  @card.Description(card.DescriptionProps{Class: "text-sm text-muted-foreground mb-1", ID: "profile-email"})
-						  @badge.Badge(badge.Props{Class: "mb-1", ID: "profile-roles"})
+						  @card.Title(card.TitleProps{Class: "font-semibold text-lg mb-2 mt-2 md:mb-3 md:mt-4", ID: "profile-name"})
+						  @card.Description(card.DescriptionProps{Class: "text-sm text-muted-foreground mb-2", ID: "profile-email"})
+						  @badge.Badge(badge.Props{Class: "mb-2", ID: "profile-roles"})
 						  <script>
 						  // Fetch user profile and update avatar, name, email, roles
 						  fetch('/api/auth/check', { credentials: 'include' })
