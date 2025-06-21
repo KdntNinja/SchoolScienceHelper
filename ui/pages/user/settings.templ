@@ -52,144 +52,148 @@ templ Settings(auth0Domain string, auth0ClientID string) {
 					}
 					@tabs.Content(tabs.ContentProps{Value: "account", TabsID: "settings-tabs"}) {
 						<div class="space-y-8">
-							@card.Card(card.Props{Class: "p-6 bg-muted/30 border border-border"}) {
-								@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) {
-									Change Username 
+							@card.Card(card.Props{Class: "p-6 bg-muted/40 border border-border shadow-lg transition-all duration-300 hover:shadow-2xl"}) {
+								@card.Title(card.TitleProps{Class: "text-xl font-bold text-primary mb-4 flex items-center gap-2"}) {
+									<svg class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+									Change Username
 								}
-								<form id="change-username-form" class="mb-2 w-full">
+								<form id="change-username-form" class="mb-2 w-full flex flex-col gap-2">
 									@form.Item() {
-										@form.Label(form.LabelProps{For: "change-username-input"}) {
-											Username 
+										@form.Label(form.LabelProps{For: "change-username-input", Class: "font-semibold text-base"}) {
+											Username
 										}
-										@input.Input(input.Props{ID: "change-username-input", Type: input.TypeText, Placeholder: "New username", Class: "mb-2 w-full"})
-										@form.Description(form.DescriptionProps{ID: "change-username-status", Class: "text-xs mt-2"})
-										@button.Button(button.Props{ID: "change-username-btn", Class: "btn btn-primary w-full", Type: button.TypeSubmit}) {
-											Change Username 
+										@input.Input(input.Props{ID: "change-username-input", Type: input.TypeText, Placeholder: "New username", Class: "mb-2 w-full rounded-lg border border-border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50"})
+										@form.Description(form.DescriptionProps{ID: "change-username-status", Class: "text-xs mt-2 text-muted-foreground"})
+										@button.Button(button.Props{ID: "change-username-btn", Class: "btn btn-primary w-full rounded-lg font-semibold shadow-sm hover:shadow-md transition-all duration-200", Type: button.TypeSubmit}) {
+											Change Username
 										}
 									}
 								</form>
 								<script>
-                                document.getElementById('change-username-form').onsubmit = async (e) => {
-                                    e.preventDefault();
-                                    const username = document.getElementById('change-username-input').value;
-                                    const status = document.getElementById('change-username-status');
-                                    status.textContent = 'Updating...';
-                                    const resp = await fetch('/api/auth/change-username', {
-                                        method: 'POST',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({ username }),
-                                        credentials: 'include',
-                                    });
-                                    status.textContent = resp.ok ? 'Username updated!' : (await resp.text() || 'Failed to update username.');
-                                };
-                            </script>
+                document.getElementById('change-username-form').onsubmit = async (e) => {
+                    e.preventDefault();
+                    const username = document.getElementById('change-username-input').value;
+                    const status = document.getElementById('change-username-status');
+                    status.textContent = 'Updating...';
+                    const resp = await fetch('/api/auth/change-username', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username }),
+                        credentials: 'include',
+                    });
+                    status.textContent = resp.ok ? 'Username updated!' : (await resp.text() || 'Failed to update username.');
+                };
+            </script>
 							}
-							@card.Card(card.Props{Class: "p-6 bg-muted/30 border border-border"}) {
-								@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) {
-									Change Password 
+							@card.Card(card.Props{Class: "p-6 bg-muted/40 border border-border shadow-lg transition-all duration-300 hover:shadow-2xl"}) {
+								@card.Title(card.TitleProps{Class: "text-xl font-bold text-primary mb-4 flex items-center gap-2"}) {
+									<svg class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12H8m8 0a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+									Change Password
 								}
-								@button.Button(button.Props{ID: "change-password-btn", Class: "btn btn-primary w-full"}) {
-									Send Password Change Email 
+								@button.Button(button.Props{ID: "change-password-btn", Class: "btn btn-primary w-full rounded-lg font-semibold shadow-sm hover:shadow-md transition-all duration-200"}) {
+									Send Password Change Email
 								}
-								@card.Description(card.DescriptionProps{ID: "change-password-status", Class: "text-xs mt-2"})
+								@card.Description(card.DescriptionProps{ID: "change-password-status", Class: "text-xs mt-2 text-muted-foreground"})
 								<script>
-                                document.getElementById('change-password-btn').onclick = async () => {
-                                    const status = document.getElementById('change-password-status');
-                                    status.textContent = 'Sending...';
-                                    // Get user email from profile info (already loaded on page)
-                                    const email = document.getElementById('profile-email').textContent;
-                                    if (!email || !email.includes('@')) {
-                                        status.textContent = 'Could not determine your email.';
-                                        return;
-                                    }
-                                    const resp = await fetch('/api/auth/change-password', {
-                                        method: 'POST',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({ email }),
-                                        credentials: 'include',
-                                    });
-                                    status.textContent = resp.ok ? 'Password change email sent!' : 'Failed to send password change email.';
-                                };
-                            </script>
+                document.getElementById('change-password-btn').onclick = async () => {
+                    const status = document.getElementById('change-password-status');
+                    status.textContent = 'Sending...';
+                    // Get user email from profile info (already loaded on page)
+                    const email = document.getElementById('profile-email').textContent;
+                    if (!email || !email.includes('@')) {
+                        status.textContent = 'Could not determine your email.';
+                        return;
+                    }
+                    const resp = await fetch('/api/auth/change-password', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email }),
+                        credentials: 'include',
+                    });
+                    status.textContent = resp.ok ? 'Password change email sent!' : 'Failed to send password change email.';
+                };
+            </script>
 							}
-							@card.Card(card.Props{Class: "p-6 bg-muted/30 border border-border"}) {
-								@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) {
-									Delete Account 
+							@card.Card(card.Props{Class: "p-6 bg-muted/40 border border-border shadow-lg transition-all duration-300 hover:shadow-2xl"}) {
+								@card.Title(card.TitleProps{Class: "text-xl font-bold text-primary mb-4 flex items-center gap-2"}) {
+									<svg class="h-5 w-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+									Delete Account
 								}
-								<div id="delete-confirm-section">
+								<div id="delete-confirm-section" class="w-full">
 									@button.Button(button.Props{
 										ID:      "delete-btn",
 										Variant: button.VariantDefault,
-										Class:   "w-full flex items-center justify-center gap-2 bg-[#ff2222] text-black font-semibold px-4 py-2 rounded shadow transition-colors duration-150 mt-4",
+										Class:   "w-full flex items-center justify-center gap-2 bg-[#ff2222] text-black font-semibold px-4 py-2 rounded-lg shadow hover:bg-red-700 hover:text-white transition-all duration-200 mt-4",
 										Attributes: templ.Attributes{
 											"data-theme-btn": "true",
 											"style": "background-color:#ff2222!important;color:#000!important;border:none!important;",
 										},
 									}) {
+										<svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
 										Delete Account
 									}
 								</div>
 								<script>
-                                let deleteConfirm = false;
-                                function resetDeleteButton() {
-                                    const section = document.getElementById('delete-confirm-section');
-                                    section.innerHTML = `<button id=\"delete-btn\" class=\"w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded shadow transition-colors duration-150 mt-4\" data-theme-btn=\"true\">Delete Account </button>`;
-                                    document.getElementById('delete-btn').onclick = deleteHandler;
-                                    deleteConfirm = false;
+                let deleteConfirm = false;
+                function resetDeleteButton() {
+                    const section = document.getElementById('delete-confirm-section');
+                    section.innerHTML = `<button id=\"delete-btn\" class=\"w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg shadow transition-all duration-200 mt-4\" data-theme-btn=\"true\"><svg class=\"h-5 w-5 mr-2\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M6 18L18 6M6 6l12 12\" /></svg>Delete Account</button>`;
+                    document.getElementById('delete-btn').onclick = deleteHandler;
+                    deleteConfirm = false;
+                }
+                function deleteHandler() {
+                    const section = document.getElementById('delete-confirm-section');
+                    if (!deleteConfirm) {
+                        section.innerHTML = `
+                            <div class=\"mb-4\">
+                                <label for=\"delete-password-input\" class=\"block text-sm font-semibold mb-2\">Enter your password to confirm:</label>
+                                <input id=\"delete-password-input\" type=\"password\" class=\"w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary\" placeholder=\"Enter your password\" autocomplete=\"off\" />
+                            </div>
+                            <button id=\"final-delete-btn\" class=\"w-full bg-red-600 text-white font-bold py-2 px-4 rounded-lg disabled:opacity-50\" disabled>Confirm Delete</button>
+                            <div class=\"form-error text-destructive text-sm mt-1\" style=\"display:none\"></div>
+                            <button id=\"cancel-delete-btn\" class=\"w-full mt-2 border border-border rounded-lg py-2\">Cancel</button>
+                        `;
+                        deleteConfirm = true;
+                        const input = document.getElementById('delete-password-input');
+                        const finalBtn = document.getElementById('final-delete-btn');
+                        const cancelBtn = document.getElementById('cancel-delete-btn');
+                        input.addEventListener('input', () => {
+                            finalBtn.disabled = input.value.length < 6;
+                        });
+                        finalBtn.onclick = async () => {
+                            finalBtn.disabled = true;
+                            finalBtn.textContent = 'Deleting...';
+                            try {
+                                const res = await fetch('/api/auth/delete', {
+                                    method: 'POST',
+                                    credentials: 'include',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ password: input.value })
+                                });
+                                if (res.ok) {
+                                    window.location.href = '/';
+                                } else {
+                                    const err = await res.text();
+                                    finalBtn.disabled = false;
+                                    finalBtn.textContent = 'Confirm Delete';
+                                    const errDiv = section.querySelector('.form-error');
+                                    errDiv.textContent = err || 'Failed to delete account. Password may be incorrect.';
+                                    errDiv.style.display = '';
                                 }
-                                function deleteHandler() {
-                                    const section = document.getElementById('delete-confirm-section');
-                                    if (!deleteConfirm) {
-                                        section.innerHTML = `
-                                            <div class=\"mb-4\">
-                                                <label for=\"delete-password-input\" class=\"block text-sm font-semibold mb-2\">Enter your password to confirm:</label>
-                                                <input id=\"delete-password-input\" type=\"password\" class=\"w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary\" placeholder=\"Enter your password\" autocomplete=\"off\" />
-                                            </div>
-                                            <button id=\"final-delete-btn\" class=\"w-full bg-red-600 text-white font-bold py-2 px-4 rounded disabled:opacity-50\" disabled>Confirm Delete</button>
-                                            <div class=\"form-error text-destructive text-sm mt-1\" style=\"display:none\"></div>
-                                            <button id=\"cancel-delete-btn\" class=\"w-full mt-2 border border-border rounded py-2\">Cancel</button>
-                                        `;
-                                        deleteConfirm = true;
-                                        const input = document.getElementById('delete-password-input');
-                                        const finalBtn = document.getElementById('final-delete-btn');
-                                        const cancelBtn = document.getElementById('cancel-delete-btn');
-                                        input.addEventListener('input', () => {
-                                            finalBtn.disabled = input.value.length < 6;
-                                        });
-                                        finalBtn.onclick = async () => {
-                                            finalBtn.disabled = true;
-                                            finalBtn.textContent = 'Deleting...';
-                                            try {
-                                                const res = await fetch('/api/auth/delete', {
-                                                    method: 'POST',
-                                                    credentials: 'include',
-                                                    headers: { 'Content-Type': 'application/json' },
-                                                    body: JSON.stringify({ password: input.value })
-                                                });
-                                                if (res.ok) {
-                                                    window.location.href = '/';
-                                                } else {
-                                                    const err = await res.text();
-                                                    finalBtn.disabled = false;
-                                                    finalBtn.textContent = 'Confirm Delete';
-                                                    const errDiv = section.querySelector('.form-error');
-                                                    errDiv.textContent = err || 'Failed to delete account. Password may be incorrect.';
-                                                    errDiv.style.display = '';
-                                                }
-                                            } catch {
-                                                finalBtn.disabled = false;
-                                                finalBtn.textContent = 'Confirm Delete';
-                                                const errDiv = section.querySelector('.form-error');
-                                                errDiv.textContent = 'Network error.';
-                                                errDiv.style.display = '';
-                                            }
-                                        };
-                                        cancelBtn.onclick = resetDeleteButton;
-                                        return;
-                                    }
-                                }
-                                document.getElementById('delete-btn').onclick = deleteHandler;
-                            </script>
+                            } catch {
+                                finalBtn.disabled = false;
+                                finalBtn.textContent = 'Confirm Delete';
+                                const errDiv = section.querySelector('.form-error');
+                                errDiv.textContent = 'Network error.';
+                                errDiv.style.display = '';
+                            }
+                        };
+                        cancelBtn.onclick = resetDeleteButton;
+                        return;
+                    }
+                }
+                document.getElementById('delete-btn').onclick = deleteHandler;
+            </script>
 							}
 						</div>
 					}
