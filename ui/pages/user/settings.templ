@@ -218,6 +218,19 @@ templ Settings(auth0Domain string, auth0ClientID string) {
                     });
                     if (resp.ok) {
                         status.textContent = 'Username updated!';
+                        // Refresh profile info (avatar, name, etc)
+                        fetch('/api/auth/check', { credentials: 'include' })
+                          .then(r => r.ok ? r.json() : Promise.reject('Failed to check auth'))
+                          .then(data => {
+                            if (data && data.user) {
+                              document.getElementById('profile-name').textContent = data.user.name || data.user.nickname || 'Unknown';
+                              // Optionally update avatar if name initial is used
+                              const avatar = document.getElementById('profile-avatar');
+                              if (!data.user.picture && avatar) {
+                                avatar.textContent = (data.user.name ? data.user.name[0] : '?').toUpperCase();
+                              }
+                            }
+                          });
                     } else {
                         const err = await resp.text();
                         status.textContent = err || 'Failed to update username.';
@@ -277,7 +290,7 @@ templ Settings(auth0Domain string, auth0ClientID string) {
                 let deleteConfirm = false;
                 function resetDeleteButton() {
                     const section = document.getElementById('delete-confirm-section');
-                    section.innerHTML = `<button id=\"delete-btn\" class=\"w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg shadow transition-all duration-200 mt-4\" data-theme-btn=\"true\"><svg class=\"h-5 w-5 mr-2\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M6 18L18 6M6 6l12 12\" /></svg>Delete Account</button>`;
+                    section.innerHTML = `<button id=\"delete-btn\" class=\"w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg shadow transition-all duration-200 mt-4\" data-theme-btn=\"true\"><svg class=\"h-5 w-5 mr-2\" fill=\"none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>Delete Account</button>`;
                     document.getElementById('delete-btn').onclick = deleteHandler;
                     deleteConfirm = false;
                 }
