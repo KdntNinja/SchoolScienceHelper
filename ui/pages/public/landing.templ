@@ -43,75 +43,69 @@ templ Landing(auth0Domain string, auth0ClientID string) {
 				<script>
 document.addEventListener('DOMContentLoaded', function() {
   // --- Auth0 callback handling ---
+  function tryAuthWithToken(token) {
+    if (!token) return;
+    fetch('/api/auth/callback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token })
+    })
+    .then(res => {
+      if (res.ok) {
+        window.location.replace('/dash');
+      }
+    });
+  }
+  // 1. Check URL hash for id_token/access_token
   const hash = window.location.hash;
   let idToken = null;
   if (hash && (hash.includes('id_token') || hash.includes('access_token'))) {
     const params = new URLSearchParams(hash.substring(1));
-    idToken = params.get('id_token');
+    idToken = params.get('id_token') || params.get('access_token');
     if (idToken) {
-      // Send token to backend to set cookie
-      fetch('/api/auth/callback', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: idToken })
-      })
-      .then(res => {
-        if (res.ok) {
-          window.location.replace('/dash');
-        } else {
-          const alertDiv = document.createElement('div');
-          alertDiv.innerHTML = `<div class='w-full my-2'>
-            <div class='border border-destructive text-destructive rounded-lg p-4 bg-background'>
-              <div class='mb-1 font-medium leading-none tracking-tight'>Authentication failed.</div>
-            </div>
-          </div>`;
-          document.body.appendChild(alertDiv);
-          setTimeout(() => alertDiv.remove(), 4000);
-        }
-      });
+      tryAuthWithToken(idToken);
       return;
     }
   }
-  // Check for existing session
+  // 2. Check cookies for id_token or access_token
+  function getCookie(name) {
+    const v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+    return v ? v[2] : null;
+  }
+  const cookieToken = getCookie('id_token') || getCookie('access_token');
+  if (cookieToken) {
+    tryAuthWithToken(cookieToken);
+    return;
+  }
+  // 3. Check localStorage for id_token or access_token
+  try {
+    const storedIdToken = localStorage.getItem('id_token') || localStorage.getItem('access_token');
+    if (storedIdToken) {
+      tryAuthWithToken(storedIdToken);
+      return;
+    }
+  } catch {}
+  // 4. Check for existing session
   fetch('/api/auth/check', { credentials: 'include' }).then(r => r.json()).then(data => {
     if (data && data.authenticated) {
-      // Allow all authenticated users (even if unverified) to access /dash
       window.location.replace('/dash');
       return;
     }
-    // Optionally: check for Auth0 token in localStorage (if SPA flow)
-    try {
-      const storedIdToken = localStorage.getItem('id_token');
-      if (storedIdToken) {
-        fetch('/api/auth/callback', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ token: storedIdToken })
-        })
-        .then(res => {
-          if (res.ok) {
-            window.location.replace('/dash');
-          }
-        });
-      }
-    } catch {}
   });
-
-	const btn = document.getElementById('get-started-btn');
-	btn.onclick = function(e) {
-		e.preventDefault();
-		// Auth0 config injected from Go backend
-		const domain = "{{ auth0Domain }}";
-		const clientId = "{{ auth0ClientID }}";
-		if (!domain || !clientId) {
-			alert('Auth0 configuration is missing.');
-			return;
-		}
-		const redirectUri = window.location.origin + '/'; // Use / as the callback
-		const nonce = Date.now();
-		window.location.href = `https://${domain}/authorize?response_type=id_token%20token&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=openid%20profile%20email&nonce=${nonce}`;
-	};
-  // Note: /dash and other privileged pages should check email_verified on the backend and restrict actions accordingly.
+  // Get Started button
+  const btn = document.getElementById('get-started-btn');
+  btn.onclick = function(e) {
+    e.preventDefault();
+    const domain = "{{ auth0Domain }}";
+    const clientId = "{{ auth0ClientID }}";
+    if (!domain || !clientId) {
+      alert('Auth0 configuration is missing.');
+      return;
+    }
+    const redirectUri = window.location.origin + '/';
+    const nonce = Date.now();
+    window.location.href = `https://${domain}/authorize?response_type=id_token%20token&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=openid%20profile%20email&nonce=${nonce}`;
+  };
 });
 </script>
 			}
