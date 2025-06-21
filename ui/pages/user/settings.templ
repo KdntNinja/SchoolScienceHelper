@@ -197,24 +197,31 @@ templ Settings(auth0Domain string, auth0ClientID string) {
 								}
 								@card.Description(card.DescriptionProps{ID: "change-password-status", Class: "text-xs mt-2 text-muted-foreground"})
 								<script>
-                document.getElementById('change-password-btn').onclick = async () => {
-                    const status = document.getElementById('change-password-status');
-                    status.textContent = 'Sending...';
-                    // Get user email from profile info (already loaded on page)
-                    const email = document.getElementById('profile-email').textContent;
-                    if (!email || !email.includes('@')) {
-                        status.textContent = 'Could not determine your email.';
-                        return;
-                    }
-                    const resp = await fetch('/api/auth/change-password', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email }),
-                        credentials: 'include',
-                    });
-                    status.textContent = resp.ok ? 'Password change email sent!' : 'Failed to send password change email.';
-                };
-            </script>
+document.getElementById('change-password-btn').onclick = async () => {
+  const status = document.getElementById('change-password-status');
+  status.textContent = 'Sending...';
+  // Always ping backend to get user email
+  const resp = await fetch('/api/auth/check', { credentials: 'include' });
+  let email = '';
+  if (resp.ok) {
+    const data = await resp.json();
+    if (data && data.user && data.user.email) {
+      email = data.user.email;
+    }
+  }
+  if (!email || !email.includes('@')) {
+    status.textContent = 'Could not determine your email.';
+    return;
+  }
+  const resp2 = await fetch('/api/auth/change-password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+    credentials: 'include',
+  });
+  status.textContent = resp2.ok ? 'Password change email sent!' : 'Failed to send password change email.';
+};
+</script>
 							}
 							@card.Card(card.Props{Class: "p-6 bg-muted/40 border border-border shadow-lg transition-all duration-300 hover:shadow-2xl"}) {
 								@card.Title(card.TitleProps{Class: "text-xl font-bold text-primary mb-4 flex items-center gap-2"}) {

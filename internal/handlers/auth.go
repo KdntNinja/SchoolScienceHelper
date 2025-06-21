@@ -332,6 +332,30 @@ func AvatarUploadHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("ok"))
 }
 
+// GET /api/auth/email - returns the current user's email
+func GetCurrentUserEmailHandler(w http.ResponseWriter, r *http.Request) {
+	userID, err := getUserIDFromJWT(r)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+	dbURL := os.Getenv("POSTGRES_DATABASE_URL")
+	db, err := sql.Open("postgres", dbURL)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	defer db.Close()
+	var email string
+	err = db.QueryRow(`SELECT email FROM users WHERE id = $1`, userID).Scan(&email)
+	if err != nil || email == "" {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"email": email})
+}
+
 // Helper to extract user ID from JWT (sub claim)
 func getUserIDFromJWT(r *http.Request) (string, error) {
 	cookie, err := r.Cookie("auth_token")
