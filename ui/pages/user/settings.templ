@@ -52,9 +52,8 @@ templ Settings(auth0Domain string, auth0ClientID string) {
 					}
 					@tabs.Content(tabs.ContentProps{Value: "account", TabsID: "settings-tabs"}) {
 						<div class="space-y-8">
-							@card.Card(card.Props{Class: "p-6 bg-muted/40 border border-border shadow-lg transition-all duration-300 hover:shadow-2xl"}) {
-								@card.Title(card.TitleProps{Class: "text-xl font-bold text-primary mb-4 flex items-center gap-2"}) {
-									<svg class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+							@card.Card(card.Props{Class: "p-6 bg-muted/30 border border-border shadow-sm"}) {
+								@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) {
 									Change Username
 								}
 								<form id="change-username-form" class="mb-2 w-full flex flex-col gap-2">
@@ -81,7 +80,12 @@ templ Settings(auth0Domain string, auth0ClientID string) {
                         body: JSON.stringify({ username }),
                         credentials: 'include',
                     });
-                    status.textContent = resp.ok ? 'Username updated!' : (await resp.text() || 'Failed to update username.');
+                    if (resp.ok) {
+                        status.textContent = 'Username updated!';
+                    } else {
+                        const err = await resp.text();
+                        status.textContent = err || 'Failed to update username.';
+                    }
                 };
             </script>
 							}
