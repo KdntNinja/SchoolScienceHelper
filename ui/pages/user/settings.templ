@@ -49,7 +49,7 @@ templ Settings(auth0Domain string, auth0ClientID string) {
 						  @form.Item() {
 						    <form id="avatar-upload-form" class="flex flex-col items-center gap-3 mt-2 w-full max-w-xs" enctype="multipart/form-data">
 						      <div class="w-full flex flex-row gap-3 items-center justify-center">
-						        @button.Button(button.Props{Type: button.TypeSubmit, Variant: button.VariantDefault, Class: "w-full flex-1 rounded-lg font-semibold shadow-sm hover:shadow-md transition-all duration-200"}) {
+						        @button.Button(button.Props{Type: button.TypeSubmit, Variant: button.VariantDefault, Class: "w-full flex-1 rounded-lg font-semibold shadow-sm hover:shadow-md transition-all duration-200", ID: "avatar-upload-btn", Disabled: true}) {
 						          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5-5m0 0l5 5m-5-5v12" /></svg>
 						          Upload New Avatar
 						        }
@@ -101,12 +101,14 @@ templ Settings(auth0Domain string, auth0ClientID string) {
 						    const fileInput = document.getElementById('avatar-file');
 						    const status = document.getElementById('avatar-upload-status');
 						    const spinner = document.getElementById('avatar-upload-spinner');
+						    const uploadBtn = document.getElementById('avatar-upload-btn');
 						    if (!fileInput.files || !fileInput.files[0]) {
 						      status.textContent = 'Please select an image.';
 						      status.className = 'text-xs text-red-600 mt-1';
 						      return;
 						    }
 						    spinner.classList.remove('hidden');
+						    uploadBtn.disabled = true;
 						    const formData = new FormData();
 						    formData.append('avatar', fileInput.files[0]);
 						    status.textContent = 'Uploading...';
@@ -133,6 +135,19 @@ templ Settings(auth0Domain string, auth0ClientID string) {
 						      status.className = 'text-xs text-red-600 mt-1';
 						    }
 						  };
+						  const fileInput = document.getElementById('avatar-file');
+const uploadBtn = document.getElementById('avatar-upload-btn');
+fileInput.onchange = (e) => {
+  const file = e.target.files[0];
+  uploadBtn.disabled = !file;
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      document.getElementById('avatar-image-slot').innerHTML = `<img src="${ev.target.result}" alt="avatar preview" class="rounded-full w-full h-full object-cover" />`;
+    };
+    reader.readAsDataURL(file);
+  }
+};
 						  </script>
 						}
 					}
