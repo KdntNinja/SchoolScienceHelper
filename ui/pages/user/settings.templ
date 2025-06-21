@@ -240,7 +240,6 @@ templ Settings(auth0Domain string, auth0ClientID string) {
 							}
 							@card.Card(card.Props{Class: "p-6 bg-muted/40 border border-border shadow-lg transition-all duration-300 hover:shadow-2xl"}) {
 								@card.Title(card.TitleProps{Class: "text-xl font-bold text-primary mb-4 flex items-center gap-2"}) {
-									<svg class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12H8m8 0a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
 									Change Password
 								}
 								@button.Button(button.Props{ID: "change-password-btn", Class: "btn btn-primary w-full rounded-lg font-semibold shadow-sm hover:shadow-md transition-all duration-200"}) {
@@ -269,7 +268,6 @@ templ Settings(auth0Domain string, auth0ClientID string) {
 							}
 							@card.Card(card.Props{Class: "p-6 bg-muted/40 border border-border shadow-lg transition-all duration-300 hover:shadow-2xl"}) {
 								@card.Title(card.TitleProps{Class: "text-xl font-bold text-primary mb-4 flex items-center gap-2"}) {
-									<svg class="h-5 w-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
 									Delete Account
 								}
 								<div id="delete-confirm-section" class="w-full">
@@ -282,7 +280,6 @@ templ Settings(auth0Domain string, auth0ClientID string) {
 											"style": "background-color:#ff2222!important;color:#000!important;border:none!important;",
 										},
 									}) {
-										<svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
 										Delete Account
 									}
 								</div>
