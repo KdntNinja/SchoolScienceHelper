@@ -106,9 +106,6 @@ templ Settings(auth0Domain string, auth0ClientID string) {
 						@tabs.Trigger(tabs.TriggerProps{Value: "security", TabsID: "settings-tabs"}) {
 							Security 
 						}
-						@tabs.Trigger(tabs.TriggerProps{Value: "notifications", TabsID: "settings-tabs"}) {
-							Notifications 
-						}
 					}
 					@tabs.Content(tabs.ContentProps{Value: "profile", TabsID: "settings-tabs"}) {
 						@card.Card(card.Props{Class: "w-full flex flex-col items-center justify-center p-6 rounded-xl border border-border bg-muted/30 shadow"}) {
