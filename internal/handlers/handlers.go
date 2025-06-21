@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"database/sql"
 	"encoding/json"
 	"net/http"
+	"os"
 )
 
 // AuthCheckHandler returns the user's authentication status and basic info (if logged in)
@@ -15,7 +17,20 @@ func AuthCheckHandler(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
-	// Optionally include more user info if needed
+	// Fetch avatar_url from DB and inject as user.picture
+	userID, _ := user["sub"].(string)
+	if userID != "" {
+		dbURL := os.Getenv("POSTGRES_DATABASE_URL")
+		db, err := sql.Open("postgres", dbURL)
+		if err == nil {
+			defer db.Close()
+			var avatarURL string
+			db.QueryRow(`SELECT avatar_url FROM users WHERE id = $1`, userID).Scan(&avatarURL)
+			if avatarURL != "" {
+				user["picture"] = avatarURL
+			}
+		}
+	}
 	resp := map[string]interface{}{
 		"authenticated": true,
 		"user":          user,
