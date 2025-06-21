@@ -42,56 +42,13 @@ templ Landing(auth0Domain string, auth0ClientID string) {
 				</span>
 				<script>
 document.addEventListener('DOMContentLoaded', function() {
-  // --- Auth0 callback handling ---
-  function tryAuthWithToken(token) {
-    if (!token) return;
-    fetch('/api/auth/callback', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token })
-    })
-    .then(res => {
-      if (res.ok) {
+  fetch('/api/auth/check', { credentials: 'include' })
+    .then(r => r.json())
+    .then(data => {
+      if (data && data.authenticated) {
         window.location.replace('/dash');
       }
     });
-  }
-  // 1. Check URL hash for id_token/access_token
-  const hash = window.location.hash;
-  let idToken = null;
-  if (hash && (hash.includes('id_token') || hash.includes('access_token'))) {
-    const params = new URLSearchParams(hash.substring(1));
-    idToken = params.get('id_token') || params.get('access_token');
-    if (idToken) {
-      tryAuthWithToken(idToken);
-      return;
-    }
-  }
-  // 2. Check cookies for id_token or access_token
-  function getCookie(name) {
-    const v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
-    return v ? v[2] : null;
-  }
-  const cookieToken = getCookie('id_token') || getCookie('access_token');
-  if (cookieToken) {
-    tryAuthWithToken(cookieToken);
-    return;
-  }
-  // 3. Check localStorage for id_token or access_token
-  try {
-    const storedIdToken = localStorage.getItem('id_token') || localStorage.getItem('access_token');
-    if (storedIdToken) {
-      tryAuthWithToken(storedIdToken);
-      return;
-    }
-  } catch {}
-  // 4. Check for existing session
-  fetch('/api/auth/check', { credentials: 'include' }).then(r => r.json()).then(data => {
-    if (data && data.authenticated) {
-      window.location.replace('/dash');
-      return;
-    }
-  });
   // Get Started button
   const btn = document.getElementById('get-started-btn');
   btn.onclick = function(e) {
