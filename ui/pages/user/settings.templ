@@ -69,20 +69,20 @@ templ Settings(auth0Domain string, auth0ClientID string) {
 									}
 								</form>
 								<script>
-	document.getElementById('change-username-form').onsubmit = async (e) => {
-	  e.preventDefault();
-	  const username = document.getElementById('change-username-input').value;
-	  const status = document.getElementById('change-username-status');
-	  status.textContent = 'Updating...';
-	  const resp = await fetch('/api/auth/change-username', {
-	    method: 'POST',
-	    headers: { 'Content-Type': 'application/json' },
-	    body: JSON.stringify({ username }),
-	    credentials: 'include',
-	  });
-	  status.textContent = resp.ok ? 'Username updated!' : (await resp.text() || 'Failed to update username.');
-	};
-	</script>
+                                document.getElementById('change-username-form').onsubmit = async (e) => {
+                                    e.preventDefault();
+                                    const username = document.getElementById('change-username-input').value;
+                                    const status = document.getElementById('change-username-status');
+                                    status.textContent = 'Updating...';
+                                    const resp = await fetch('/api/auth/change-username', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ username }),
+                                        credentials: 'include',
+                                    });
+                                    status.textContent = resp.ok ? 'Username updated!' : (await resp.text() || 'Failed to update username.');
+                                };
+                            </script>
 							}
 							@card.Card(card.Props{Class: "p-6 bg-muted/30 border border-border"}) {
 								@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) {
@@ -93,24 +93,24 @@ templ Settings(auth0Domain string, auth0ClientID string) {
 								}
 								@card.Description(card.DescriptionProps{ID: "change-password-status", Class: "text-xs mt-2"})
 								<script>
-	document.getElementById('change-password-btn').onclick = async () => {
-	  const status = document.getElementById('change-password-status');
-	  status.textContent = 'Sending...';
-	  // Get user email from profile info (already loaded on page)
-	  const email = document.getElementById('profile-email').textContent;
-	  if (!email || !email.includes('@')) {
-	    status.textContent = 'Could not determine your email.';
-	    return;
-	  }
-	  const resp = await fetch('/api/auth/change-password', {
-	    method: 'POST',
-	    headers: { 'Content-Type': 'application/json' },
-	    body: JSON.stringify({ email }),
-	    credentials: 'include',
-	  });
-	  status.textContent = resp.ok ? 'Password change email sent!' : 'Failed to send password change email.';
-	};
-	</script>
+                                document.getElementById('change-password-btn').onclick = async () => {
+                                    const status = document.getElementById('change-password-status');
+                                    status.textContent = 'Sending...';
+                                    // Get user email from profile info (already loaded on page)
+                                    const email = document.getElementById('profile-email').textContent;
+                                    if (!email || !email.includes('@')) {
+                                        status.textContent = 'Could not determine your email.';
+                                        return;
+                                    }
+                                    const resp = await fetch('/api/auth/change-password', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ email }),
+                                        credentials: 'include',
+                                    });
+                                    status.textContent = resp.ok ? 'Password change email sent!' : 'Failed to send password change email.';
+                                };
+                            </script>
 							}
 							@card.Card(card.Props{Class: "p-6 bg-muted/30 border border-border"}) {
 								@card.Title(card.TitleProps{Class: "text-xl font-semibold text-primary mb-2"}) {
@@ -123,73 +123,73 @@ templ Settings(auth0Domain string, auth0ClientID string) {
 										Class:   "w-full flex items-center justify-center gap-2 bg-[#ff2222] text-black font-semibold px-4 py-2 rounded shadow transition-colors duration-150 mt-4",
 										Attributes: templ.Attributes{
 											"data-theme-btn": "true",
-											"style":          "background-color:#ff2222!important;color:#000!important;border:none!important;",
+											"style": "background-color:#ff2222!important;color:#000!important;border:none!important;",
 										},
 									}) {
 										Delete Account
 									}
 								</div>
 								<script>
-	let deleteConfirm = false;
-	function resetDeleteButton() {
-	  const section = document.getElementById('delete-confirm-section');
-	  section.innerHTML = `<button id="delete-btn" class="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded shadow transition-colors duration-150 mt-4" data-theme-btn="true">Delete Account </button>`;
-	  document.getElementById('delete-btn').onclick = deleteHandler;
-	  deleteConfirm = false;
-	}
-	function deleteHandler() {
-	  const section = document.getElementById('delete-confirm-section');
-	  if (!deleteConfirm) {
-	    section.innerHTML = `
-	      <div class="mb-4">
-	        <label for="delete-password-input" class="block text-sm font-semibold mb-2">Enter your password to confirm:</label>
-	        <input id="delete-password-input" type="password" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Enter your password" autocomplete="off" />
-	      </div>
-	      <button id="final-delete-btn" class="w-full bg-red-600 text-white font-bold py-2 px-4 rounded disabled:opacity-50" disabled>Confirm Delete</button>
-	      <div class="form-error text-destructive text-sm mt-1" style="display:none"></div>
-	      <button id="cancel-delete-btn" class="w-full mt-2 border border-border rounded py-2">Cancel</button>
-	    `;
-	    deleteConfirm = true;
-	    const input = document.getElementById('delete-password-input');
-	    const finalBtn = document.getElementById('final-delete-btn');
-	    const cancelBtn = document.getElementById('cancel-delete-btn');
-	    input.addEventListener('input', () => {
-	      finalBtn.disabled = input.value.length < 6;
-	    });
-	    finalBtn.onclick = async () => {
-	      finalBtn.disabled = true;
-	      finalBtn.textContent = 'Deleting...';
-	      try {
-	        const res = await fetch('/api/auth/delete', {
-	          method: 'POST',
-	          credentials: 'include',
-	          headers: { 'Content-Type': 'application/json' },
-	          body: JSON.stringify({ password: input.value })
-	        });
-	        if (res.ok) {
-	          window.location.href = '/';
-	        } else {
-	          const err = await res.text();
-	          finalBtn.disabled = false;
-	          finalBtn.textContent = 'Confirm Delete';
-	          const errDiv = section.querySelector('.form-error');
-	          errDiv.textContent = err || 'Failed to delete account. Password may be incorrect.';
-	          errDiv.style.display = '';
-	        }
-	      } catch {
-	        finalBtn.disabled = false;
-	        finalBtn.textContent = 'Confirm Delete';
-	        const errDiv = section.querySelector('.form-error');
-	        errDiv.textContent = 'Network error.';
-	        errDiv.style.display = '';
-	      }
-	    };
-	    cancelBtn.onclick = resetDeleteButton;
-	    return;
-	  }
-	}
-	document.getElementById('delete-btn').onclick = deleteHandler;
-	</script>
+                                let deleteConfirm = false;
+                                function resetDeleteButton() {
+                                    const section = document.getElementById('delete-confirm-section');
+                                    section.innerHTML = `<button id=\"delete-btn\" class=\"w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded shadow transition-colors duration-150 mt-4\" data-theme-btn=\"true\">Delete Account </button>`;
+                                    document.getElementById('delete-btn').onclick = deleteHandler;
+                                    deleteConfirm = false;
+                                }
+                                function deleteHandler() {
+                                    const section = document.getElementById('delete-confirm-section');
+                                    if (!deleteConfirm) {
+                                        section.innerHTML = `
+                                            <div class=\"mb-4\">
+                                                <label for=\"delete-password-input\" class=\"block text-sm font-semibold mb-2\">Enter your password to confirm:</label>
+                                                <input id=\"delete-password-input\" type=\"password\" class=\"w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary\" placeholder=\"Enter your password\" autocomplete=\"off\" />
+                                            </div>
+                                            <button id=\"final-delete-btn\" class=\"w-full bg-red-600 text-white font-bold py-2 px-4 rounded disabled:opacity-50\" disabled>Confirm Delete</button>
+                                            <div class=\"form-error text-destructive text-sm mt-1\" style=\"display:none\"></div>
+                                            <button id=\"cancel-delete-btn\" class=\"w-full mt-2 border border-border rounded py-2\">Cancel</button>
+                                        `;
+                                        deleteConfirm = true;
+                                        const input = document.getElementById('delete-password-input');
+                                        const finalBtn = document.getElementById('final-delete-btn');
+                                        const cancelBtn = document.getElementById('cancel-delete-btn');
+                                        input.addEventListener('input', () => {
+                                            finalBtn.disabled = input.value.length < 6;
+                                        });
+                                        finalBtn.onclick = async () => {
+                                            finalBtn.disabled = true;
+                                            finalBtn.textContent = 'Deleting...';
+                                            try {
+                                                const res = await fetch('/api/auth/delete', {
+                                                    method: 'POST',
+                                                    credentials: 'include',
+                                                    headers: { 'Content-Type': 'application/json' },
+                                                    body: JSON.stringify({ password: input.value })
+                                                });
+                                                if (res.ok) {
+                                                    window.location.href = '/';
+                                                } else {
+                                                    const err = await res.text();
+                                                    finalBtn.disabled = false;
+                                                    finalBtn.textContent = 'Confirm Delete';
+                                                    const errDiv = section.querySelector('.form-error');
+                                                    errDiv.textContent = err || 'Failed to delete account. Password may be incorrect.';
+                                                    errDiv.style.display = '';
+                                                }
+                                            } catch {
+                                                finalBtn.disabled = false;
+                                                finalBtn.textContent = 'Confirm Delete';
+                                                const errDiv = section.querySelector('.form-error');
+                                                errDiv.textContent = 'Network error.';
+                                                errDiv.style.display = '';
+                                            }
+                                        };
+                                        cancelBtn.onclick = resetDeleteButton;
+                                        return;
+                                    }
+                                }
+                                document.getElementById('delete-btn').onclick = deleteHandler;
+                            </script>
 							}
 						</div>
 					}
