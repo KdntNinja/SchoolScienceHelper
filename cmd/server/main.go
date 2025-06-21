@@ -146,6 +146,7 @@ func registerAuthRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("/api/auth/delete", handlers.DeleteAccountHandler)
 	mux.HandleFunc("/api/auth/change-password", handlers.ChangePasswordHandler)
 	mux.HandleFunc("/api/auth/change-username", handlers.ChangeUsernameHandler)
+	mux.HandleFunc("/api/auth/avatar", handlers.AvatarUploadHandler)
 	mux.Handle("/api/auth/resend-verification", handlers.RequireAuth(http.HandlerFunc(handlers.ResendVerificationHandler)))
 	mux.Handle("/api/auth/logout-all", handlers.RequireAuth(http.HandlerFunc(handlers.LogoutAllHandler)))
 	mux.Handle("/api/auth/sessions", handlers.RequireAuth(http.HandlerFunc(handlers.SessionsHandler)))

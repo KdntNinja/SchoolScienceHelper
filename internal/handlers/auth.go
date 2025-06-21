@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
+	"io"
 	"net/http"
 	"os"
 	"time"
@@ -276,6 +277,59 @@ func ChangeUsernameHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Username updated in Auth0"))
+}
+
+// POST /api/auth/avatar - upload and update user avatar
+func AvatarUploadHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+	userID, err := getUserIDFromJWT(r)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+	err = r.ParseMultipartForm(10 << 20) // 10MB max
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Invalid form data"))
+		return
+	}
+	file, handler, err := r.FormFile("avatar")
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("No file uploaded"))
+		return
+	}
+	defer file.Close()
+	// Save file to local disk (or S3, etc.)
+	avatarDir := "./assets/avatars/"
+	os.MkdirAll(avatarDir, 0755)
+	filename := userID + "_" + time.Now().Format("20060102150405") + "_" + handler.Filename
+	avatarPath := avatarDir + filename
+	out, err := os.Create(avatarPath)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Failed to save avatar"))
+		return
+	}
+	defer out.Close()
+	_, err = io.Copy(out, file)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Failed to save avatar"))
+		return
+	}
+	// Update user profile in DB
+	dbURL := os.Getenv("POSTGRES_DATABASE_URL")
+	db, err := sql.Open("postgres", dbURL)
+	if err == nil {
+		defer db.Close()
+		db.Exec(`UPDATE users SET avatar_url = $1 WHERE id = $2`, "/assets/avatars/"+filename, userID)
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("ok"))
 }
 
 // Helper to extract user ID from JWT (sub claim)
