@@ -12,6 +12,7 @@ import (
 	"KdnSite/internal/handlers"
 	"KdnSite/internal/leaderboard"
 	"KdnSite/internal/projects"
+	"KdnSite/internal/quiz"
 	"KdnSite/internal/resources"
 	"KdnSite/internal/revision"
 	"KdnSite/internal/user"
@@ -22,6 +23,7 @@ import (
 	userpages "KdnSite/ui/pages/user"
 	userpagescommunity "KdnSite/ui/pages/user/community"
 	userpagesprojects "KdnSite/ui/pages/user/projects"
+	userpagesquiz "KdnSite/ui/pages/user/quiz"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -256,6 +258,23 @@ func registerUserRoutes(mux *http.ServeMux) {
 			_ = adminpages.AdminPanel().Render(r.Context(), w)
 		})).ServeHTTP(w, r)
 	})
+
+	mux.HandleFunc("/user/quizzes", func(w http.ResponseWriter, r *http.Request) {
+		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			err := userpagesquiz.QuizList().Render(r.Context(), w)
+			if err != nil {
+				log.Errorf("Render error (QuizList): %v", err)
+			}
+		})).ServeHTTP(w, r)
+	})
+	mux.HandleFunc("/user/quiz/take", func(w http.ResponseWriter, r *http.Request) {
+		handlers.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			err := userpagesquiz.TakeQuiz().Render(r.Context(), w)
+			if err != nil {
+				log.Errorf("Render error (TakeQuiz): %v", err)
+			}
+		})).ServeHTTP(w, r)
+	})
 }
 
 func SetupAssetsRoutes(mux *http.ServeMux) {
@@ -328,6 +347,9 @@ func registerAPIRoutes(mux *http.ServeMux, db *sql.DB) {
 		}
 	})))
 	mux.HandleFunc("/api/sse/email-verified", handlers.EmailVerificationSSE)
+	mux.Handle("/api/quizzes", handlers.RequireAuth(quiz.ListQuizzes(db)))
+	mux.Handle("/api/quiz", handlers.RequireAuth(quiz.GetQuiz(db)))
+	mux.Handle("/api/quiz/attempt", handlers.RequireAuth(quiz.SubmitQuizAttempt(db)))
 }
 
 func hasPermission(claims map[string]interface{}, permission string) bool {

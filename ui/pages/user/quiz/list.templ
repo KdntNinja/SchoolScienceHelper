@@ -1,0 +1,23 @@
+package pages
+
+import (
+	"KdnSite/ui/components/card"
+	"KdnSite/ui/layouts"
+)
+
+templ QuizList() {
+	@layouts.BaseLayout() {
+		@card.Card(card.Props{Class: "w-full max-w-3xl mx-auto p-8 mt-12"}) {
+			@card.Header(card.HeaderProps{}) {
+				@card.Title(card.TitleProps{Class: "text-3xl font-bold mb-6 text-primary"}) {
+					Quizzes
+				}
+			}
+			@card.Content(card.ContentProps{}) {
+				<div id="quiz-list">
+					<!-- Quizzes will be loaded here via JS -->
+				</div>
+			}
+		}
+	}
+}

@@ -1,0 +1,28 @@
+package pages
+
+import (
+	"KdnSite/ui/components/button"
+	"KdnSite/ui/components/card"
+	"KdnSite/ui/layouts"
+)
+
+templ TakeQuiz() {
+	@layouts.BaseLayout() {
+		@card.Card(card.Props{Class: "w-full max-w-2xl mx-auto p-8 mt-12"}) {
+			@card.Header(card.HeaderProps{}) {
+				@card.Title(card.TitleProps{Class: "text-3xl font-bold mb-6 text-primary"}) {
+					Take Quiz
+				}
+			}
+			@card.Content(card.ContentProps{}) {
+				<div id="quiz-container">
+					<!-- Quiz questions and options will be loaded here via JS -->
+				</div>
+				<div id="quiz-feedback" class="mt-4"></div>
+				@button.Button(button.Props{ID: "submit-quiz-btn", Variant: button.VariantDefault, Class: "mt-6 w-full"}) {
+					Submit Quiz
+				}
+			}
+		}
+	}
+}

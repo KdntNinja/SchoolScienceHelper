@@ -22,78 +22,106 @@ templ Settings(auth0Domain string, auth0ClientID string) {
 			@card.Content(card.ContentProps{}) {
 				<!-- User Profile Card -->
 				@card.Card(card.Props{Class: "w-full flex flex-col items-center justify-center p-6 rounded-xl border border-border bg-muted/30 shadow"}) {
-					@avatar.Avatar(avatar.Props{Class: "w-16 h-16 mb-2", ID: "profile-avatar"})
-					<form id="avatar-upload-form" class="flex flex-col items-center gap-2 mt-2" enctype="multipart/form-data">
-						<input type="file" id="avatar-file" accept="image/*" class="block w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
-						<button type="submit" class="btn btn-sm btn-primary">Upload New Avatar</button>
-						<span id="avatar-upload-status" class="text-xs mt-1"></span>
-					</form>
-					@card.Title(card.TitleProps{Class: "font-semibold text-lg mb-1", ID: "profile-name"})
-					@card.Description(card.DescriptionProps{Class: "text-sm text-muted-foreground mb-1", ID: "profile-email"})
-					@badge.Badge(badge.Props{Class: "mb-1", ID: "profile-roles"})
-					<div>
-						<script>
-						// Fetch user profile and update avatar, name, email, roles
-						fetch('/api/auth/check', { credentials: 'include' })
-						  .then(r => r.ok ? r.json() : Promise.reject('Failed to check auth'))
-						  .then(data => {
-							if (data && data.user) {
-							  const user = data.user;
-							  // Avatar: use picture if available, else fallback to initial
-							  const avatar = document.getElementById('profile-avatar');
-							  if (user.picture) {
-								avatar.innerHTML = `<img src="${user.picture}" alt="avatar" class="rounded-full w-16 h-16 object-cover" />`;
-							  } else {
-								avatar.textContent = (user.name ? user.name[0] : '?').toUpperCase();
-							  }
-							  document.getElementById('profile-name').textContent = user.name || user.nickname || 'Unknown';
-							  document.getElementById('profile-email').textContent = user.email || '';
-							  document.getElementById('profile-roles').textContent = user.roles ? user.roles.join(', ') : '';
-							  // Optionally update username input with current nickname
-							  if (user.nickname) {
-								const usernameInput = document.getElementById('change-username-input');
-								if (usernameInput && !usernameInput.value) usernameInput.value = user.nickname;
-							  }
-							}
-						  });
-						// Avatar upload handler
-						document.getElementById('avatar-upload-form').onsubmit = async (e) => {
-						  e.preventDefault();
-						  const fileInput = document.getElementById('avatar-file');
-						  const status = document.getElementById('avatar-upload-status');
-						  if (!fileInput.files || !fileInput.files[0]) {
-							status.textContent = 'Please select an image.';
-							status.className = 'text-xs text-red-600 mt-1';
-							return;
-						  }
-						  const formData = new FormData();
-						  formData.append('avatar', fileInput.files[0]);
-						  status.textContent = 'Uploading...';
-						  status.className = 'text-xs text-muted-foreground mt-1';
-						  const resp = await fetch('/api/auth/avatar', {
-							method: 'POST',
-							body: formData,
-							credentials: 'include',
-						  });
-						  if (resp.ok) {
-							status.textContent = 'Avatar updated!';
-							status.className = 'text-xs text-green-600 mt-1';
-							// Optionally, refresh avatar
-							fetch('/api/auth/check', { credentials: 'include' })
-							  .then(r => r.ok ? r.json() : Promise.reject('Failed to check auth'))
-							  .then(data => {
-								if (data && data.user && data.user.picture) {
-								  document.getElementById('profile-avatar').innerHTML = `<img src="${data.user.picture}?t=${Date.now()}" alt="avatar" class="rounded-full w-16 h-16 object-cover" />`;
-								}
-							  });
-						  } else {
-							const err = await resp.text();
-							status.textContent = err || 'Failed to upload avatar.';
-							status.className = 'text-xs text-red-600 mt-1';
-						  }
-						};
-						</script>
-					</div>
+				  <div class="relative group mb-2">
+				    @avatar.Avatar(avatar.Props{ID: "profile-avatar", Size: avatar.SizeLg, Class: "shadow-lg border-4 border-primary/40"}) {
+				      <span id="avatar-image-slot"></span>
+				    }
+				    <label for="avatar-file" class="absolute bottom-2 right-2 bg-primary/90 rounded-full p-2 shadow-lg cursor-pointer opacity-80 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center" title="Change avatar">
+				      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 13l6-6m2 2a2.828 2.828 0 11-4-4 2.828 2.828 0 014 4z" /></svg>
+				      <input type="file" id="avatar-file" accept="image/*" class="hidden" />
+				    </label>
+				    <div id="avatar-upload-spinner" class="hidden absolute inset-0 flex items-center justify-center bg-black/30 rounded-full">
+				      <svg class="animate-spin h-8 w-8 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>
+				    </div>
+				  </div>
+				  @form.Item() {
+				    <form id="avatar-upload-form" class="flex flex-col items-center gap-2 mt-2 w-full max-w-xs" enctype="multipart/form-data">
+				      <div class="w-full flex flex-row gap-2 items-center justify-center">
+				        @button.Button(button.Props{Type: button.TypeSubmit, Variant: button.VariantDefault, Class: "w-full flex-1 rounded-lg font-semibold shadow-sm hover:shadow-md transition-all duration-200"}) {
+				          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5-5m0 0l5 5m-5-5v12" /></svg>
+				          Upload New Avatar
+				        }
+				      </div>
+				      @form.Message(form.MessageProps{ID: "avatar-upload-status", Class: "mt-1"})
+				    </form>
+				  }
+				  @card.Title(card.TitleProps{Class: "font-semibold text-lg mb-1", ID: "profile-name"})
+				  @card.Description(card.DescriptionProps{Class: "text-sm text-muted-foreground mb-1", ID: "profile-email"})
+				  @badge.Badge(badge.Props{Class: "mb-1", ID: "profile-roles"})
+				  <script>
+				  // Fetch user profile and update avatar, name, email, roles
+				  fetch('/api/auth/check', { credentials: 'include' })
+				    .then(r => r.ok ? r.json() : Promise.reject('Failed to check auth'))
+				    .then(data => {
+				      if (data && data.user) {
+				        const user = data.user;
+				        const slot = document.getElementById('avatar-image-slot');
+				        if (user.picture) {
+				          slot.innerHTML = `<img src="${user.picture}" alt="avatar" class="rounded-full w-full h-full object-cover" />`;
+				        } else {
+				          // Fallback: initials with gradient
+				          const initial = (user.name ? user.name[0] : '?').toUpperCase();
+				          slot.innerHTML = `<span class='font-bold text-4xl text-primary'>${initial}</span>`;
+				        }
+				        document.getElementById('profile-name').textContent = user.name || user.nickname || 'Unknown';
+				        document.getElementById('profile-email').textContent = user.email || '';
+				        document.getElementById('profile-roles').textContent = user.roles ? user.roles.join(', ') : '';
+				        if (user.nickname) {
+				          const usernameInput = document.getElementById('change-username-input');
+				          if (usernameInput && !usernameInput.value) usernameInput.value = user.nickname;
+				        }
+				      }
+				    });
+				  // Instant preview for avatar
+				  document.getElementById('avatar-file').onchange = (e) => {
+				    const file = e.target.files[0];
+				    if (file) {
+				      const reader = new FileReader();
+				      reader.onload = ev => {
+				        document.getElementById('avatar-image-slot').innerHTML = `<img src="${ev.target.result}" alt="avatar preview" class="rounded-full w-full h-full object-cover" />`;
+				      };
+				      reader.readAsDataURL(file);
+				    }
+				  };
+				  // Avatar upload handler with spinner
+				  document.getElementById('avatar-upload-form').onsubmit = async (e) => {
+				    e.preventDefault();
+				    const fileInput = document.getElementById('avatar-file');
+				    const status = document.getElementById('avatar-upload-status');
+				    const spinner = document.getElementById('avatar-upload-spinner');
+				    if (!fileInput.files || !fileInput.files[0]) {
+				      status.textContent = 'Please select an image.';
+				      status.className = 'text-xs text-red-600 mt-1';
+				      return;
+				    }
+				    spinner.classList.remove('hidden');
+				    const formData = new FormData();
+				    formData.append('avatar', fileInput.files[0]);
+				    status.textContent = 'Uploading...';
+				    status.className = 'text-xs text-muted-foreground mt-1';
+				    const resp = await fetch('/api/auth/avatar', {
+				      method: 'POST',
+				      body: formData,
+				      credentials: 'include',
+				    });
+				    spinner.classList.add('hidden');
+				    if (resp.ok) {
+				      status.textContent = 'Avatar updated!';
+				      status.className = 'text-xs text-green-600 mt-1';
+				      fetch('/api/auth/check', { credentials: 'include' })
+				        .then(r => r.ok ? r.json() : Promise.reject('Failed to check auth'))
+				        .then(data => {
+				          if (data && data.user && data.user.picture) {
+				            document.getElementById('avatar-image-slot').innerHTML = `<img src="${data.user.picture}?t=${Date.now()}" alt="avatar" class="rounded-full w-full h-full object-cover" />`;
+				          }
+				        });
+				    } else {
+				      const err = await resp.text();
+				      status.textContent = err || 'Failed to upload avatar.';
+				      status.className = 'text-xs text-red-600 mt-1';
+				    }
+				  };
+				  </script>
 				}
 				@tabs.Tabs(tabs.Props{ID: "settings-tabs", Class: "w-full"}) {
 					@tabs.List(tabs.ListProps{ID: "settings-tabs-list", Class: "mb-6"}) {
@@ -109,78 +137,106 @@ templ Settings(auth0Domain string, auth0ClientID string) {
 					}
 					@tabs.Content(tabs.ContentProps{Value: "profile", TabsID: "settings-tabs"}) {
 						@card.Card(card.Props{Class: "w-full flex flex-col items-center justify-center p-6 rounded-xl border border-border bg-muted/30 shadow"}) {
-							@avatar.Avatar(avatar.Props{Class: "w-16 h-16 mb-2", ID: "profile-avatar"})
-							<form id="avatar-upload-form" class="flex flex-col items-center gap-2 mt-2" enctype="multipart/form-data">
-								<input type="file" id="avatar-file" accept="image/*" class="block w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
-								<button type="submit" class="btn btn-sm btn-primary">Upload New Avatar</button>
-								<span id="avatar-upload-status" class="text-xs mt-1"></span>
-							</form>
-							@card.Title(card.TitleProps{Class: "font-semibold text-lg mb-1", ID: "profile-name"})
-							@card.Description(card.DescriptionProps{Class: "text-sm text-muted-foreground mb-1", ID: "profile-email"})
-							@badge.Badge(badge.Props{Class: "mb-1", ID: "profile-roles"})
-							<div>
-								<script>
-								// Fetch user profile and update avatar, name, email, roles
-								fetch('/api/auth/check', { credentials: 'include' })
-								  .then(r => r.ok ? r.json() : Promise.reject('Failed to check auth'))
-								  .then(data => {
-									if (data && data.user) {
-									  const user = data.user;
-									  // Avatar: use picture if available, else fallback to initial
-									  const avatar = document.getElementById('profile-avatar');
-									  if (user.picture) {
-										avatar.innerHTML = `<img src="${user.picture}" alt="avatar" class="rounded-full w-16 h-16 object-cover" />`;
-									  } else {
-										avatar.textContent = (user.name ? user.name[0] : '?').toUpperCase();
-									  }
-									  document.getElementById('profile-name').textContent = user.name || user.nickname || 'Unknown';
-									  document.getElementById('profile-email').textContent = user.email || '';
-									  document.getElementById('profile-roles').textContent = user.roles ? user.roles.join(', ') : '';
-									  // Optionally update username input with current nickname
-									  if (user.nickname) {
-										const usernameInput = document.getElementById('change-username-input');
-										if (usernameInput && !usernameInput.value) usernameInput.value = user.nickname;
-									  }
-									}
-								  });
-								// Avatar upload handler
-								document.getElementById('avatar-upload-form').onsubmit = async (e) => {
-								  e.preventDefault();
-								  const fileInput = document.getElementById('avatar-file');
-								  const status = document.getElementById('avatar-upload-status');
-								  if (!fileInput.files || !fileInput.files[0]) {
-									status.textContent = 'Please select an image.';
-									status.className = 'text-xs text-red-600 mt-1';
-									return;
-								  }
-								  const formData = new FormData();
-								  formData.append('avatar', fileInput.files[0]);
-								  status.textContent = 'Uploading...';
-								  status.className = 'text-xs text-muted-foreground mt-1';
-								  const resp = await fetch('/api/auth/avatar', {
-									method: 'POST',
-									body: formData,
-									credentials: 'include',
-								  });
-								  if (resp.ok) {
-									status.textContent = 'Avatar updated!';
-									status.className = 'text-xs text-green-600 mt-1';
-									// Optionally, refresh avatar
-									fetch('/api/auth/check', { credentials: 'include' })
-									  .then(r => r.ok ? r.json() : Promise.reject('Failed to check auth'))
-									  .then(data => {
-										if (data && data.user && data.user.picture) {
-										  document.getElementById('profile-avatar').innerHTML = `<img src="${data.user.picture}?t=${Date.now()}" alt="avatar" class="rounded-full w-16 h-16 object-cover" />`;
-										}
-									  });
-								  } else {
-									const err = await resp.text();
-									status.textContent = err || 'Failed to upload avatar.';
-									status.className = 'text-xs text-red-600 mt-1';
-								  }
-								};
-								</script>
-							</div>
+						  <div class="relative group mb-2">
+						    @avatar.Avatar(avatar.Props{ID: "profile-avatar", Size: avatar.SizeLg, Class: "shadow-lg border-4 border-primary/40"}) {
+						      <span id="avatar-image-slot"></span>
+						    }
+						    <label for="avatar-file" class="absolute bottom-2 right-2 bg-primary/90 rounded-full p-2 shadow-lg cursor-pointer opacity-80 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center" title="Change avatar">
+						      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 13l6-6m2 2a2.828 2.828 0 11-4-4 2.828 2.828 0 014 4z" /></svg>
+						      <input type="file" id="avatar-file" accept="image/*" class="hidden" />
+						    </label>
+						    <div id="avatar-upload-spinner" class="hidden absolute inset-0 flex items-center justify-center bg-black/30 rounded-full">
+						      <svg class="animate-spin h-8 w-8 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>
+						    </div>
+						  </div>
+						  @form.Item() {
+						    <form id="avatar-upload-form" class="flex flex-col items-center gap-2 mt-2 w-full max-w-xs" enctype="multipart/form-data">
+						      <div class="w-full flex flex-row gap-2 items-center justify-center">
+						        @button.Button(button.Props{Type: button.TypeSubmit, Variant: button.VariantDefault, Class: "w-full flex-1 rounded-lg font-semibold shadow-sm hover:shadow-md transition-all duration-200"}) {
+						          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5-5m0 0l5 5m-5-5v12" /></svg>
+						          Upload New Avatar
+						        }
+						      </div>
+						      @form.Message(form.MessageProps{ID: "avatar-upload-status", Class: "mt-1"})
+						    </form>
+						  }
+						  @card.Title(card.TitleProps{Class: "font-semibold text-lg mb-1", ID: "profile-name"})
+						  @card.Description(card.DescriptionProps{Class: "text-sm text-muted-foreground mb-1", ID: "profile-email"})
+						  @badge.Badge(badge.Props{Class: "mb-1", ID: "profile-roles"})
+						  <script>
+						  // Fetch user profile and update avatar, name, email, roles
+						  fetch('/api/auth/check', { credentials: 'include' })
+						    .then(r => r.ok ? r.json() : Promise.reject('Failed to check auth'))
+						    .then(data => {
+						      if (data && data.user) {
+						        const user = data.user;
+						        const slot = document.getElementById('avatar-image-slot');
+						        if (user.picture) {
+						          slot.innerHTML = `<img src="${user.picture}" alt="avatar" class="rounded-full w-full h-full object-cover" />`;
+						        } else {
+						          // Fallback: initials with gradient
+						          const initial = (user.name ? user.name[0] : '?').toUpperCase();
+						          slot.innerHTML = `<span class='font-bold text-4xl text-primary'>${initial}</span>`;
+						        }
+						        document.getElementById('profile-name').textContent = user.name || user.nickname || 'Unknown';
+						        document.getElementById('profile-email').textContent = user.email || '';
+						        document.getElementById('profile-roles').textContent = user.roles ? user.roles.join(', ') : '';
+						        if (user.nickname) {
+						          const usernameInput = document.getElementById('change-username-input');
+						          if (usernameInput && !usernameInput.value) usernameInput.value = user.nickname;
+						        }
+						      }
+						    });
+						  // Instant preview for avatar
+						  document.getElementById('avatar-file').onchange = (e) => {
+						    const file = e.target.files[0];
+						    if (file) {
+						      const reader = new FileReader();
+						      reader.onload = ev => {
+						        document.getElementById('avatar-image-slot').innerHTML = `<img src="${ev.target.result}" alt="avatar preview" class="rounded-full w-full h-full object-cover" />`;
+						      };
+						      reader.readAsDataURL(file);
+						    }
+						  };
+						  // Avatar upload handler with spinner
+						  document.getElementById('avatar-upload-form').onsubmit = async (e) => {
+						    e.preventDefault();
+						    const fileInput = document.getElementById('avatar-file');
+						    const status = document.getElementById('avatar-upload-status');
+						    const spinner = document.getElementById('avatar-upload-spinner');
+						    if (!fileInput.files || !fileInput.files[0]) {
+						      status.textContent = 'Please select an image.';
+						      status.className = 'text-xs text-red-600 mt-1';
+						      return;
+						    }
+						    spinner.classList.remove('hidden');
+						    const formData = new FormData();
+						    formData.append('avatar', fileInput.files[0]);
+						    status.textContent = 'Uploading...';
+						    status.className = 'text-xs text-muted-foreground mt-1';
+						    const resp = await fetch('/api/auth/avatar', {
+						      method: 'POST',
+						      body: formData,
+						      credentials: 'include',
+						    });
+						    spinner.classList.add('hidden');
+						    if (resp.ok) {
+						      status.textContent = 'Avatar updated!';
+						      status.className = 'text-xs text-green-600 mt-1';
+						      fetch('/api/auth/check', { credentials: 'include' })
+						        .then(r => r.ok ? r.json() : Promise.reject('Failed to check auth'))
+						        .then(data => {
+						          if (data && data.user && data.user.picture) {
+						            document.getElementById('avatar-image-slot').innerHTML = `<img src="${data.user.picture}?t=${Date.now()}" alt="avatar" class="rounded-full w-full h-full object-cover" />`;
+						          }
+						        });
+						    } else {
+						      const err = await resp.text();
+						      status.textContent = err || 'Failed to upload avatar.';
+						      status.className = 'text-xs text-red-600 mt-1';
+						    }
+						  };
+						  </script>
 						}
 					}
 					@tabs.Content(tabs.ContentProps{Value: "account", TabsID: "settings-tabs"}) {
