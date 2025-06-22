@@ -34,6 +34,13 @@ func HandleAuthCallback(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("invalid token"))
 		return
 	}
+	// Detect method used for token (if client provides a hint)
+	method := r.Header.Get("X-Auth-Source")
+	if method == "" {
+		// Try to guess from Referer or User-Agent if needed, or just log unknown
+		method = "unknown"
+	}
+	log.Infof("[HandleAuthCallback] Token received via: %s", method)
 	secure := true
 	if os.Getenv("GO_ENV") != "production" {
 		secure = false
@@ -242,12 +249,14 @@ func ChangeUsernameHandler(w http.ResponseWriter, r *http.Request) {
 		Username string `json:"username"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.Username == "" {
+		log.Errorf("[ChangeUsernameHandler] Bad request: %v", err)
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Missing username"))
 		return
 	}
 	userID, err := getUserIDFromJWT(r)
 	if err != nil {
+		log.Errorf("[ChangeUsernameHandler] Unauthorized: %v", err)
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("Unauthorized"))
 		return
@@ -255,6 +264,7 @@ func ChangeUsernameHandler(w http.ResponseWriter, r *http.Request) {
 	domain := os.Getenv("AUTH0_DOMAIN")
 	apiToken := os.Getenv("AUTH0_MANAGEMENT_TOKEN")
 	if domain == "" || apiToken == "" {
+		log.Errorf("[ChangeUsernameHandler] Auth0 config missing: domain=%v, token=%v", domain, apiToken != "")
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("Auth0 config missing"))
 		return
@@ -262,7 +272,6 @@ func ChangeUsernameHandler(w http.ResponseWriter, r *http.Request) {
 	client := &http.Client{Timeout: 10 * time.Second}
 	payload := map[string]interface{}{
 		"nickname": req.Username, // Auth0 uses "nickname" for display name
-		// "username" is only available for certain DB connections, but "nickname" is always present
 	}
 	body, _ := json.Marshal(payload)
 	url := "https://" + domain + "/api/v2/users/" + userID
@@ -270,9 +279,16 @@ func ChangeUsernameHandler(w http.ResponseWriter, r *http.Request) {
 	reqAPI.Header.Set("Authorization", "Bearer "+apiToken)
 	reqAPI.Header.Set("Content-Type", "application/json")
 	resp, err := client.Do(reqAPI)
-	if err != nil || resp.StatusCode >= 400 {
+	if err != nil {
+		log.Errorf("[ChangeUsernameHandler] HTTP error: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Failed to update username in Auth0"))
+		w.Write([]byte("Failed to update username in Auth0 (HTTP error)"))
+		return
+	}
+	if resp.StatusCode >= 400 {
+		log.Errorf("[ChangeUsernameHandler] Auth0 error: status=%d", resp.StatusCode)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Failed to update username in Auth0 (bad status)"))
 		return
 	}
 	w.WriteHeader(http.StatusOK)
