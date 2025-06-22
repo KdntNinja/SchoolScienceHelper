@@ -42,11 +42,52 @@ templ Landing(auth0Domain string, auth0ClientID string) {
 				</span>
 				<script>
 document.addEventListener('DOMContentLoaded', function() {
+  // Try all available auth methods: cookie, URL, localStorage
+  function tryLoginFromUrl() {
+    const params = new URLSearchParams(window.location.hash.replace(/^#/, '?'));
+    const idToken = params.get('id_token');
+    const accessToken = params.get('access_token');
+    if (idToken || accessToken) {
+      // Send token to backend to set cookie
+      fetch('/api/auth/callback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: idToken || accessToken }),
+        credentials: 'include',
+      }).then(r => {
+        if (r.ok) {
+          window.location.replace('/dash');
+        }
+      });
+      return true;
+    }
+    return false;
+  }
+  function tryLoginFromLocalStorage() {
+    const token = localStorage.getItem('token');
+    if (token) {
+      fetch('/api/auth/callback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token }),
+        credentials: 'include',
+      }).then(r => {
+        if (r.ok) {
+          window.location.replace('/dash');
+        }
+      });
+      return true;
+    }
+    return false;
+  }
+  // 1. Try cookie-based session
   fetch('/api/auth/check', { credentials: 'include' })
     .then(r => r.json())
     .then(data => {
       if (data && data.authenticated) {
         window.location.replace('/dash');
+      } else if (!tryLoginFromUrl()) {
+        tryLoginFromLocalStorage();
       }
     });
   // Get Started button
