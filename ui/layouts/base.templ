@@ -58,7 +58,9 @@ templ BaseLayout(footerExtra ...any) {
 				<a href="https://webcraft.kdnsite.site" target="_blank" class="text-blue-500 hover:underline">
 					Visit webcraft.kdnsite.site
 				</a>
-				{ footerExtra... }
+				for _, extra := range footerExtra {
+					@extra.(templ.Component)
+				}
 			</footer>
 		</body>
 	</html>
