@@ -46,20 +46,22 @@ document.addEventListener('DOMContentLoaded', function() {
   const clientId = "{{ auth0ClientID }}";
   const redirectUri = window.location.origin + '/';
   const nonce = Date.now();
-  // Only use cookie/session-based auth
+  
+  // Check if user is already authenticated and redirect to dashboard if they are
   fetch('/api/auth/check', { credentials: 'include' })
     .then(r => r.json())
     .then(data => {
       if (data && data.authenticated) {
         window.location.replace('/dash');
-      } else {
-        // Not authenticated: auto-trigger Auth0 login
-        if (domain && clientId) {
-          window.location.href = `https://${domain}/authorize?response_type=id_token%20token&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=openid%20profile%20email&nonce=${nonce}`;
-        }
       }
+      // If not authenticated, just stay on the landing page - no auto-redirect
+    })
+    .catch(err => {
+      // If auth check fails, just stay on landing page
+      console.log('Auth check failed:', err);
     });
-  // Get Started button (optional, still present)
+  
+  // Get Started button triggers Auth0 login
   const btn = document.getElementById('get-started-btn');
   btn.onclick = function(e) {
     e.preventDefault();
