@@ -54,6 +54,12 @@ templ BaseLayout(footerExtra ...any) {
 			@card.Card(card.Props{Class: "w-full min-h-screen flex flex-col bg-background text-foreground"}) {
 				{ children... }
 			}
+			<footer class="w-full text-center py-4 mt-auto">
+				<a href="https://webcraft.kdnsite.site" target="_blank" class="text-blue-500 hover:underline">
+					Visit webcraft.kdnsite.site
+				</a>
+				{ footerExtra... }
+			</footer>
 		</body>
 	</html>
 }
